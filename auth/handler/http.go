@@ -104,7 +104,7 @@ func (ths *handler) RefreshToken(c *gin.Context) {
 				c.JSON(http.StatusInternalServerError, res)
 				return
 			}
-			newTokenPair.Access = ""
+			newTokenPair.Refresh = ""
 			res.Result = newTokenPair
 			c.JSON(http.StatusOK, res)
 			return
