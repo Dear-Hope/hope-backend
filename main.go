@@ -1,22 +1,22 @@
 package main
 
 import (
-	"net/http"
+	"HOPE-backend/auth"
+	_authHandler "HOPE-backend/auth/handler"
+	_authRepo "HOPE-backend/auth/repository"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := gin.Default()
+	db := NewPostgreSQLDatabase()
 
 	v1 := router.Group("/api/v1")
-	{
-		v1.GET("/hello", hello)
-	}
 
-	router.Run(":8000")
-}
+	authRepo := _authRepo.NewPostgreSQLRepository(db)
+	authSvc := auth.NewAuthService(authRepo)
+	_authHandler.NewAuthHandler(v1, authSvc)
 
-func hello(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"result": "Hello, world!"})
+	router.Run(":80")
 }
