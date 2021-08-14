@@ -93,6 +93,7 @@ func (ths *handler) RefreshToken(c *gin.Context) {
 		log.Printf("error validate refresh token: %s", err.Error())
 
 		c.JSON(http.StatusBadRequest, res)
+		return
 	}
 
 	if rtClaims, ok := refreshToken.Claims.(jwt.MapClaims); ok && refreshToken.Valid {
