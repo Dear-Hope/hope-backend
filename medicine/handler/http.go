@@ -26,7 +26,7 @@ func NewMedicineHandler(router *gin.RouterGroup, svc models.MedicineService) {
 
 func (ths *handler) GetMedicineList(c *gin.Context) {
 	var res models.Response
-	kind := c.Param("kind")
+	kind := c.Query("kind")
 
 	medicines, err := ths.svc.List(models.Kind(kind))
 	if err != nil {
