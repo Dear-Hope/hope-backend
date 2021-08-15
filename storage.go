@@ -26,4 +26,5 @@ func migrateTable(db *gorm.DB) {
 	db.AutoMigrate(&models.Medicine{})
 	db.AutoMigrate(&models.Ambulance{})
 	db.AutoMigrate(&models.Hospital{})
+	db.AutoMigrate(&models.Laboratory{})
 }

@@ -10,6 +10,9 @@ import (
 	"HOPE-backend/hospital"
 	_hospitalHandler "HOPE-backend/hospital/handler"
 	_hospitalRepo "HOPE-backend/hospital/repository"
+	"HOPE-backend/laboratory"
+	_laboratoryHandler "HOPE-backend/laboratory/handler"
+	_laboratoryRepo "HOPE-backend/laboratory/repository"
 	"HOPE-backend/medicine"
 	_medicineHandler "HOPE-backend/medicine/handler"
 	_medicineRepo "HOPE-backend/medicine/repository"
@@ -38,6 +41,10 @@ func main() {
 	hospitalRepo := _hospitalRepo.NewPostgreSQLRepository(db)
 	hospitalSvc := hospital.NewHospitalService(hospitalRepo)
 	_hospitalHandler.NewHospitalHandler(v1, hospitalSvc)
+
+	laboratoryRepo := _laboratoryRepo.NewPostgreSQLRepository(db)
+	laboratorySvc := laboratory.NewLaboratoryService(laboratoryRepo)
+	_laboratoryHandler.NewLaboratoryHandler(v1, laboratorySvc)
 
 	router.Run(":80")
 }
