@@ -25,15 +25,15 @@ func NewAmbulanceHandler(router *gin.RouterGroup, svc models.AmbulanceService) {
 }
 
 func (ths *handler) GetAmbulanceList(c *gin.Context) {
-	var res models.Response
+	res := gin.H{}
 	search := c.Query("search")
 	location := c.Query("location")
 
 	ambulances, err := ths.svc.List(search, location)
 	if err != nil {
-		res.Error = err.Error()
+		res["error"] = err.Error()
 	}
 
-	res.Result = ambulances
+	res["result"] = ambulances
 	c.JSON(http.StatusOK, res)
 }

@@ -28,7 +28,7 @@ func (ths *service) List(search, location string) ([]*models.Ambulance, error) {
 }
 
 func filterByParams(ambulances []*models.Ambulance, conditions map[string]string) []*models.Ambulance {
-	var filteredAmbulances []*models.Ambulance
+	filteredAmbulances := []*models.Ambulance{}
 	search := conditions["search"]
 	location := conditions["location"]
 

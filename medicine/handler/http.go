@@ -25,14 +25,14 @@ func NewMedicineHandler(router *gin.RouterGroup, svc models.MedicineService) {
 }
 
 func (ths *handler) GetMedicineList(c *gin.Context) {
-	var res models.Response
+	res := gin.H{}
 	kind := c.Query("kind")
 
 	medicines, err := ths.svc.List(models.Kind(kind))
 	if err != nil {
-		res.Error = err.Error()
+		res["error"] = err.Error()
 	}
 
-	res.Result = medicines
+	res["result"] = medicines
 	c.JSON(http.StatusOK, res)
 }
