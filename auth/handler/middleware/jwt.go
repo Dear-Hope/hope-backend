@@ -29,8 +29,10 @@ func AuthorizeTokenJWT(c *gin.Context) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		id := uint(claims["id"].(float64))
-		c.Set("userID", id)
+		userID := claims["userID"].(float64)
+		profileID := claims["profileID"].(float64)
+		c.Set("userID", uint(userID))
+		c.Set("profileID", uint(profileID))
 		c.Next()
 	} else {
 		res.Error = "invalid token"

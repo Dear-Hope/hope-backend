@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"HOPE-backend/auth/handler/middleware"
 	"HOPE-backend/auth/helper"
 	"HOPE-backend/models"
 	"fmt"
@@ -26,8 +27,14 @@ func NewAuthHandler(router *gin.RouterGroup, svc models.AuthService) {
 		auth.POST("/login", handler.Login)
 		auth.POST("/register", handler.Register)
 		auth.POST("/login/refresh", handler.RefreshToken)
+	}
+	user := router.Group("/user")
+	{
+		user.GET("/me", middleware.AuthorizeTokenJWT, handler.GetUserMe)
+		user.PUT("/me", middleware.AuthorizeTokenJWT, handler.UpdateUserMe)
 
 	}
+
 }
 
 func (ths *handler) Login(c *gin.Context) {
@@ -98,7 +105,7 @@ func (ths *handler) RefreshToken(c *gin.Context) {
 
 	if rtClaims, ok := refreshToken.Claims.(jwt.MapClaims); ok && refreshToken.Valid {
 		if rtClaims["refresh"] == true {
-			newTokenPair, err := helper.GenerateTokenPair(uint(rtClaims["id"].(float64)))
+			newTokenPair, err := helper.GenerateTokenPair(rtClaims["user"].(*models.User))
 			if err != nil {
 				res.Error = err.Error()
 				log.Printf("error generate new access token: %s", err.Error())
@@ -117,4 +124,44 @@ func (ths *handler) RefreshToken(c *gin.Context) {
 
 	res.Error = "invalid refresh token"
 	c.JSON(http.StatusUnauthorized, res)
+}
+
+func (ths *handler) GetUserMe(c *gin.Context) {
+	var res models.Response
+	userID := c.GetUint("userID")
+
+	user, err := ths.svc.GetLoggedInUser(userID)
+	if err != nil {
+		res.Error = err.Error()
+		c.JSON(http.StatusNotFound, res)
+		return
+	}
+
+	res.Result = user
+	c.JSON(http.StatusOK, res)
+}
+
+func (ths *handler) UpdateUserMe(c *gin.Context) {
+	var res models.Response
+	var req models.UpdateUserRequest
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		res.Error = fmt.Sprintf("invalid parameters: %s", err.Error())
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	req.UserID = c.GetUint("userID")
+	req.ProfileID = c.GetUint("profileID")
+
+	updatedUser, err := ths.svc.UpdateLoggedInUser(req)
+	if err != nil {
+		res.Error = err.Error()
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res.Result = updatedUser
+	c.JSON(http.StatusOK, res)
 }

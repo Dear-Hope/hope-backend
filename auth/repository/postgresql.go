@@ -37,12 +37,42 @@ func (ths *postgreSQLRepository) Create(user *models.User) error {
 func (ths *postgreSQLRepository) GetByEmail(whereClause *models.User) (*models.User, error) {
 	var user models.User
 
-	err := ths.db.Where(&whereClause).First(&user).Error
+	err := ths.db.Joins("Profile").Where(&whereClause).First(&user).Error
 	if err != nil {
 		log.Printf("user get by email: %s", err.Error())
 
 		err = errors.New("user not found with given email")
+		return nil, err
 	}
 
-	return &user, err
+	return &user, nil
+}
+
+func (ths *postgreSQLRepository) GetByID(id uint) (*models.User, error) {
+	var user models.User
+
+	err := ths.db.Joins("Profile").First(&user, id).Error
+	if err != nil {
+		log.Printf("user get by id: %s", err.Error())
+
+		err = errors.New("user not found")
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (ths *postgreSQLRepository) Update(user *models.User) (*models.User, error) {
+	err := ths.db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(user).Error
+	if err != nil {
+		log.Printf("user update: %s", err.Error())
+
+		err = errors.New("failed to update user")
+		return nil, err
+	}
+
+	var updatedUser models.User
+	ths.db.Joins("Profile").First(&updatedUser, user.ID)
+
+	return &updatedUser, nil
 }
