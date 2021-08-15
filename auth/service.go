@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"HOPE-backend/auth/handler/helper"
+	"HOPE-backend/auth/helper"
 	"HOPE-backend/models"
 )
 
@@ -17,10 +17,15 @@ func NewAuthService(repo models.AuthRepository) models.AuthService {
 
 func (ths *service) Login(req models.LoginRequest) (*models.TokenPair, error) {
 	whereClause := &models.User{
-		Email:    req.Email,
-		Password: req.Password,
+		Email: req.Email,
 	}
-	user, err := ths.repo.GetByEmailAndPassword(whereClause)
+
+	user, err := ths.repo.GetByEmail(whereClause)
+	if err != nil {
+		return nil, err
+	}
+
+	err = helper.ComparePassword([]byte(req.Password), []byte(user.Password))
 	if err != nil {
 		return nil, err
 	}
@@ -44,14 +49,19 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 		DiseaseHistory: req.DiseaseHistory,
 	}
 
+	hashedPassword, err := helper.EncryptPassword([]byte(req.Password))
+	if err != nil {
+		return nil, err
+	}
+
 	newUser := &models.User{
 		Email:    req.Email,
-		Password: req.Password,
+		Password: hashedPassword,
 		IsAdmin:  false,
 		Profile:  newUserProfile,
 	}
 
-	err := ths.repo.Create(newUser)
+	err = ths.repo.Create(newUser)
 	if err != nil {
 		return nil, err
 	}

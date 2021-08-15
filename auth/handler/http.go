@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"HOPE-backend/auth/handler/helper"
+	"HOPE-backend/auth/helper"
 	"HOPE-backend/models"
 	"fmt"
 	"log"

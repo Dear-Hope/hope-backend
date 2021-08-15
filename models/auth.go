@@ -9,7 +9,7 @@ type User struct {
 	Email    string      `json:"email" gorm:"unique;not null"`
 	Password string      `json:"password" gorm:"not null"`
 	IsAdmin  bool        `json:"is_admin" gorm:"not null"`
-	Profile  UserProfile `json:"profile"`
+	Profile  UserProfile `json:"profile" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type UserProfile struct {
@@ -39,7 +39,7 @@ type AuthService interface {
 
 type AuthRepository interface {
 	Create(*User) error
-	GetByEmailAndPassword(*User) (*User, error)
+	GetByEmail(*User) (*User, error)
 }
 
 type LoginRequest struct {

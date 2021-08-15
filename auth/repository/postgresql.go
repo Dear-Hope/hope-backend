@@ -34,14 +34,14 @@ func (ths *postgreSQLRepository) Create(user *models.User) error {
 	return nil
 }
 
-func (ths *postgreSQLRepository) GetByEmailAndPassword(whereClause *models.User) (*models.User, error) {
+func (ths *postgreSQLRepository) GetByEmail(whereClause *models.User) (*models.User, error) {
 	var user models.User
 
 	err := ths.db.Where(&whereClause).First(&user).Error
 	if err != nil {
-		log.Printf("user get by email & password failed: %s", err.Error())
+		log.Printf("user get by email: %s", err.Error())
 
-		err = errors.New("user not found with given email and password")
+		err = errors.New("user not found with given email")
 	}
 
 	return &user, err
