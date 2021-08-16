@@ -31,8 +31,8 @@ func GenerateTokenPair(userID, profileID uint) (*models.TokenPair, error) {
 
 	rtClaims := refresh.Claims.(jwt.MapClaims)
 	rtClaims["refresh"] = true
-	atClaims["userID"] = userID
-	atClaims["profileID"] = profileID
+	rtClaims["userID"] = userID
+	rtClaims["profileID"] = profileID
 	rtClaims["expires"] = time.Now().Add(24 * time.Hour).Unix()
 
 	rt, err := refresh.SignedString([]byte("hope-secret-key"))
