@@ -10,15 +10,15 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func GenerateTokenPair(user *models.User) (*models.TokenPair, error) {
+func GenerateTokenPair(userID, profileID uint) (*models.TokenPair, error) {
 	generateFailed := errors.New("failed to generate token")
 
 	access := jwt.New(jwt.SigningMethodHS256)
 
 	atClaims := access.Claims.(jwt.MapClaims)
 	atClaims["access"] = true
-	atClaims["userID"] = user.ID
-	atClaims["profileID"] = user.Profile.ID
+	atClaims["userID"] = userID
+	atClaims["profileID"] = profileID
 	atClaims["expires"] = time.Now().Add(15 * time.Minute).Unix()
 
 	at, err := access.SignedString([]byte("hope-secret-key"))
@@ -31,8 +31,8 @@ func GenerateTokenPair(user *models.User) (*models.TokenPair, error) {
 
 	rtClaims := refresh.Claims.(jwt.MapClaims)
 	rtClaims["refresh"] = true
-	atClaims["userID"] = user.ID
-	atClaims["profileID"] = user.Profile.ID
+	atClaims["userID"] = userID
+	atClaims["profileID"] = profileID
 	rtClaims["expires"] = time.Now().Add(24 * time.Hour).Unix()
 
 	rt, err := refresh.SignedString([]byte("hope-secret-key"))

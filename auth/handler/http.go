@@ -105,7 +105,9 @@ func (ths *handler) RefreshToken(c *gin.Context) {
 
 	if rtClaims, ok := refreshToken.Claims.(jwt.MapClaims); ok && refreshToken.Valid {
 		if rtClaims["refresh"] == true {
-			newTokenPair, err := helper.GenerateTokenPair(rtClaims["user"].(*models.User))
+			userID := rtClaims["userID"].(float64)
+			profileID := rtClaims["profileID"].(float64)
+			newTokenPair, err := helper.GenerateTokenPair(uint(userID), uint(profileID))
 			if err != nil {
 				res.Error = err.Error()
 				log.Printf("error generate new access token: %s", err.Error())

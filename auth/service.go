@@ -30,7 +30,7 @@ func (ths *service) Login(req models.LoginRequest) (*models.TokenPair, error) {
 		return nil, err
 	}
 
-	tokenPair, err := helper.GenerateTokenPair(user)
+	tokenPair, err := helper.GenerateTokenPair(user.ID, user.Profile.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 		return nil, err
 	}
 
-	tokenPair, err := helper.GenerateTokenPair(newUser)
+	tokenPair, err := helper.GenerateTokenPair(newUser.ID, newUser.Profile.ID)
 	if err != nil {
 		return nil, err
 	}
