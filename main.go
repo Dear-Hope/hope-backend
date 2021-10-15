@@ -16,6 +16,7 @@ import (
 	"HOPE-backend/medicine"
 	_medicineHandler "HOPE-backend/medicine/handler"
 	_medicineRepo "HOPE-backend/medicine/repository"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,6 +24,10 @@ import (
 func main() {
 	router := gin.Default()
 	db := NewPostgreSQLDatabase()
+
+	router.GET("/server/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, "Server is OK!")
+	})
 
 	v1 := router.Group("/api/v1")
 
@@ -46,5 +51,5 @@ func main() {
 	laboratorySvc := laboratory.NewLaboratoryService(laboratoryRepo)
 	_laboratoryHandler.NewLaboratoryHandler(v1, laboratorySvc)
 
-	router.Run(":80")
+	router.Run(":8000")
 }
