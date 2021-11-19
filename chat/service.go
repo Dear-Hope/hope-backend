@@ -17,6 +17,10 @@ func NewChatService(chatRepo models.ChatRepository, userRepo models.AuthReposito
 }
 
 func (ths *service) NewConversation(req models.NewConversationRequest) (*models.Conversation, error) {
+	if req.FirstUserID > req.SecondUserID {
+		req.FirstUserID, req.SecondUserID = req.SecondUserID, req.FirstUserID
+	}
+
 	firstUser, err := ths.userRepo.GetByID(req.FirstUserID)
 	if err != nil {
 		return nil, err
@@ -35,4 +39,13 @@ func (ths *service) NewConversation(req models.NewConversationRequest) (*models.
 	conversation, err := ths.chatRepo.CreateConversation(newConversation)
 
 	return conversation, err
+}
+
+func (ths *service) GetConversation(id uint) (*models.Conversation, error) {
+	conversation, err := ths.chatRepo.GetConversationByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return conversation, nil
 }

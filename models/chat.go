@@ -39,10 +39,12 @@ func (Conversation) TableName() string {
 
 type ChatService interface {
 	NewConversation(NewConversationRequest) (*Conversation, error)
+	GetConversation(uint) (*Conversation, error)
 }
 
 type ChatRepository interface {
 	CreateConversation(Conversation) (*Conversation, error)
+	GetConversationByID(uint) (*Conversation, error)
 }
 
 type NewConversationRequest struct {

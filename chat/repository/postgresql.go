@@ -33,3 +33,17 @@ func (ths *postgreSQLRepository) CreateConversation(newConversation models.Conve
 
 	return &newConversation, nil
 }
+
+func (ths *postgreSQLRepository) GetConversationByID(id uint) (*models.Conversation, error) {
+	var conversation models.Conversation
+
+	err := ths.db.First(&conversation, id).Error
+	if err != nil {
+		log.Printf("conversation get by id: %s", err.Error())
+
+		err = errors.New("conversation not found")
+		return nil, err
+	}
+
+	return &conversation, nil
+}
