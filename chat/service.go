@@ -2,6 +2,8 @@ package chat
 
 import (
 	"HOPE-backend/models"
+	"errors"
+	"fmt"
 )
 
 type service struct {
@@ -48,4 +50,30 @@ func (ths *service) GetConversation(id uint) (*models.Conversation, error) {
 	}
 
 	return conversation, nil
+}
+
+func (ths *service) NewChat(req models.NewChatRequest) (*models.Chat, error) {
+	conversation, err := ths.chatRepo.GetConversationByID(req.ConversationID)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.UserID != conversation.FirstUserID && req.UserID != conversation.SecondUserID {
+		return nil, errors.New("user is not one of the conversation owners")
+	}
+
+	newChat := models.Chat{
+		UserID:   req.UserID,
+		Type:     models.StringToChatType[req.Type],
+		Messages: req.Message,
+	}
+
+	fmt.Println(newChat)
+
+	chat, err := ths.chatRepo.CreateChat(newChat, *conversation)
+	if err != nil {
+		return nil, err
+	}
+
+	return chat, nil
 }

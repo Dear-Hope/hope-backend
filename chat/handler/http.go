@@ -24,6 +24,7 @@ func NewChatHandler(router *gin.RouterGroup, svc models.ChatService) {
 	{
 		chat.POST("/", authMiddleware.AuthorizeTokenJWT, handler.StartConversation)
 		chat.GET("/:id", authMiddleware.AuthorizeTokenJWT, handler.GetConversation)
+		chat.POST("/:id/chat", authMiddleware.AuthorizeTokenJWT, handler.SendChat)
 	}
 
 }
@@ -73,5 +74,33 @@ func (ths *handler) GetConversation(c *gin.Context) {
 	}
 
 	res.Result = conversation
+	c.JSON(http.StatusOK, res)
+}
+
+func (ths *handler) SendChat(c *gin.Context) {
+	var req models.NewChatRequest
+	var res models.Response
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		res.Error = fmt.Sprintf("invalid parameters: %s", err.Error())
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	chat, err := ths.svc.NewChat(req)
+	if err != nil {
+		res.Error = err.Error()
+		if strings.Contains(err.Error(), "already exists") ||
+			strings.Contains(err.Error(), "not found") ||
+			strings.Contains(err.Error(), "conversation owners") {
+			c.JSON(http.StatusBadRequest, res)
+		} else {
+			c.JSON(http.StatusInternalServerError, res)
+		}
+		return
+	}
+
+	res.Result = chat
 	c.JSON(http.StatusOK, res)
 }

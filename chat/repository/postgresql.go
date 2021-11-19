@@ -45,5 +45,27 @@ func (ths *postgreSQLRepository) GetConversationByID(id uint) (*models.Conversat
 		return nil, err
 	}
 
+	var chats []models.Chat
+	err = ths.db.Model(&conversation).Association("Chats").Find(&chats)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		log.Printf("conversation get by id - get all chats: %s", err.Error())
+
+		err = errors.New("something wrong when get all chats from the conversation")
+		return nil, err
+	}
+
+	conversation.Chats = chats
 	return &conversation, nil
+}
+
+func (ths *postgreSQLRepository) CreateChat(newChat models.Chat, conversation models.Conversation) (*models.Chat, error) {
+	err := ths.db.Model(&conversation).Association("Chats").Append(&newChat)
+	if err != nil {
+		log.Printf("chat create failed: %s", err.Error())
+
+		err = errors.New("failed to save chat")
+		return nil, err
+	}
+
+	return &newChat, nil
 }
