@@ -9,22 +9,26 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
 
 type handler struct {
-	svc models.ChatService
+	svc      models.ChatService
+	upgrader websocket.Upgrader
 }
 
-func NewChatHandler(router *gin.RouterGroup, svc models.ChatService) {
+func NewChatHandler(router *gin.RouterGroup, svc models.ChatService, upgrader websocket.Upgrader) {
 	handler := &handler{
-		svc: svc,
+		svc:      svc,
+		upgrader: upgrader,
 	}
 
 	chat := router.Group("conversation")
 	{
 		chat.POST("/", authMiddleware.AuthorizeTokenJWT, handler.StartConversation)
-		chat.GET("/:id", authMiddleware.AuthorizeTokenJWT, handler.GetConversation)
+		chat.GET("/:id", handler.GetConversation)
 		chat.POST("/:id/chat", authMiddleware.AuthorizeTokenJWT, handler.SendChat)
+		chat.GET("/ws", handler.ServeChatWS)
 	}
 
 }

@@ -21,11 +21,30 @@ import (
 	_medicineRepo "HOPE-backend/medicine/repository"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
+
+// We'll need to define an Upgrader
+// this will require a Read and Write buffer size
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+
+	// We'll need to check the origin of our connection
+	// this will allow us to make requests from our React
+	// development server to here.
+	// For now, we'll do no checking and just allow any connection
+	CheckOrigin: func(r *http.Request) bool { return true },
+}
 
 func main() {
 	router := gin.Default()
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	router.Use(cors.New(config))
+
 	db := NewPostgreSQLDatabase()
 
 	router.GET("/server/health", func(c *gin.Context) {
@@ -56,7 +75,7 @@ func main() {
 
 	chatRepo := _chatRepo.NewPostgreSQLRepository(db)
 	chatSvc := chat.NewChatService(chatRepo, authRepo)
-	_chatHandler.NewChatHandler(v1, chatSvc)
+	_chatHandler.NewChatHandler(v1, chatSvc, upgrader)
 
 	router.Run(":8000")
 }
