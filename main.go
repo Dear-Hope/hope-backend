@@ -43,6 +43,8 @@ func main() {
 	router := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
+	config.AllowCredentials = true
+	config.AddAllowHeaders("X-Requested-With", "Accept")
 	router.Use(cors.New(config))
 
 	db := NewPostgreSQLDatabase()
