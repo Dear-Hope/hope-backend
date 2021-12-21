@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type postgreSQLRepository struct {
@@ -35,10 +34,14 @@ func (ths *postgreSQLRepository) CreateConversation(newConversation models.Conve
 	return &newConversation, nil
 }
 
+func chatOrderByDateCreated(db *gorm.DB) *gorm.DB {
+	return db.Order("chat.created_at ASC")
+}
+
 func (ths *postgreSQLRepository) GetConversationByID(id uint) (*models.Conversation, error) {
 	var conversation models.Conversation
 
-	err := ths.db.Preload(clause.Associations).First(&conversation, id).Error
+	err := ths.db.Preload("Chats", chatOrderByDateCreated).First(&conversation, id).Error
 	if err != nil {
 		log.Printf("conversation get by id: %s", err.Error())
 
@@ -52,7 +55,7 @@ func (ths *postgreSQLRepository) GetConversationByID(id uint) (*models.Conversat
 func (ths *postgreSQLRepository) GetAllConversationByUserID(userID uint) ([]*models.Conversation, error) {
 	var conversations []*models.Conversation
 
-	err := ths.db.Preload(clause.Associations).Where(models.Conversation{FirstUserID: userID}).Or(models.Conversation{SecondUserID: userID}).Find(&conversations).Error
+	err := ths.db.Preload("Chats", chatOrderByDateCreated).Where(models.Conversation{FirstUserID: userID}).Or(models.Conversation{SecondUserID: userID}).Find(&conversations).Error
 	if err != nil {
 		log.Printf("conversation get all by user id: %s", err.Error())
 
