@@ -63,6 +63,7 @@ func (ths *handler) StartConversation(c *gin.Context) {
 func (ths *handler) GetConversation(c *gin.Context) {
 	var res models.Response
 	strID := c.Param("id")
+	currentUserID := c.GetUint("userID")
 
 	conversationID, err := strconv.Atoi(strID)
 	if err != nil {
@@ -75,6 +76,12 @@ func (ths *handler) GetConversation(c *gin.Context) {
 	if err != nil {
 		res.Error = err.Error()
 		c.JSON(http.StatusNotFound, res)
+		return
+	}
+
+	if currentUserID != conversation.FirstUserID && currentUserID != conversation.SecondUserID {
+		res.Error = "You are not the owner of this conversation"
+		c.JSON(http.StatusForbidden, res)
 		return
 	}
 
@@ -95,7 +102,7 @@ func (ths *handler) ListConversation(c *gin.Context) {
 	}
 
 	if currentUserID != uint(userID) {
-		res.Error = "You are not the owner of this conversation"
+		res.Error = "You are not the owner of these conversations"
 		c.JSON(http.StatusForbidden, res)
 		return
 	}
