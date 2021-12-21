@@ -53,12 +53,14 @@ func (Conversation) TableName() string {
 type ChatService interface {
 	NewConversation(NewConversationRequest) (*Conversation, error)
 	GetConversation(uint) (*Conversation, error)
+	ListConversation(uint) ([]*Conversation, error)
 	NewChat(NewChatRequest) (*Chat, error)
 }
 
 type ChatRepository interface {
 	CreateConversation(Conversation) (*Conversation, error)
 	GetConversationByID(uint) (*Conversation, error)
+	GetAllConversationByUserID(uint) ([]*Conversation, error)
 	CreateChat(Chat, Conversation) (*Chat, error)
 }
 

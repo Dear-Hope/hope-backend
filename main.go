@@ -44,7 +44,7 @@ func main() {
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	config.AllowCredentials = true
-	config.AddAllowHeaders("X-Requested-With", "Accept")
+	config.AddAllowHeaders("X-Requested-With", "Accept", "X-XSRF-TOKEN", "Authorization")
 	router.Use(cors.New(config))
 
 	db := NewPostgreSQLDatabase()

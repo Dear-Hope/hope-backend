@@ -52,6 +52,15 @@ func (ths *service) GetConversation(id uint) (*models.Conversation, error) {
 	return conversation, nil
 }
 
+func (ths *service) ListConversation(userID uint) ([]*models.Conversation, error) {
+	conversations, err := ths.chatRepo.GetAllConversationByUserID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return conversations, nil
+}
+
 func (ths *service) NewChat(req models.NewChatRequest) (*models.Chat, error) {
 	conversation, err := ths.chatRepo.GetConversationByID(req.ConversationID)
 	if err != nil {

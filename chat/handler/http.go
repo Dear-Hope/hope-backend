@@ -26,6 +26,7 @@ func NewChatHandler(router *gin.RouterGroup, svc models.ChatService, upgrader we
 	chat := router.Group("conversation")
 	{
 		chat.POST("/", authMiddleware.AuthorizeTokenJWT, handler.StartConversation)
+		chat.GET("/", authMiddleware.AuthorizeTokenJWT, handler.ListConversation)
 		chat.GET("/:id", handler.GetConversation)
 		chat.POST("/:id/chat", authMiddleware.AuthorizeTokenJWT, handler.SendChat)
 		chat.GET("/ws", handler.ServeChatWS)
@@ -78,6 +79,35 @@ func (ths *handler) GetConversation(c *gin.Context) {
 	}
 
 	res.Result = conversation
+	c.JSON(http.StatusOK, res)
+}
+
+func (ths *handler) ListConversation(c *gin.Context) {
+	var res models.Response
+	strID := c.Query("userID")
+	currentUserID := c.GetUint("userID")
+
+	userID, err := strconv.Atoi(strID)
+	if err != nil {
+		res.Error = err.Error()
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	if currentUserID != uint(userID) {
+		res.Error = "You are not the owner of this conversation"
+		c.JSON(http.StatusForbidden, res)
+		return
+	}
+
+	conversations, err := ths.svc.ListConversation(uint(userID))
+	if err != nil {
+		res.Error = err.Error()
+		c.JSON(http.StatusNotFound, res)
+		return
+	}
+
+	res.Result = conversations
 	c.JSON(http.StatusOK, res)
 }
 
