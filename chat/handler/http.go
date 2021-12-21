@@ -27,7 +27,7 @@ func NewChatHandler(router *gin.RouterGroup, svc models.ChatService, upgrader we
 	{
 		chat.POST("/", authMiddleware.AuthorizeTokenJWT, handler.StartConversation)
 		chat.GET("/", authMiddleware.AuthorizeTokenJWT, handler.ListConversation)
-		chat.GET("/:id", handler.GetConversation)
+		chat.GET("/:id", authMiddleware.AuthorizeTokenJWT, handler.GetConversation)
 		chat.POST("/:id/chat", authMiddleware.AuthorizeTokenJWT, handler.SendChat)
 		chat.GET("/ws", handler.ServeChatWS)
 	}
