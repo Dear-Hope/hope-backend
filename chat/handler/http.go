@@ -37,11 +37,18 @@ func NewChatHandler(router *gin.RouterGroup, svc models.ChatService, upgrader we
 func (ths *handler) StartConversation(c *gin.Context) {
 	var req models.NewConversationRequest
 	var res models.Response
+	currentUserID := c.GetUint("userID")
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		res.Error = fmt.Sprintf("invalid parameters: %s", err.Error())
 		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	if currentUserID != req.FirstUserID && currentUserID != req.SecondUserID {
+		res.Error = "You cannot start conversation without yourself"
+		c.JSON(http.StatusForbidden, res)
 		return
 	}
 
