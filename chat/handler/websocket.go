@@ -1,43 +1,34 @@
 package handler
 
 import (
-	"HOPE-backend/models"
-	"encoding/json"
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
-func (ths *handler) reader(conn *websocket.Conn) error {
-	for {
-		messageType, p, err := conn.ReadMessage()
-		if err != nil {
-			return err
-		}
-
-		var req models.NewChatRequest
-		json.Unmarshal(p, &req)
-
-		chat, err := ths.svc.NewChat(req)
-		if err != nil {
-			return err
-		}
-
-		msg, _ := json.Marshal(chat)
-
-		if err := conn.WriteMessage(messageType, msg); err != nil {
-			return err
-		}
-
+func (ths *handler) upgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
+	ws, err := ths.upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return ws, err
 	}
+	return ws, nil
 }
 
 func (ths *handler) ServeChatWS(c *gin.Context) {
-	ws, err := ths.upgrader.Upgrade(c.Writer, c.Request, nil)
+	conn, err := ths.upgrade(c.Writer, c.Request)
 	if err != nil {
 		log.Println(err)
 	}
 
-	ths.reader(ws)
+	client := &Client{
+		Conn: conn,
+		Pool: ths.pool,
+		svc:  ths.svc,
+	}
+
+	ths.pool.Register <- client
+	client.Read()
 }

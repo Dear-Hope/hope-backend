@@ -75,9 +75,12 @@ func main() {
 	laboratorySvc := laboratory.NewLaboratoryService(laboratoryRepo)
 	_laboratoryHandler.NewLaboratoryHandler(v1, laboratorySvc)
 
+	pool := _chatHandler.NewPool()
+	go pool.Start()
+
 	chatRepo := _chatRepo.NewPostgreSQLRepository(db)
 	chatSvc := chat.NewChatService(chatRepo, authRepo)
-	_chatHandler.NewChatHandler(v1, chatSvc, upgrader)
+	_chatHandler.NewChatHandler(v1, chatSvc, upgrader, pool)
 
 	router.Run(":8000")
 }

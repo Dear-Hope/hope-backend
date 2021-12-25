@@ -15,12 +15,14 @@ import (
 type handler struct {
 	svc      models.ChatService
 	upgrader websocket.Upgrader
+	pool     *Pool
 }
 
-func NewChatHandler(router *gin.RouterGroup, svc models.ChatService, upgrader websocket.Upgrader) {
+func NewChatHandler(router *gin.RouterGroup, svc models.ChatService, upgrader websocket.Upgrader, pool *Pool) {
 	handler := &handler{
 		svc:      svc,
 		upgrader: upgrader,
+		pool:     pool,
 	}
 
 	chat := router.Group("conversation")

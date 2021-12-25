@@ -3,7 +3,6 @@ package chat
 import (
 	"HOPE-backend/models"
 	"errors"
-	"fmt"
 )
 
 type service struct {
@@ -76,8 +75,6 @@ func (ths *service) NewChat(req models.NewChatRequest) (*models.Chat, error) {
 		Type:     models.StringToChatType[req.Type],
 		Messages: req.Message,
 	}
-
-	fmt.Println(newChat)
 
 	chat, err := ths.chatRepo.CreateChat(newChat, *conversation)
 	if err != nil {
