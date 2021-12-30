@@ -75,3 +75,12 @@ type NewChatRequest struct {
 	Type           string `json:"type"`
 	Message        string `json:"message"`
 }
+
+type GetConversationResponse struct {
+	ConversationID    uint        `json:"conversation_id"`
+	FirstUserProfile  UserProfile `json:"first_user"`
+	SecondUserProfile UserProfile `json:"second_user"`
+	FirstUserID       uint        `json:"first_user_id"`
+	SecondUserID      uint        `json:"second_user_id"`
+	Chats             []Chat      `json:"chats"`
+}

@@ -94,7 +94,16 @@ func (ths *handler) GetConversation(c *gin.Context) {
 		return
 	}
 
-	res.Result = conversation
+	response := models.GetConversationResponse{
+		ConversationID:    conversation.ID,
+		FirstUserProfile:  conversation.FirstUser.Profile,
+		SecondUserProfile: conversation.SecondUser.Profile,
+		FirstUserID:       conversation.FirstUserID,
+		SecondUserID:      conversation.SecondUserID,
+		Chats:             conversation.Chats,
+	}
+
+	res.Result = response
 	c.JSON(http.StatusOK, res)
 }
 
@@ -123,7 +132,20 @@ func (ths *handler) ListConversation(c *gin.Context) {
 		return
 	}
 
-	res.Result = conversations
+	var response []models.GetConversationResponse
+
+	for _, conversation := range conversations {
+		response = append(response, models.GetConversationResponse{
+			ConversationID:    conversation.ID,
+			FirstUserProfile:  conversation.FirstUser.Profile,
+			SecondUserProfile: conversation.SecondUser.Profile,
+			FirstUserID:       conversation.FirstUserID,
+			SecondUserID:      conversation.SecondUserID,
+			Chats:             conversation.Chats,
+		})
+	}
+
+	res.Result = response
 	c.JSON(http.StatusOK, res)
 }
 
