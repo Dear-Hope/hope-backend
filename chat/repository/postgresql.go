@@ -41,7 +41,7 @@ func chatOrderByDateCreated(db *gorm.DB) *gorm.DB {
 func (ths *postgreSQLRepository) GetConversationByID(id uint) (*models.Conversation, error) {
 	var conversation models.Conversation
 
-	err := ths.db.Preload("Chats", chatOrderByDateCreated).Preload("FirstUser.Profile").Preload("SecondUser.Profile").First(&conversation, id).Error
+	err := ths.db.Preload("Chats", chatOrderByDateCreated).Preload("FirstUser").Preload("SecondUser").First(&conversation, id).Error
 	if err != nil {
 		log.Printf("conversation get by id: %s", err.Error())
 
@@ -56,8 +56,8 @@ func (ths *postgreSQLRepository) GetAllConversationByUserID(userID uint) ([]*mod
 	var conversations []*models.Conversation
 
 	err := ths.db.Preload("Chats", chatOrderByDateCreated).
-		Preload("FirstUser.Profile").
-		Preload("SecondUser.Profile").
+		Preload("FirstUser").
+		Preload("SecondUser").
 		Where(models.Conversation{FirstUserID: userID}).
 		Or(models.Conversation{SecondUserID: userID}).
 		Find(&conversations).Error

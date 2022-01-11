@@ -20,7 +20,12 @@ func (ths *service) Login(req models.LoginRequest) (*models.TokenPair, error) {
 		Email: req.Email,
 	}
 
-	user, err := ths.repo.GetByEmail(whereClause)
+	user, err := ths.repo.GetUserByEmail(whereClause)
+	if err != nil {
+		return nil, err
+	}
+
+	profile, err := ths.repo.GetProfileByUserID(user.Role, user.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +35,7 @@ func (ths *service) Login(req models.LoginRequest) (*models.TokenPair, error) {
 		return nil, err
 	}
 
-	tokenPair, err := helper.GenerateTokenPair(user.ID, user.Profile.ID)
+	tokenPair, err := helper.GenerateTokenPair(user.ID, profile.GetProfileID())
 	if err != nil {
 		return nil, err
 	}
@@ -39,14 +44,24 @@ func (ths *service) Login(req models.LoginRequest) (*models.TokenPair, error) {
 }
 
 func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, error) {
-	newUserProfile := models.UserProfile{
-		FirstName:      req.FirstName,
-		LastName:       req.LastName,
-		Weight:         req.Weight,
-		Height:         req.Height,
-		Job:            req.Job,
-		Activities:     req.Activities,
-		DiseaseHistory: req.DiseaseHistory,
+	var newUserProfile models.Profile
+	if req.Role == "patient" {
+		newUserProfile = &models.Patient{
+			Weight:         req.PatientProfile.Weight,
+			Height:         req.PatientProfile.Height,
+			Job:            req.PatientProfile.Job,
+			Activities:     req.PatientProfile.Activities,
+			DiseaseHistory: req.PatientProfile.DiseaseHistory,
+		}
+	} else {
+		newUserProfile = &models.Psychologist{
+			Location:         req.PsychologistProfile.Location,
+			Lisence:          req.PsychologistProfile.Lisence,
+			MembershipNumber: req.PsychologistProfile.MembershipNumber,
+			Experience:       req.PsychologistProfile.Experience,
+			TopicCategory:    req.PsychologistProfile.TopicCategory,
+			Specialization:   req.PsychologistProfile.Specialization,
+		}
 	}
 
 	hashedPassword, err := helper.EncryptPassword([]byte(req.Password))
@@ -55,18 +70,24 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 	}
 
 	newUser := &models.User{
-		Email:    req.Email,
-		Password: hashedPassword,
-		IsAdmin:  false,
-		Profile:  newUserProfile,
+		Email:     req.Email,
+		Password:  hashedPassword,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Role:      req.Role,
 	}
-
-	err = ths.repo.Create(newUser)
+	err = ths.repo.CreateUser(newUser)
 	if err != nil {
 		return nil, err
 	}
 
-	tokenPair, err := helper.GenerateTokenPair(newUser.ID, newUser.Profile.ID)
+	newUserProfile.SetUserID(newUser.ID)
+	err = ths.repo.CreateProfile(newUser.Role, newUserProfile)
+	if err != nil {
+		return nil, err
+	}
+
+	tokenPair, err := helper.GenerateTokenPair(newUser.ID, newUserProfile.GetProfileID())
 	if err != nil {
 		return nil, err
 	}
@@ -74,50 +95,70 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 	return tokenPair, nil
 }
 
-func (ths *service) GetLoggedInUser(id uint) (*models.User, error) {
-	user, err := ths.repo.GetByID(id)
+func (ths *service) GetLoggedInUser(id uint) (*models.UserResponse, error) {
+	user, err := ths.repo.GetUserByID(id)
 	if err != nil {
 		return nil, err
 	}
 
 	user.Password = ""
 
-	return user, nil
+	profile, err := ths.repo.GetProfileByUserID(user.Role, user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.UserResponse{User: *user, Profile: profile}, nil
 }
 
-func (ths *service) UpdateLoggedInUser(req models.UpdateUserRequest) (*models.User, error) {
+func (ths *service) UpdateLoggedInUser(req models.UpdateRequest) (*models.UserResponse, error) {
 	newPassword, err := helper.EncryptPassword([]byte(req.Password))
 	if err != nil {
 		return nil, err
 	}
 
 	newUser := &models.User{
-		Email:    req.Email,
-		Password: newPassword,
-		IsAdmin:  req.IsAdmin,
-		Profile: models.UserProfile{
-			FirstName:      req.FirstName,
-			LastName:       req.LastName,
-			Weight:         req.Weight,
-			Height:         req.Height,
-			Job:            req.Job,
-			Activities:     req.Activities,
-			DiseaseHistory: req.DiseaseHistory,
-			UserID:         req.UserID,
-		},
+		Email:     req.Email,
+		Password:  newPassword,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
 	}
 
 	newUser.ID = req.UserID
-	newUser.Profile.ID = req.ProfileID
 	if req.Password == "" {
 		newUser.Password = req.Password
 	}
 
-	updatedUser, err := ths.repo.Update(newUser)
+	updatedUser, err := ths.repo.UpdateUser(newUser)
+	if err != nil {
+		return nil, err
+	}
+
+	var newUserProfile models.Profile
+	if updatedUser.Role == "patient" {
+		newUserProfile = &models.Patient{
+			Weight:         req.PatientProfile.Weight,
+			Height:         req.PatientProfile.Height,
+			Job:            req.PatientProfile.Job,
+			Activities:     req.PatientProfile.Activities,
+			DiseaseHistory: req.PatientProfile.DiseaseHistory,
+		}
+	} else {
+		newUserProfile = &models.Psychologist{
+			Location:         req.PsychologistProfile.Location,
+			Lisence:          req.PsychologistProfile.Lisence,
+			MembershipNumber: req.PsychologistProfile.MembershipNumber,
+			Experience:       req.PsychologistProfile.Experience,
+			TopicCategory:    req.PsychologistProfile.TopicCategory,
+			Specialization:   req.PsychologistProfile.Specialization,
+		}
+	}
+	newUserProfile.SetUserID(updatedUser.ID)
+	updatedUserProfile, err := ths.repo.UpdateProfile(updatedUser.Role, newUserProfile)
 	if err != nil {
 		return nil, err
 	}
 
 	updatedUser.Password = ""
-	return updatedUser, nil
+	return &models.UserResponse{User: *updatedUser, Profile: updatedUserProfile}, nil
 }

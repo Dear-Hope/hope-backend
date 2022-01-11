@@ -94,13 +94,15 @@ func (ths *handler) GetConversation(c *gin.Context) {
 		return
 	}
 
+	conversation.FirstUser.Password = ""
+	conversation.SecondUser.Password = ""
 	response := models.GetConversationResponse{
-		ConversationID:    conversation.ID,
-		FirstUserProfile:  conversation.FirstUser.Profile,
-		SecondUserProfile: conversation.SecondUser.Profile,
-		FirstUserID:       conversation.FirstUserID,
-		SecondUserID:      conversation.SecondUserID,
-		Chats:             conversation.Chats,
+		ConversationID: conversation.ID,
+		FirstUser:      conversation.FirstUser,
+		SecondUser:     conversation.SecondUser,
+		FirstUserID:    conversation.FirstUserID,
+		SecondUserID:   conversation.SecondUserID,
+		Chats:          conversation.Chats,
 	}
 
 	res.Result = response
@@ -135,13 +137,15 @@ func (ths *handler) ListConversation(c *gin.Context) {
 	var response []models.GetConversationResponse
 
 	for _, conversation := range conversations {
+		conversation.FirstUser.Password = ""
+		conversation.SecondUser.Password = ""
 		response = append(response, models.GetConversationResponse{
-			ConversationID:    conversation.ID,
-			FirstUserProfile:  conversation.FirstUser.Profile,
-			SecondUserProfile: conversation.SecondUser.Profile,
-			FirstUserID:       conversation.FirstUserID,
-			SecondUserID:      conversation.SecondUserID,
-			Chats:             conversation.Chats,
+			ConversationID: conversation.ID,
+			FirstUser:      conversation.FirstUser,
+			SecondUser:     conversation.SecondUser,
+			FirstUserID:    conversation.FirstUserID,
+			SecondUserID:   conversation.SecondUserID,
+			Chats:          conversation.Chats,
 		})
 	}
 

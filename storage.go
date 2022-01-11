@@ -22,7 +22,8 @@ func NewPostgreSQLDatabase() *gorm.DB {
 
 func migrateTable(db *gorm.DB) {
 	db.AutoMigrate(&models.User{})
-	db.AutoMigrate(&models.UserProfile{})
+	db.AutoMigrate(&models.Patient{})
+	db.AutoMigrate(&models.Psychologist{})
 	db.AutoMigrate(&models.Medicine{})
 	db.AutoMigrate(&models.Ambulance{})
 	db.AutoMigrate(&models.Hospital{})

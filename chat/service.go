@@ -22,12 +22,12 @@ func (ths *service) NewConversation(req models.NewConversationRequest) (*models.
 		req.FirstUserID, req.SecondUserID = req.SecondUserID, req.FirstUserID
 	}
 
-	firstUser, err := ths.userRepo.GetByID(req.FirstUserID)
+	firstUser, err := ths.userRepo.GetUserByID(req.FirstUserID)
 	if err != nil {
 		return nil, err
 	}
 
-	secondUser, err := ths.userRepo.GetByID(req.SecondUserID)
+	secondUser, err := ths.userRepo.GetUserByID(req.SecondUserID)
 	if err != nil {
 		return nil, err
 	}

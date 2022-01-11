@@ -145,7 +145,7 @@ func (ths *handler) GetUserMe(c *gin.Context) {
 
 func (ths *handler) UpdateUserMe(c *gin.Context) {
 	var res models.Response
-	var req models.UpdateUserRequest
+	var req models.UpdateRequest
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {

@@ -77,10 +77,10 @@ type NewChatRequest struct {
 }
 
 type GetConversationResponse struct {
-	ConversationID    uint        `json:"conversation_id"`
-	FirstUserProfile  UserProfile `json:"first_user"`
-	SecondUserProfile UserProfile `json:"second_user"`
-	FirstUserID       uint        `json:"first_user_id"`
-	SecondUserID      uint        `json:"second_user_id"`
-	Chats             []Chat      `json:"chats"`
+	ConversationID uint   `json:"conversation_id"`
+	FirstUser      User   `json:"first_user"`
+	SecondUser     User   `json:"second_user"`
+	FirstUserID    uint   `json:"first_user_id"`
+	SecondUserID   uint   `json:"second_user_id"`
+	Chats          []Chat `json:"chats"`
 }
