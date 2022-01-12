@@ -150,3 +150,19 @@ func (ths *postgreSQLRepository) UpdateProfile(role string, profile models.Profi
 
 	return updatedProfile, nil
 }
+
+func (ths *postgreSQLRepository) UpdateOnlineStatus(userID uint) error {
+	var user models.User
+	ths.db.Select("online_status").First(&user, userID)
+
+	user.ID = userID
+	err := ths.db.Model(&user).Update("online_status", !user.OnlineStatus).Error
+	if err != nil {
+		log.Printf("user online status update: %s", err.Error())
+
+		err = errors.New("failed to update user online status")
+		return err
+	}
+
+	return nil
+}

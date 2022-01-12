@@ -162,3 +162,12 @@ func (ths *service) UpdateLoggedInUser(req models.UpdateRequest) (*models.UserRe
 	updatedUser.Password = ""
 	return &models.UserResponse{User: *updatedUser, Profile: updatedUserProfile}, nil
 }
+
+func (ths *service) ChangeOnlineStatus(userID uint) error {
+	err := ths.repo.UpdateOnlineStatus(userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

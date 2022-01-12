@@ -12,6 +12,7 @@ type User struct {
 	FirstName    string `json:"first_name"`
 	LastName     string `json:"last_name"`
 	ProfilePhoto string `json:"profile_photo"`
+	OnlineStatus bool   `json:"online_status" gorm:"not null"`
 }
 
 type Profile interface {
@@ -70,6 +71,7 @@ type AuthService interface {
 	Register(RegisterRequest) (*TokenPair, error)
 	GetLoggedInUser(uint) (*UserResponse, error)
 	UpdateLoggedInUser(UpdateRequest) (*UserResponse, error)
+	ChangeOnlineStatus(uint) error
 }
 
 type AuthRepository interface {
@@ -80,6 +82,7 @@ type AuthRepository interface {
 	GetProfileByUserID(string, uint) (Profile, error)
 	UpdateUser(*User) (*User, error)
 	UpdateProfile(string, Profile) (Profile, error)
+	UpdateOnlineStatus(uint) error
 }
 
 type UserResponse struct {

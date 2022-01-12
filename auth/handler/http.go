@@ -32,6 +32,7 @@ func NewAuthHandler(router *gin.RouterGroup, svc models.AuthService) {
 	{
 		user.GET("/me", middleware.AuthorizeTokenJWT, handler.GetUserMe)
 		user.PUT("/me", middleware.AuthorizeTokenJWT, handler.UpdateUserMe)
+		user.POST("/me/status", middleware.AuthorizeTokenJWT, handler.ChangeStatus)
 
 	}
 
@@ -165,5 +166,20 @@ func (ths *handler) UpdateUserMe(c *gin.Context) {
 	}
 
 	res.Result = updatedUser
+	c.JSON(http.StatusOK, res)
+}
+
+func (ths *handler) ChangeStatus(c *gin.Context) {
+	var res models.Response
+
+	userID := c.GetUint("userID")
+	err := ths.svc.ChangeOnlineStatus(userID)
+	if err != nil {
+		res.Error = err.Error()
+		c.JSON(http.StatusInternalServerError, res)
+		return
+	}
+
+	res.Result = "success"
 	c.JSON(http.StatusOK, res)
 }
