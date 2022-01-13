@@ -19,6 +19,9 @@ import (
 	"HOPE-backend/medicine"
 	_medicineHandler "HOPE-backend/medicine/handler"
 	_medicineRepo "HOPE-backend/medicine/repository"
+	"HOPE-backend/psychologicalrecord"
+	_recordHandler "HOPE-backend/psychologicalrecord/handler"
+	_recordRepo "HOPE-backend/psychologicalrecord/repository"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
@@ -81,6 +84,10 @@ func main() {
 	chatRepo := _chatRepo.NewPostgreSQLRepository(db)
 	chatSvc := chat.NewChatService(chatRepo, authRepo)
 	_chatHandler.NewChatHandler(v1, chatSvc, upgrader, pool)
+
+	recordRepo := _recordRepo.NewPostgreSQLRepository(db)
+	recordSvc := psychologicalrecord.NewPsychologicalRecordService(recordRepo, authRepo)
+	_recordHandler.NewPsychologicalRecordHandler(v1, recordSvc)
 
 	router.Run(":8000")
 }

@@ -32,7 +32,7 @@ func (pool *Pool) Start() {
 			log.Println("Size of Connection Pool: ", len(pool.Clients))
 		case message := <-pool.Broadcast:
 			log.Println("Sending message to all clients in Pool")
-			for client, _ := range pool.Clients {
+			for client := range pool.Clients {
 				if err := client.Conn.WriteJSON(message); err != nil {
 					log.Println(err)
 					return

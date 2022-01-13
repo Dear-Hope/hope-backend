@@ -25,7 +25,7 @@ func (ths *postgreSQLRepository) CreateConversation(newConversation models.Conve
 		log.Printf("conversation create failed: %s", err.Error())
 
 		if strings.Contains(err.Error(), "duplicate key") {
-			return nil, errors.New("conversation betweetn this two user already exists")
+			return nil, errors.New("conversation between this two user already exists")
 		}
 
 		return nil, errors.New("failed to create conversation")
