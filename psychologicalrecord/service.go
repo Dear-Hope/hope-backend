@@ -3,6 +3,7 @@ package psychologicalrecord
 import (
 	"HOPE-backend/models"
 	"errors"
+	"time"
 )
 
 type service struct {
@@ -20,8 +21,11 @@ func NewPsychologicalRecordService(
 	}
 }
 
-func (ths *service) NewRecord(newRecord models.PsychologicalRecord) (*models.PsychologicalRecord, error) {
-	psychologist, err := ths.userRepo.GetUserByID(newRecord.PsychologistID)
+func (ths *service) NewRecord(req models.NewPsychologicalRecordRequest, psychologistID uint) (
+	*models.PsychologicalRecord,
+	error,
+) {
+	psychologist, err := ths.userRepo.GetUserByID(psychologistID)
 	if err != nil {
 		return nil, errors.New("psychologist with given ID not found")
 	}
@@ -30,7 +34,7 @@ func (ths *service) NewRecord(newRecord models.PsychologicalRecord) (*models.Psy
 		return nil, errors.New("the one who filled this record was not a psyhologist")
 	}
 
-	patient, err := ths.userRepo.GetUserByID(newRecord.PatientID)
+	patient, err := ths.userRepo.GetUserByID(req.PatientID)
 	if err != nil {
 		return nil, errors.New("patient with given ID not found")
 	}
@@ -39,9 +43,29 @@ func (ths *service) NewRecord(newRecord models.PsychologicalRecord) (*models.Psy
 		return nil, errors.New("the one being filled in this record was not a patient")
 	}
 
-	newRecord.Psychologist = *psychologist
-	newRecord.Patient = *patient
-	newRecord.PsychologistAcknowledgement = true
+	date, err := time.Parse("2006-01-02", req.Date)
+	if err != nil {
+		return nil, errors.New("failed to parse date given")
+	}
+
+	newRecord := models.PsychologicalRecord{
+		PsychologistName:            psychologist.FirstName + " " + psychologist.LastName,
+		PatientName:                 req.PatientName,
+		Date:                        date,
+		Sex:                         req.Sex,
+		Age:                         req.Age,
+		Education:                   req.Education,
+		Occupation:                  req.Occupation,
+		JobPosition:                 req.JobPosition,
+		Habit:                       req.Habit,
+		Analysis:                    req.Analysis,
+		Problem:                     req.Problem,
+		Recommendation:              req.Recommendation,
+		Note:                        req.Note,
+		PsychologistAcknowledgement: true,
+		Psychologist:                *psychologist,
+		Patient:                     *patient,
+	}
 
 	record, err := ths.recordRepo.Create(newRecord)
 	if err != nil {

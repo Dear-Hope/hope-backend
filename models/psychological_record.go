@@ -33,7 +33,7 @@ func (PsychologicalRecord) TableName() string {
 }
 
 type PsychologicalRecordService interface {
-	NewRecord(PsychologicalRecord) (*PsychologicalRecord, error)
+	NewRecord(NewPsychologicalRecordRequest, uint) (*PsychologicalRecord, error)
 	GetRecord(uint) (*PsychologicalRecord, error)
 	ListRecord(uint) ([]*PsychologicalRecord, error)
 }
@@ -42,4 +42,20 @@ type PsychologicalRecordRepository interface {
 	Create(PsychologicalRecord) (*PsychologicalRecord, error)
 	GetRecordByID(uint) (*PsychologicalRecord, error)
 	GetAllRecordByPyschologistID(uint) ([]*PsychologicalRecord, error)
+}
+
+type NewPsychologicalRecordRequest struct {
+	PatientName    string `json:"patient_name"`
+	Date           string `json:"date"`
+	Sex            string `json:"sex"`
+	Age            int    `json:"age"`
+	Education      string `json:"education"`
+	Occupation     string `json:"occupation"`
+	JobPosition    string `json:"job_position"`
+	Habit          string `json:"habit"`
+	Problem        string `json:"problem"`
+	Analysis       string `json:"analysis"`
+	Recommendation string `json:"recommendation"`
+	Note           string `json:"note"`
+	PatientID      uint   `json:"patient_id"`
 }

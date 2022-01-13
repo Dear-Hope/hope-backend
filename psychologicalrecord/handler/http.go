@@ -29,7 +29,7 @@ func NewPsychologicalRecordHandler(router *gin.RouterGroup, svc models.Psycholog
 }
 
 func (ths *handler) NewRecord(c *gin.Context) {
-	var req models.PsychologicalRecord
+	var req models.NewPsychologicalRecordRequest
 	var res models.Response
 
 	currentUserID := c.GetUint("userID")
@@ -41,24 +41,19 @@ func (ths *handler) NewRecord(c *gin.Context) {
 		return
 	}
 
-	if currentUserID != req.PsychologistID {
-		res.Error = "cannot create new record for other psychologist"
-		c.JSON(http.StatusForbidden, res)
-		return
-	}
-
 	if currentUserID == req.PatientID {
 		res.Error = "patient cannot create a new psychological record"
 		c.JSON(http.StatusForbidden, res)
 		return
 	}
 
-	record, err := ths.svc.NewRecord(req)
+	record, err := ths.svc.NewRecord(req, currentUserID)
 	if err != nil {
 		res.Error = err.Error()
 		if strings.Contains(err.Error(), "already exists") ||
 			strings.Contains(err.Error(), "not found") ||
-			strings.Contains(err.Error(), "record was not a") {
+			strings.Contains(err.Error(), "record was not a") ||
+			strings.Contains(err.Error(), "date") {
 			c.JSON(http.StatusBadRequest, res)
 		} else {
 			c.JSON(http.StatusInternalServerError, res)
