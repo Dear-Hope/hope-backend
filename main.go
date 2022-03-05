@@ -19,6 +19,9 @@ import (
 	"HOPE-backend/medicine"
 	_medicineHandler "HOPE-backend/medicine/handler"
 	_medicineRepo "HOPE-backend/medicine/repository"
+	"HOPE-backend/moodtracker"
+	_moodHandler "HOPE-backend/moodtracker/handler"
+	_moodRepo "HOPE-backend/moodtracker/repository"
 	"HOPE-backend/psychologicalrecord"
 	_recordHandler "HOPE-backend/psychologicalrecord/handler"
 	_recordRepo "HOPE-backend/psychologicalrecord/repository"
@@ -88,6 +91,10 @@ func main() {
 	recordRepo := _recordRepo.NewPostgreSQLRepository(db)
 	recordSvc := psychologicalrecord.NewPsychologicalRecordService(recordRepo, authRepo)
 	_recordHandler.NewPsychologicalRecordHandler(v1, recordSvc)
+
+	moodRepo := _moodRepo.NewPostgreSQLRepository(db)
+	moodSvc := moodtracker.NewMoodTrackerService(moodRepo, authRepo)
+	_moodHandler.NewMoodTrackerHandler(v1, moodSvc)
 
 	router.Run(":8000")
 }

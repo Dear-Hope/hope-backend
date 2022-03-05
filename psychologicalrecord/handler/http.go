@@ -20,11 +20,11 @@ func NewPsychologicalRecordHandler(router *gin.RouterGroup, svc models.Psycholog
 		svc: svc,
 	}
 
-	chat := router.Group("record")
+	record := router.Group("record")
 	{
-		chat.POST("/", authMiddleware.AuthorizeTokenJWT, handler.NewRecord)
-		chat.GET("/", authMiddleware.AuthorizeTokenJWT, handler.ListRecord)
-		chat.GET("/:id", authMiddleware.AuthorizeTokenJWT, handler.GetRecord)
+		record.POST("/", authMiddleware.AuthorizeTokenJWT, handler.NewRecord)
+		record.GET("/", authMiddleware.AuthorizeTokenJWT, handler.ListRecord)
+		record.GET("/:id", authMiddleware.AuthorizeTokenJWT, handler.GetRecord)
 	}
 }
 
