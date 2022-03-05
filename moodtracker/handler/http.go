@@ -22,6 +22,7 @@ func NewMoodTrackerHandler(router *gin.RouterGroup, svc models.MoodTrackerServic
 	mood := router.Group("mood")
 	{
 		mood.POST("/", authMiddleware.AuthorizeTokenJWT, handler.NewMoodTrack)
+		mood.GET("/", authMiddleware.AuthorizeTokenJWT, handler.ListMoodTrack)
 	}
 }
 
@@ -52,5 +53,21 @@ func (ths *handler) NewMoodTrack(c *gin.Context) {
 	}
 
 	res.Result = emotion
+	c.JSON(http.StatusOK, res)
+}
+
+func (ths *handler) ListMoodTrack(c *gin.Context) {
+	var res models.Response
+
+	currentUserID := c.GetUint("userID")
+
+	emotions, err := ths.svc.ListEmotion(currentUserID)
+	if err != nil {
+		res.Error = err.Error()
+		c.JSON(http.StatusNotFound, res)
+		return
+	}
+
+	res.Result = emotions
 	c.JSON(http.StatusOK, res)
 }

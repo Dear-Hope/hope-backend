@@ -33,3 +33,16 @@ func (ths *postgreSQLRepository) Create(newEmotion models.Emotion) (*models.Emot
 
 	return &newEmotion, nil
 }
+
+func (ths *postgreSQLRepository) GetAllEmotionByPatientID(id uint) ([]*models.Emotion, error) {
+	var emotions []*models.Emotion
+	err := ths.db.Where(models.Emotion{PatientID: id}).Find(&emotions).Error
+	if err != nil {
+		log.Printf("emotions get all by patient id: %s", err.Error())
+
+		err = errors.New("something wrong when get all emotions by patient ID")
+		return nil, err
+	}
+
+	return emotions, nil
+}
