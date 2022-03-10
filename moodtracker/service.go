@@ -67,3 +67,12 @@ func (ths *service) ListEmotion(patientID uint) ([]*models.Emotion, error) {
 
 	return emotions, err
 }
+
+func (ths *service) ListEmotionPerWeek(patientID uint) ([]*models.Emotion, error) {
+	emotions, err := ths.moodRepo.GetAllEmotionByPatientIDPerWeek(patientID)
+	if err != nil {
+		return nil, err
+	}
+
+	return emotions, err
+}
