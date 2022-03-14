@@ -25,6 +25,9 @@ import (
 	"HOPE-backend/psychologicalrecord"
 	_recordHandler "HOPE-backend/psychologicalrecord/handler"
 	_recordRepo "HOPE-backend/psychologicalrecord/repository"
+	"HOPE-backend/selfcare"
+	_selfCareHandler "HOPE-backend/selfcare/handler"
+	_selfCareRepo "HOPE-backend/selfcare/repository"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
@@ -95,6 +98,10 @@ func main() {
 	moodRepo := _moodRepo.NewPostgreSQLRepository(db)
 	moodSvc := moodtracker.NewMoodTrackerService(moodRepo, authRepo)
 	_moodHandler.NewMoodTrackerHandler(v1, moodSvc)
+
+	selfCareRepo := _selfCareRepo.NewPostgreSQLRepository(db)
+	selfCareSvc := selfcare.NewSelfCareService(selfCareRepo)
+	_selfCareHandler.NewSelfCareHandler(v1, selfCareSvc)
 
 	router.Run(":8000")
 }
