@@ -19,11 +19,13 @@ func (SelfCareItem) TableName() string {
 
 type SelfCareService interface {
 	NewItem(NewSelfCareItemRequest) (*SelfCareItem, error)
+	ListItems() ([]*SelfCareItem, error)
 	GetItemsByMood(string) ([]*SelfCareItem, error)
 }
 
 type SelfCareRepository interface {
 	Create(SelfCareItem) (*SelfCareItem, error)
+	GetAllItems() ([]*SelfCareItem, error)
 	GetItemsByMood(string) ([]*SelfCareItem, error)
 }
 

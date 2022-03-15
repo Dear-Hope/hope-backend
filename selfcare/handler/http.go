@@ -22,7 +22,7 @@ func NewSelfCareHandler(router *gin.RouterGroup, svc models.SelfCareService) {
 	mood := router.Group("selfcare")
 	{
 		mood.POST("/", authMiddleware.AuthorizeTokenJWT, handler.NewSelfCareItem)
-		mood.GET("/", authMiddleware.AuthorizeTokenJWT, handler.ListSelfCareItemsByMood)
+		mood.GET("/", authMiddleware.AuthorizeTokenJWT, handler.ListSelfCareItems)
 	}
 }
 
@@ -53,12 +53,18 @@ func (ths *handler) NewSelfCareItem(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (ths *handler) ListSelfCareItemsByMood(c *gin.Context) {
+func (ths *handler) ListSelfCareItems(c *gin.Context) {
 	var res models.Response
+	var items []*models.SelfCareItem
+	var err error
 
 	mood := c.Query("mood")
 
-	items, err := ths.svc.GetItemsByMood(mood)
+	if mood == "" {
+		items, err = ths.svc.ListItems()
+	} else {
+		items, err = ths.svc.GetItemsByMood(mood)
+	}
 	if err != nil {
 		res.Error = err.Error()
 		c.JSON(http.StatusNotFound, res)

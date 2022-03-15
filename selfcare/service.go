@@ -39,3 +39,12 @@ func (ths *service) GetItemsByMood(mood string) ([]*models.SelfCareItem, error) 
 
 	return items, err
 }
+
+func (ths *service) ListItems() ([]*models.SelfCareItem, error) {
+	items, err := ths.repo.GetAllItems()
+	if err != nil {
+		return nil, err
+	}
+
+	return items, err
+}

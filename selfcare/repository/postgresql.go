@@ -46,3 +46,16 @@ func (ths *postgreSQLRepository) GetItemsByMood(mood string) ([]*models.SelfCare
 
 	return items, nil
 }
+
+func (ths *postgreSQLRepository) GetAllItems() ([]*models.SelfCareItem, error) {
+	var items []*models.SelfCareItem
+	err := ths.db.Find(&items).Error
+	if err != nil {
+		log.Printf("self care items get all: %s", err.Error())
+
+		err = errors.New("something wrong when get all self care items")
+		return nil, err
+	}
+
+	return items, nil
+}
