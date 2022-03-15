@@ -24,6 +24,7 @@ func NewMoodTrackerHandler(router *gin.RouterGroup, svc models.MoodTrackerServic
 		mood.POST("/", authMiddleware.AuthorizeTokenJWT, handler.NewMoodTrack)
 		mood.GET("/", authMiddleware.AuthorizeTokenJWT, handler.ListMoodTrack)
 		mood.GET("/week", authMiddleware.AuthorizeTokenJWT, handler.ListMoodTrackPerWeek)
+		mood.GET("/month", authMiddleware.AuthorizeTokenJWT, handler.ListMoodTrackPerMonth)
 	}
 }
 
@@ -79,6 +80,22 @@ func (ths *handler) ListMoodTrackPerWeek(c *gin.Context) {
 	currentUserID := c.GetUint("userID")
 
 	emotions, err := ths.svc.ListEmotionPerWeek(currentUserID)
+	if err != nil {
+		res.Error = err.Error()
+		c.JSON(http.StatusNotFound, res)
+		return
+	}
+
+	res.Result = emotions
+	c.JSON(http.StatusOK, res)
+}
+
+func (ths *handler) ListMoodTrackPerMonth(c *gin.Context) {
+	var res models.Response
+
+	currentUserID := c.GetUint("userID")
+
+	emotions, err := ths.svc.ListEmotionPerMonth(currentUserID)
 	if err != nil {
 		res.Error = err.Error()
 		c.JSON(http.StatusNotFound, res)

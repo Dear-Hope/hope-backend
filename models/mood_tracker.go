@@ -31,12 +31,14 @@ type MoodTrackerService interface {
 	NewEmotion(NewEmotionRequest, uint) (*Emotion, error)
 	ListEmotion(uint) ([]*Emotion, error)
 	ListEmotionPerWeek(uint) ([]*Emotion, error)
+	ListEmotionPerMonth(uint) ([]*Emotion, error)
 }
 
 type MoodTrackerRepository interface {
 	Create(Emotion) (*Emotion, error)
 	GetAllEmotionByPatientID(uint) ([]*Emotion, error)
 	GetAllEmotionByPatientIDPerWeek(uint) ([]*Emotion, error)
+	GetAllEmotionByPatientIDPerMonth(uint) ([]*Emotion, error)
 }
 
 type NewEmotionRequest struct {
