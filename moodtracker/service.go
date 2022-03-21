@@ -29,7 +29,10 @@ func (ths *service) NewEmotion(req models.NewEmotionRequest, patientID uint) (
 		return nil, errors.New("mood given is not listed in our database")
 	}
 
-	timeFrame, err := req.ConvertIntoTimeFrame()
+	loc := time.FixedZone("UTC", req.Offset*60*60)
+	date := time.UnixMilli(req.Time).UTC().In(loc)
+
+	timeFrame, err := models.ConvertIntoTimeFrame(date)
 	if err != nil {
 		return nil, err
 	}
@@ -42,10 +45,6 @@ func (ths *service) NewEmotion(req models.NewEmotionRequest, patientID uint) (
 	if patient.Role != "patient" {
 		return nil, errors.New("the one who filled this record was not a patient")
 	}
-
-	loc := time.FixedZone("UTC", req.Offset*60*60)
-	year, month, day := time.UnixMilli(req.Time).Date()
-	date := time.Date(year, month, day, 0, 0, 0, 0, loc)
 
 	newEmotion := models.Emotion{
 		Mood:        req.Mood,

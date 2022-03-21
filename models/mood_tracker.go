@@ -60,10 +60,7 @@ func (ths *NewEmotionRequest) IsMoodAvailable() bool {
 	return false
 }
 
-func (ths *NewEmotionRequest) ConvertIntoTimeFrame() (string, error) {
-	loc := time.FixedZone("UTC", ths.Offset*60*60)
-	time := time.UnixMilli(ths.Time).UTC().In(loc)
-
+func ConvertIntoTimeFrame(time time.Time) (string, error) {
 	switch hour := time.Hour(); {
 	case hour >= 3 && hour <= 10:
 		return "Morning", nil
