@@ -14,7 +14,7 @@ type Emotion struct {
 	Triggers    pq.StringArray `json:"triggers" gorm:"not null;type:text[]"`
 	Description string         `json:"description" gorm:"not null"`
 	TimeFrame   string         `json:"time_frame" gorm:"not null"`
-	Date        time.Time      `json:"date" gorm:"not null"`
+	Date        int64          `json:"date" gorm:"not null"`
 	PatientID   uint           `json:"patient_id" gorm:"not null"`
 	Patient     User           `json:"-" gorm:"constraint:OnUpdate:CASCADE;"`
 }
@@ -60,7 +60,10 @@ func (ths *NewEmotionRequest) IsMoodAvailable() bool {
 	return false
 }
 
-func ConvertIntoTimeFrame(time time.Time) (string, error) {
+func (ths *NewEmotionRequest) ConvertIntoTimeFrame() (string, error) {
+	loc := time.FixedZone("UTC", ths.Offset*60*60)
+	time := time.UnixMilli(ths.Time).UTC().In(loc)
+
 	switch hour := time.Hour(); {
 	case hour >= 3 && hour <= 10:
 		return "Morning", nil

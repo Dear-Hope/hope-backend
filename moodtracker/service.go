@@ -3,7 +3,6 @@ package moodtracker
 import (
 	"HOPE-backend/models"
 	"errors"
-	"time"
 )
 
 type service struct {
@@ -29,10 +28,7 @@ func (ths *service) NewEmotion(req models.NewEmotionRequest, patientID uint) (
 		return nil, errors.New("mood given is not listed in our database")
 	}
 
-	loc := time.FixedZone("UTC", req.Offset*60*60)
-	date := time.UnixMilli(req.Time).UTC().In(loc)
-
-	timeFrame, err := models.ConvertIntoTimeFrame(date)
+	timeFrame, err := req.ConvertIntoTimeFrame()
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +47,7 @@ func (ths *service) NewEmotion(req models.NewEmotionRequest, patientID uint) (
 		Triggers:    req.Triggers,
 		Description: req.Description,
 		TimeFrame:   timeFrame,
-		Date:        date,
+		Date:        req.Time,
 		PatientID:   patientID,
 		Patient:     *patient,
 	}

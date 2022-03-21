@@ -85,7 +85,7 @@ func (ths *postgreSQLRepository) GetAllEmotionByPatientIDPerMonth(id uint) ([]*m
 	return emotions, nil
 }
 
-func getStartDayOfWeek() time.Time { //get monday 00:00:00
+func getStartDayOfWeek() int64 { //get monday 00:00:00
 	tm := time.Now()
 	weekday := time.Duration(tm.Weekday())
 	if weekday == 0 {
@@ -93,18 +93,18 @@ func getStartDayOfWeek() time.Time { //get monday 00:00:00
 	}
 	year, month, day := tm.Date()
 	currentZeroDay := time.Date(year, month, day, 0, 0, 0, 0, time.Local)
-	return currentZeroDay.Add(-1 * (weekday - 1) * 24 * time.Hour)
+	return currentZeroDay.Add(-1 * (weekday - 1) * 24 * time.Hour).UnixMilli()
 }
 
-func getFirstAndLastDayOfMonth() (time.Time, time.Time) { //get first day of the month
+func getFirstAndLastDayOfMonth() (int64, int64) { //get first day of the month
 	t := time.Now()
 	firstday := time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, time.Local)
 	lastday := firstday.AddDate(0, 1, 0).Add(time.Nanosecond * -1)
 
-	return firstday, lastday
+	return firstday.UnixMilli(), lastday.UnixMilli()
 }
 
-func getLastDayOfWeek() time.Time { //get sunday 00:00:00
+func getLastDayOfWeek() int64 { //get sunday 00:00:00
 	tm := time.Now()
 	weekday := time.Duration(tm.Weekday())
 	if weekday == 0 {
@@ -112,5 +112,5 @@ func getLastDayOfWeek() time.Time { //get sunday 00:00:00
 	}
 	year, month, day := tm.Date()
 	currentZeroDay := time.Date(year, month, day, 0, 0, 0, 0, time.Local)
-	return currentZeroDay.Add(1 * (7 - weekday) * 24 * time.Hour)
+	return currentZeroDay.Add(1 * (7 - weekday) * 24 * time.Hour).UnixMilli()
 }
