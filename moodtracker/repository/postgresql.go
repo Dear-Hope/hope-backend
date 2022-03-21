@@ -51,7 +51,7 @@ func (ths *postgreSQLRepository) GetAllEmotionByPatientID(id uint) ([]*models.Em
 func (ths *postgreSQLRepository) GetAllEmotionByPatientIDPerWeek(id uint) ([]*models.Emotion, error) {
 	var emotions []*models.Emotion
 	err := ths.db.Where(
-		"patient_id = ? AND created_at >= ? AND created_at <= ?",
+		"patient_id = ? AND date >= ? AND date <= ?",
 		id,
 		getStartDayOfWeek(),
 		getLastDayOfWeek(),
@@ -70,7 +70,7 @@ func (ths *postgreSQLRepository) GetAllEmotionByPatientIDPerMonth(id uint) ([]*m
 	var emotions []*models.Emotion
 	firstDay, lastDay := getFirstAndLastDayOfMonth()
 	err := ths.db.Where(
-		"patient_id = ? AND created_at >= ? AND created_at <= ?",
+		"patient_id = ? AND date >= ? AND date <= ?",
 		id,
 		firstDay,
 		lastDay,

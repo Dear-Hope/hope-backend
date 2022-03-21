@@ -14,6 +14,7 @@ type Emotion struct {
 	Triggers    pq.StringArray `json:"triggers" gorm:"not null;type:text[]"`
 	Description string         `json:"description" gorm:"not null"`
 	TimeFrame   string         `json:"time_frame" gorm:"not null"`
+	Date        time.Time      `json:"date" gorm:"not null"`
 	PatientID   uint           `json:"patient_id" gorm:"not null"`
 	Patient     User           `json:"-" gorm:"constraint:OnUpdate:CASCADE;"`
 }
@@ -46,6 +47,7 @@ type NewEmotionRequest struct {
 	Triggers    []string `json:"triggers"`
 	Description string   `json:"description"`
 	Time        int64    `json:"time"`
+	Offset      int      `json:"offset"`
 }
 
 func (ths *NewEmotionRequest) IsMoodAvailable() bool {
@@ -59,7 +61,8 @@ func (ths *NewEmotionRequest) IsMoodAvailable() bool {
 }
 
 func (ths *NewEmotionRequest) ConvertIntoTimeFrame() (string, error) {
-	time := time.UnixMilli(ths.Time)
+	loc := time.FixedZone("UTC", ths.Offset*60*60)
+	time := time.UnixMilli(ths.Time).UTC().In(loc)
 
 	switch hour := time.Hour(); {
 	case hour >= 3 && hour <= 10:

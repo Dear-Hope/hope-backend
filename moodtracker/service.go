@@ -3,6 +3,7 @@ package moodtracker
 import (
 	"HOPE-backend/models"
 	"errors"
+	"time"
 )
 
 type service struct {
@@ -42,11 +43,16 @@ func (ths *service) NewEmotion(req models.NewEmotionRequest, patientID uint) (
 		return nil, errors.New("the one who filled this record was not a patient")
 	}
 
+	loc := time.FixedZone("UTC", req.Offset*60*60)
+	year, month, day := time.UnixMilli(req.Time).Date()
+	date := time.Date(year, month, day, 0, 0, 0, 0, loc)
+
 	newEmotion := models.Emotion{
 		Mood:        req.Mood,
 		Triggers:    req.Triggers,
 		Description: req.Description,
 		TimeFrame:   timeFrame,
+		Date:        date,
 		PatientID:   patientID,
 		Patient:     *patient,
 	}
