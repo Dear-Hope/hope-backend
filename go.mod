@@ -3,6 +3,7 @@ module HOPE-backend
 go 1.16
 
 require (
+	github.com/beeker1121/mailchimp-go v0.0.0-20160721165115-7c5f827423b2 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.3

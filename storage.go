@@ -33,4 +33,5 @@ func migrateTable(db *gorm.DB) {
 	db.AutoMigrate(&models.PsychologicalRecord{})
 	db.AutoMigrate(&models.Emotion{})
 	db.AutoMigrate(&models.SelfCareItem{})
+	db.AutoMigrate(&models.Subscription{})
 }

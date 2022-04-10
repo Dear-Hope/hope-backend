@@ -22,6 +22,9 @@ import (
 	"HOPE-backend/moodtracker"
 	_moodHandler "HOPE-backend/moodtracker/handler"
 	_moodRepo "HOPE-backend/moodtracker/repository"
+	"HOPE-backend/newsletter"
+	_newsletterHandler "HOPE-backend/newsletter/handler"
+	_newsletterRepo "HOPE-backend/newsletter/repository"
 	"HOPE-backend/psychologicalrecord"
 	_recordHandler "HOPE-backend/psychologicalrecord/handler"
 	_recordRepo "HOPE-backend/psychologicalrecord/repository"
@@ -102,6 +105,15 @@ func main() {
 	selfCareRepo := _selfCareRepo.NewPostgreSQLRepository(db)
 	selfCareSvc := selfcare.NewSelfCareService(selfCareRepo)
 	_selfCareHandler.NewSelfCareHandler(v1, selfCareSvc)
+
+	// err := mailchimp.SetKey("eb5431057e55a836f23671a6c07c7643-us14")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	newsletterRepo := _newsletterRepo.NewPostgreSQLRepository(db)
+	newsletterSvc := newsletter.NewNewsletterService(newsletterRepo)
+	_newsletterHandler.NewNewsletterService(v1, newsletterSvc)
 
 	router.Run(":8000")
 }
