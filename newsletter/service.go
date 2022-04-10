@@ -3,9 +3,6 @@ package newsletter
 import (
 	"HOPE-backend/models"
 	"errors"
-	"time"
-
-	"github.com/beeker1121/mailchimp-go/lists/members"
 )
 
 type service struct {
@@ -23,18 +20,18 @@ func (ths *service) Subscribe(req models.NewSubscriberRequest) error {
 		return errors.New("invalid email given")
 	}
 
-	params := members.NewParams{
-		EmailType:       "html",
-		Status:          members.StatusSubscribed,
-		Language:        "ID",
-		TimestampSignup: time.UnixMilli(req.Time),
-		EmailAddress:    req.Email,
-	}
+	// params := members.NewParams{
+	// 	EmailType:       "html",
+	// 	Status:          members.StatusSubscribed,
+	// 	Language:        "ID",
+	// 	TimestampSignup: time.UnixMilli(req.Time),
+	// 	EmailAddress:    req.Email,
+	// }
 
-	_, err := members.New("ced232ba84", &params)
-	if err != nil {
-		return errors.New("error when subcribing to the newsletter")
-	}
+	// _, err := members.New("ced232ba84", &params)
+	// if err != nil {
+	// 	return errors.New("error when subcribing to the newsletter")
+	// }
 
 	newSubs := models.Subscription{
 		Email:       req.Email,
@@ -42,7 +39,7 @@ func (ths *service) Subscribe(req models.NewSubscriberRequest) error {
 		// MemberID:    member.ID,
 	}
 
-	err = ths.subsRepo.Create(newSubs)
+	err := ths.subsRepo.Create(newSubs)
 	if err != nil {
 		return err
 	}
