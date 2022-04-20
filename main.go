@@ -53,11 +53,7 @@ var upgrader = websocket.Upgrader{
 
 func main() {
 	router := gin.Default()
-	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
-	config.AllowCredentials = true
-	config.AddAllowHeaders("X-Requested-With", "Accept", "X-XSRF-TOKEN", "Authorization")
-	router.Use(cors.New(config))
+	router.Use(cors.Default())
 
 	db := NewPostgreSQLDatabase()
 

@@ -36,7 +36,7 @@ func (ths *service) Subscribe(req models.NewSubscriberRequest) error {
 	newSubs := models.Subscription{
 		Email:       req.Email,
 		SubsribedAt: req.Time,
-		// MemberID:    member.ID,
+		MemberID:    "placeholder for now",
 	}
 
 	err := ths.subsRepo.Create(newSubs)

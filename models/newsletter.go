@@ -6,7 +6,7 @@ type Subscription struct {
 	gorm.Model
 	Email       string `json:"email" gorm:"not null;unique"`
 	SubsribedAt int64  `json:"subscribed_at" gorm:"not null"`
-	// MemberID    string `json:"member_id" gorm:"not null"`
+	MemberID    string `json:"member_id" gorm:"not null"`
 }
 
 func (Subscription) TableName() string {

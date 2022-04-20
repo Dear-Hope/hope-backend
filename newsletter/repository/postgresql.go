@@ -35,7 +35,7 @@ func (ths *postgreSQLRepository) Create(newSubscription models.Subscription) err
 }
 
 func (ths *postgreSQLRepository) Delete(email string) error {
-	err := ths.db.Delete(models.Subscription{Email: email}).Error
+	err := ths.db.Where("email = ?", email).Delete(&models.Subscription{}).Error
 	if err != nil {
 		log.Printf("delete subscription: %s", err.Error())
 
