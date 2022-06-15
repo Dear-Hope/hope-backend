@@ -1,7 +1,7 @@
 package main
 
 import (
-	"HOPE-backend/models"
+	"HOPE-backend/v1/models"
 	"log"
 
 	"gorm.io/driver/postgres"

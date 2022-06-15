@@ -1,41 +1,40 @@
 package main
 
 import (
-	"HOPE-backend/ambulance"
-	_ambulanceHandler "HOPE-backend/ambulance/handler"
-	_ambulanceRepo "HOPE-backend/ambulance/repository"
-	"HOPE-backend/auth"
-	_authHandler "HOPE-backend/auth/handler"
-	_authRepo "HOPE-backend/auth/repository"
-	"HOPE-backend/chat"
-	_chatHandler "HOPE-backend/chat/handler"
-	_chatRepo "HOPE-backend/chat/repository"
-	"HOPE-backend/hospital"
-	_hospitalHandler "HOPE-backend/hospital/handler"
-	_hospitalRepo "HOPE-backend/hospital/repository"
-	"HOPE-backend/laboratory"
-	_laboratoryHandler "HOPE-backend/laboratory/handler"
-	_laboratoryRepo "HOPE-backend/laboratory/repository"
-	"HOPE-backend/medicine"
-	_medicineHandler "HOPE-backend/medicine/handler"
-	_medicineRepo "HOPE-backend/medicine/repository"
-	"HOPE-backend/moodtracker"
-	_moodHandler "HOPE-backend/moodtracker/handler"
-	_moodRepo "HOPE-backend/moodtracker/repository"
-	"HOPE-backend/newsletter"
-	_newsletterHandler "HOPE-backend/newsletter/handler"
-	_newsletterRepo "HOPE-backend/newsletter/repository"
-	"HOPE-backend/psychologicalrecord"
-	_recordHandler "HOPE-backend/psychologicalrecord/handler"
-	_recordRepo "HOPE-backend/psychologicalrecord/repository"
-	"HOPE-backend/selfcare"
-	_selfCareHandler "HOPE-backend/selfcare/handler"
-	_selfCareRepo "HOPE-backend/selfcare/repository"
+	"HOPE-backend/v1/ambulance"
+	_ambulanceHandler "HOPE-backend/v1/ambulance/handler"
+	_ambulanceRepo "HOPE-backend/v1/ambulance/repository"
+	_chatHandler "HOPE-backend/v1/chat/handler"
+	"HOPE-backend/v1/hospital"
+	_hospitalHandler "HOPE-backend/v1/hospital/handler"
+	_hospitalRepo "HOPE-backend/v1/hospital/repository"
+	"HOPE-backend/v1/laboratory"
+	_laboratoryHandler "HOPE-backend/v1/laboratory/handler"
+	_laboratoryRepo "HOPE-backend/v1/laboratory/repository"
+	"HOPE-backend/v1/medicine"
+	_medicineHandler "HOPE-backend/v1/medicine/handler"
+	_medicineRepo "HOPE-backend/v1/medicine/repository"
+	"HOPE-backend/v1/newsletter"
+	_newsletterHandler "HOPE-backend/v1/newsletter/handler"
+	_newsletterRepo "HOPE-backend/v1/newsletter/repository"
+	"HOPE-backend/v2/services/auth"
+	_authHandler "HOPE-backend/v2/services/auth/handler"
+	_authRepo "HOPE-backend/v2/services/auth/repository"
+	"HOPE-backend/v2/services/moodtracker"
+	_moodHandler "HOPE-backend/v2/services/moodtracker/handler"
+	_moodRepo "HOPE-backend/v2/services/moodtracker/repository"
+	"HOPE-backend/v2/services/selfcare"
+	_selfCareHandler "HOPE-backend/v2/services/selfcare/handler"
+	_selfCareRepo "HOPE-backend/v2/services/selfcare/repository"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+
+	dbV2 "HOPE-backend/v2/db"
+
+	sendblue "github.com/sendinblue/APIv3-go-library/lib"
 )
 
 // We'll need to define an Upgrader
@@ -56,16 +55,20 @@ func main() {
 	router.Use(cors.Default())
 
 	db := NewPostgreSQLDatabase()
+	db2 := dbV2.NewPostgreSQLDatabase()
 
 	router.GET("/server/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, "Server is OK!")
 	})
 
 	v1 := router.Group("/api/v1")
+	v2 := router.Group("/api/v2")
 
-	authRepo := _authRepo.NewPostgreSQLRepository(db)
-	authSvc := auth.NewAuthService(authRepo)
-	_authHandler.NewAuthHandler(v1, authSvc)
+	mailer := sendblue.NewAPIClient(sendblue.NewConfiguration())
+
+	authRepo := _authRepo.NewPostgreSQLRepository(db2)
+	authSvc := auth.NewAuthService(authRepo, mailer)
+	_authHandler.NewAuthHandler(v2, authSvc)
 
 	medicineRepo := _medicineRepo.NewPostgreSQLRepository(db)
 	medicineSvc := medicine.NewMedicineService(medicineRepo)
@@ -86,21 +89,21 @@ func main() {
 	pool := _chatHandler.NewPool()
 	go pool.Start()
 
-	chatRepo := _chatRepo.NewPostgreSQLRepository(db)
-	chatSvc := chat.NewChatService(chatRepo, authRepo)
-	_chatHandler.NewChatHandler(v1, chatSvc, upgrader, pool)
+	// chatRepo := _chatRepo.NewPostgreSQLRepository(db)
+	// chatSvc := chat.NewChatService(chatRepo, authRepo)
+	// _chatHandler.NewChatHandler(v1, chatSvc, upgrader, pool)
 
-	recordRepo := _recordRepo.NewPostgreSQLRepository(db)
-	recordSvc := psychologicalrecord.NewPsychologicalRecordService(recordRepo, authRepo)
-	_recordHandler.NewPsychologicalRecordHandler(v1, recordSvc)
+	// recordRepo := _recordRepo.NewPostgreSQLRepository(db)
+	// recordSvc := psychologicalrecord.NewPsychologicalRecordService(recordRepo, authRepo)
+	// _recordHandler.NewPsychologicalRecordHandler(v1, recordSvc)
 
-	moodRepo := _moodRepo.NewPostgreSQLRepository(db)
+	moodRepo := _moodRepo.NewPostgreSQLRepository(db2)
 	moodSvc := moodtracker.NewMoodTrackerService(moodRepo, authRepo)
-	_moodHandler.NewMoodTrackerHandler(v1, moodSvc)
+	_moodHandler.NewMoodTrackerHandler(v2, moodSvc)
 
-	selfCareRepo := _selfCareRepo.NewPostgreSQLRepository(db)
+	selfCareRepo := _selfCareRepo.NewPostgreSQLRepository(db2)
 	selfCareSvc := selfcare.NewSelfCareService(selfCareRepo)
-	_selfCareHandler.NewSelfCareHandler(v1, selfCareSvc)
+	_selfCareHandler.NewSelfCareHandler(v2, selfCareSvc)
 
 	// err := mailchimp.SetKey("eb5431057e55a836f23671a6c07c7643-us14")
 	// if err != nil {
