@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"HOPE-backend/auth/helper"
+	"HOPE-backend/v1/auth/helper"
 	"HOPE-backend/v1/models"
 )
 

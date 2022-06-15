@@ -3,6 +3,7 @@ package auth
 import (
 	"HOPE-backend/v2/models"
 	"HOPE-backend/v2/services/auth/helper"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -80,7 +81,7 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 		return nil, err
 	}
 
-	err = sendActivationKey(ths.mailer, key, newUser.Email)
+	err = sendActivationKey(ths.mailer, key, newUser.Email, newUser.FirstName+" "+newUser.LastName)
 	if err != nil {
 		return nil, err
 	}
@@ -102,28 +103,37 @@ func constructActivationKey(user models.DBUserWithProfile) (string, error) {
 	return key, nil
 }
 
-func sendActivationKey(mailer *sendblue.APIClient, key, email string) error {
-	// _, _, err := mailer.TransactionalEmailsApi.SendTransacEmail(
-	// 	context.Background(),
-	// 	sendblue.SendSmtpEmail{
-	// 		Sender: &sendblue.SendSmtpEmailSender{
-	// 			Name:  "dearhope",
-	// 			Email: "no-reply@dearhope.id",
-	// 		},
-	// 		To: []sendblue.SendSmtpEmailTo{
-	// 			{
-	// 				Email: email,
-	// 			},
-	// 		},
-	// 		Subject:     "Account Activation",
-	// 		TextContent: "https://dearhope.id/activate?key=" + key,
-	// 	},
-	// )
-	// if err != nil {
-	// 	return errors.New("failed to send activation key: " + err.Error())
-	// }
-
-	fmt.Println("https://dearhope.id/activate?key=" + key)
+func sendActivationKey(mailer *sendblue.APIClient, key, email, name string) error {
+	template := fmt.Sprintf(
+		`<h4>Hai, %s!</h4>
+		</br>
+		<p>Selamat datang di keluarga Dear Hope. Mulai detik ini kamu tidak sendiri lagi, karena ada Hope yang menemani. Sebelum kita memulai, kita hanya butuh untuk mengkonfirmasi bahwa ini adalah kamu, Klik di bawah ini untuk menverifikasi alamat email kamu:</p>
+		</br>
+		<a href="https://dearhope.id/activate?key=%s"> Klik di sini untuk melakukan aktivasi</a>
+		</br>
+		<p>Semoga harimu menyenangkan</p>`,
+		name,
+		key,
+	)
+	_, _, err := mailer.TransactionalEmailsApi.SendTransacEmail(
+		context.Background(),
+		sendblue.SendSmtpEmail{
+			Sender: &sendblue.SendSmtpEmailSender{
+				Name:  "Dear Hope",
+				Email: "no-reply@dearhope.id",
+			},
+			To: []sendblue.SendSmtpEmailTo{
+				{
+					Email: email,
+				},
+			},
+			Subject:     "Account Activation",
+			HtmlContent: template,
+		},
+	)
+	if err != nil {
+		return errors.New("failed to send activation key: " + err.Error())
+	}
 
 	return nil
 }

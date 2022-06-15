@@ -14,15 +14,15 @@ import (
 	"HOPE-backend/v1/medicine"
 	_medicineHandler "HOPE-backend/v1/medicine/handler"
 	_medicineRepo "HOPE-backend/v1/medicine/repository"
-	"HOPE-backend/v1/newsletter"
-	_newsletterHandler "HOPE-backend/v1/newsletter/handler"
-	_newsletterRepo "HOPE-backend/v1/newsletter/repository"
 	"HOPE-backend/v2/services/auth"
 	_authHandler "HOPE-backend/v2/services/auth/handler"
 	_authRepo "HOPE-backend/v2/services/auth/repository"
 	"HOPE-backend/v2/services/moodtracker"
 	_moodHandler "HOPE-backend/v2/services/moodtracker/handler"
 	_moodRepo "HOPE-backend/v2/services/moodtracker/repository"
+	"HOPE-backend/v2/services/newsletter"
+	_newsletterHandler "HOPE-backend/v2/services/newsletter/handler"
+	_newsletterRepo "HOPE-backend/v2/services/newsletter/repository"
 	"HOPE-backend/v2/services/selfcare"
 	_selfCareHandler "HOPE-backend/v2/services/selfcare/handler"
 	_selfCareRepo "HOPE-backend/v2/services/selfcare/repository"
@@ -64,7 +64,10 @@ func main() {
 	v1 := router.Group("/api/v1")
 	v2 := router.Group("/api/v2")
 
-	mailer := sendblue.NewAPIClient(sendblue.NewConfiguration())
+	mailerCfg := sendblue.NewConfiguration()
+	mailerCfg.AddDefaultHeader("api-key", "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")
+	mailerCfg.AddDefaultHeader("partner-key", "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")
+	mailer := sendblue.NewAPIClient(mailerCfg)
 
 	authRepo := _authRepo.NewPostgreSQLRepository(db2)
 	authSvc := auth.NewAuthService(authRepo, mailer)
@@ -110,9 +113,9 @@ func main() {
 	// 	log.Fatal(err)
 	// }
 
-	newsletterRepo := _newsletterRepo.NewPostgreSQLRepository(db)
-	newsletterSvc := newsletter.NewNewsletterService(newsletterRepo)
-	_newsletterHandler.NewNewsletterService(v1, newsletterSvc)
+	newsletterRepo := _newsletterRepo.NewPostgreSQLRepository(db2)
+	newsletterSvc := newsletter.NewNewsletterService(newsletterRepo, mailer)
+	_newsletterHandler.NewNewsletterService(v2, newsletterSvc)
 
 	router.Run(":8000")
 }
