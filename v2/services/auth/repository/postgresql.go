@@ -74,7 +74,7 @@ func (ths *postgreSQLRepository) GetUserWithProfileByID(id uint) (*models.DBUser
 	var dbUser models.DBUserWithProfile
 	err := ths.db.Get(
 		&dbUser,
-		`SELECT u.id AS user_id, email, password, first_name, last_name, profile_photo, is_active
+		`SELECT u.id AS user_id, email, password, first_name, last_name, profile_photo, is_active,
 		weight, height, job, activities, p.id AS profile_id
 		FROM "auth".users AS u, "auth".profiles AS p 
 		WHERE u.id = p.user_id AND u.id=$1`,
