@@ -257,7 +257,7 @@ func (ths *service) ResetPassword(req models.ResetPasswordRequest) error {
 			</br>
 			<p>Seseorang baru-baru ini meminta pengaturan ulang kata sandi untuk akun Dear Hope Anda. Silakan gunakan tautan ini untuk mengatur ulang kata sandi Anda:</p>
 			</br>
-			<a href="app://dearhope.id/reset?key=%s"> <img alt="reset button" src="https://res.cloudinary.com/shirotama/image/upload/v1656645972/image/static/reset_button.png" width=200/> </a>
+			<a href="https://dearhope.id/reset?key=%s"> <img alt="reset button" src="https://res.cloudinary.com/shirotama/image/upload/v1656645972/image/static/reset_button.png" width=200/> </a>
 			</br>
 			<p>*Note: Jika Anda tidak meminta pengaturan ulang kata sandi, Anda dapat mengabaikan email ini.</p>`,
 			user.FirstName+" "+user.LastName,
