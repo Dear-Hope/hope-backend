@@ -285,11 +285,6 @@ func (ths *service) ChangePassword(req models.ChangePasswordRequest) (*models.To
 		return nil, errors.New("failed to change password: " + err.Error())
 	}
 
-	err = helper.ComparePassword([]byte(req.OldPassword), []byte(user.Password))
-	if err != nil {
-		return nil, err
-	}
-
 	hashedPassword, err := helper.EncryptPassword([]byte(req.NewPassword))
 	if err != nil {
 		return nil, err

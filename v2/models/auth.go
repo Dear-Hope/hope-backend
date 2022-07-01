@@ -97,7 +97,6 @@ type ResetPasswordRequest struct {
 
 type ChangePasswordRequest struct {
 	Key         string `json:"key"`
-	OldPassword string `json:"old_password"`
 	NewPassword string `json:"new_password"`
 }
 
