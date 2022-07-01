@@ -89,7 +89,7 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 			</br>
 			<p>Selamat datang di keluarga Dear Hope. Mulai detik ini kamu tidak sendiri lagi, karena ada Hope yang menemani. Sebelum kita memulai, kita hanya butuh untuk mengkonfirmasi bahwa ini adalah kamu, Klik di bawah ini untuk menverifikasi alamat email kamu:</p>
 			</br>
-			<a href="https://dearhope.id/activate?key=%s"> <img alt="activation button" src="https://res.cloudinary.com/shirotama/image/upload/v1656645972/image/static/verifikasi_button.png" width=200/> </a>
+			<a href="app://dearhope.id/activate?key=%s"> <img alt="activation button" src="https://res.cloudinary.com/shirotama/image/upload/v1656645972/image/static/verifikasi_button.png" width=200/> </a>
 			</br>
 			<p>Semoga harimu menyenangkan</p>`,
 			newUser.FirstName+" "+newUser.LastName,
@@ -257,7 +257,7 @@ func (ths *service) ResetPassword(req models.ResetPasswordRequest) error {
 			</br>
 			<p>Seseorang baru-baru ini meminta pengaturan ulang kata sandi untuk akun Dear Hope Anda. Silakan gunakan tautan ini untuk mengatur ulang kata sandi Anda:</p>
 			</br>
-			<a href="https://dearhope.id/activate?key=%s"> <img alt="reset button" src="https://res.cloudinary.com/shirotama/image/upload/v1656645972/image/static/reset_button.png" width=200/> </a>
+			<a href="app://dearhope.id/reset?key=%s"> <img alt="reset button" src="https://res.cloudinary.com/shirotama/image/upload/v1656645972/image/static/reset_button.png" width=200/> </a>
 			</br>
 			<p>*Note: Jika Anda tidak meminta pengaturan ulang kata sandi, Anda dapat mengabaikan email ini.</p>`,
 			user.FirstName+" "+user.LastName,
@@ -274,7 +274,7 @@ func (ths *service) ResetPassword(req models.ResetPasswordRequest) error {
 }
 
 func (ths *service) ChangePassword(req models.ChangePasswordRequest) (*models.TokenPair, error) {
-	userString, err := helper.Decrypt(strings.TrimPrefix(req.Key, "https://dearhope.id/activate?key="))
+	userString, err := helper.Decrypt(strings.TrimPrefix(req.Key, "https://dearhope.id/reset?key="))
 	if err != nil {
 		return nil, errors.New("failed to decrypt change password key: " + err.Error())
 	}
