@@ -39,6 +39,8 @@ type AuthService interface {
 	GetLoggedInUser(uint) (*UserResponse, error)
 	UpdateLoggedInUser(UpdateRequest) (*UserResponse, error)
 	Activate(ActivateRequest) (*TokenPair, error)
+	ResetPassword(ResetPasswordRequest) error
+	ChangePassword(ChangePasswordRequest) (*TokenPair, error)
 }
 
 type AuthRepository interface {
@@ -87,4 +89,20 @@ type TokenPair struct {
 
 type ActivateRequest struct {
 	Key string `json:"key"`
+}
+
+type ResetPasswordRequest struct {
+	Email string `json:"email"`
+}
+
+type ChangePasswordRequest struct {
+	Key         string `json:"key"`
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}
+
+type EmailTemplate struct {
+	Content string
+	Email   string
+	Subject string
 }

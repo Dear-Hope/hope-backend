@@ -28,6 +28,8 @@ func NewAuthHandler(router *gin.RouterGroup, svc models.AuthService) {
 		auth.POST("/register", handler.Register)
 		auth.POST("/login/refresh", handler.RefreshToken)
 		auth.POST("/activate", handler.ActivateAccount)
+		auth.POST("/password/reset", handler.ResetPassword)
+		auth.POST("/password/change", handler.ChangePassword)
 	}
 	user := router.Group("/user")
 	{
@@ -187,6 +189,48 @@ func (ths *handler) ActivateAccount(c *gin.Context) {
 		res.Error = err.Error()
 		c.JSON(http.StatusBadRequest, res)
 		return
+	}
+
+	res.Result = token
+	c.JSON(http.StatusOK, res)
+}
+
+func (ths *handler) ResetPassword(c *gin.Context) {
+	var res models.Response
+	var req models.ResetPasswordRequest
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		res.Error = fmt.Sprintf("invalid parameters: %s", err.Error())
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	err = ths.svc.ResetPassword(req)
+	if err != nil {
+		res.Error = err.Error()
+		c.JSON(http.StatusBadRequest, res)
+	}
+
+	res.Result = map[string]bool{"success": true}
+	c.JSON(http.StatusOK, res)
+}
+
+func (ths *handler) ChangePassword(c *gin.Context) {
+	var res models.Response
+	var req models.ChangePasswordRequest
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		res.Error = fmt.Sprintf("invalid parameters: %s", err.Error())
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	token, err := ths.svc.ChangePassword(req)
+	if err != nil {
+		res.Error = err.Error()
+		c.JSON(http.StatusBadRequest, res)
 	}
 
 	res.Result = token

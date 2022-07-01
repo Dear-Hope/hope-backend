@@ -76,12 +76,28 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 
 	newUser.UserID = userID
 	newUser.ProfileID = profileID
-	key, err := constructActivationKey(newUser)
+	key, err := constructKey(newUser)
 	if err != nil {
 		return nil, err
 	}
 
-	err = sendActivationKey(ths.mailer, key, newUser.Email, newUser.FirstName+" "+newUser.LastName)
+	template := models.EmailTemplate{
+		Subject: "Account Activation",
+		Email:   req.Email,
+		Content: fmt.Sprintf(
+			`<h4>Hai, %s!</h4>
+			</br>
+			<p>Selamat datang di keluarga Dear Hope. Mulai detik ini kamu tidak sendiri lagi, karena ada Hope yang menemani. Sebelum kita memulai, kita hanya butuh untuk mengkonfirmasi bahwa ini adalah kamu, Klik di bawah ini untuk menverifikasi alamat email kamu:</p>
+			</br>
+			<a href="https://dearhope.id/activate?key=%s"> <img alt="activation button" src="https://res.cloudinary.com/shirotama/image/upload/v1656645972/image/static/verifikasi_button.png" width=200/> </a>
+			</br>
+			<p>Semoga harimu menyenangkan</p>`,
+			newUser.FirstName+" "+newUser.LastName,
+			key,
+		),
+	}
+
+	err = sendKey(ths.mailer, template)
 	if err != nil {
 		return nil, err
 	}
@@ -89,32 +105,21 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 	return tokenPair, nil
 }
 
-func constructActivationKey(user models.DBUserWithProfile) (string, error) {
+func constructKey(user models.DBUserWithProfile) (string, error) {
 	userByte, err := json.Marshal(user)
 	if err != nil {
-		return "", errors.New("failed to construct activation key: " + err.Error())
+		return "", errors.New("failed to construct key: " + err.Error())
 	}
 
 	key, err := helper.Encrypt(string(userByte))
 	if err != nil {
-		return "", errors.New("failed to encrypt activation key: " + err.Error())
+		return "", errors.New("failed to encrypt key: " + err.Error())
 	}
 
 	return key, nil
 }
 
-func sendActivationKey(mailer *sendblue.APIClient, key, email, name string) error {
-	template := fmt.Sprintf(
-		`<h4>Hai, %s!</h4>
-		</br>
-		<p>Selamat datang di keluarga Dear Hope. Mulai detik ini kamu tidak sendiri lagi, karena ada Hope yang menemani. Sebelum kita memulai, kita hanya butuh untuk mengkonfirmasi bahwa ini adalah kamu, Klik di bawah ini untuk menverifikasi alamat email kamu:</p>
-		</br>
-		<a href="https://dearhope.id/activate?key=%s"> Klik di sini untuk melakukan aktivasi</a>
-		</br>
-		<p>Semoga harimu menyenangkan</p>`,
-		name,
-		key,
-	)
+func sendKey(mailer *sendblue.APIClient, template models.EmailTemplate) error {
 	_, _, err := mailer.TransactionalEmailsApi.SendTransacEmail(
 		context.Background(),
 		sendblue.SendSmtpEmail{
@@ -124,11 +129,11 @@ func sendActivationKey(mailer *sendblue.APIClient, key, email, name string) erro
 			},
 			To: []sendblue.SendSmtpEmailTo{
 				{
-					Email: email,
+					Email: template.Email,
 				},
 			},
-			Subject:     "Account Activation",
-			HtmlContent: template,
+			Subject:     template.Subject,
+			HtmlContent: template.Content,
 		},
 	)
 	if err != nil {
@@ -220,6 +225,77 @@ func (ths *service) Activate(req models.ActivateRequest) (*models.TokenPair, err
 	}
 
 	user.IsActive = true
+	_, err = ths.repo.UpdateUserWithProfile(user)
+	if err != nil {
+		return nil, err
+	}
+
+	tokenPair, err := helper.GenerateTokenPair(user.UserID, user.ProfileID, true)
+	if err != nil {
+		return nil, err
+	}
+
+	return tokenPair, nil
+}
+
+func (ths *service) ResetPassword(req models.ResetPasswordRequest) error {
+	user, err := ths.repo.GetUserWithProfileByEmail(req.Email)
+	if err != nil {
+		return err
+	}
+
+	key, err := constructKey(*user)
+	if err != nil {
+		return err
+	}
+
+	template := models.EmailTemplate{
+		Subject: "Reset Password",
+		Email:   req.Email,
+		Content: fmt.Sprintf(
+			`<h4>Halo, %s!</h4>
+			</br>
+			<p>Seseorang baru-baru ini meminta pengaturan ulang kata sandi untuk akun Dear Hope Anda. Silakan gunakan tautan ini untuk mengatur ulang kata sandi Anda:</p>
+			</br>
+			<a href="https://dearhope.id/activate?key=%s"> <img alt="reset button" src="https://res.cloudinary.com/shirotama/image/upload/v1656645972/image/static/reset_button.png" width=200/> </a>
+			</br>
+			<p>*Note: Jika Anda tidak meminta pengaturan ulang kata sandi, Anda dapat mengabaikan email ini.</p>`,
+			user.FirstName+" "+user.LastName,
+			key,
+		),
+	}
+
+	err = sendKey(ths.mailer, template)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ths *service) ChangePassword(req models.ChangePasswordRequest) (*models.TokenPair, error) {
+	userString, err := helper.Decrypt(strings.TrimPrefix(req.Key, "https://dearhope.id/activate?key="))
+	if err != nil {
+		return nil, errors.New("failed to decrypt change password key: " + err.Error())
+	}
+
+	var user models.DBUserWithProfile
+	err = json.Unmarshal([]byte(userString), &user)
+	if err != nil {
+		return nil, errors.New("failed to change password: " + err.Error())
+	}
+
+	err = helper.ComparePassword([]byte(req.OldPassword), []byte(user.Password))
+	if err != nil {
+		return nil, err
+	}
+
+	hashedPassword, err := helper.EncryptPassword([]byte(req.NewPassword))
+	if err != nil {
+		return nil, err
+	}
+
+	user.Password = hashedPassword
 	_, err = ths.repo.UpdateUserWithProfile(user)
 	if err != nil {
 		return nil, err
