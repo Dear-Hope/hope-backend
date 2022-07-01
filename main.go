@@ -28,9 +28,9 @@ import (
 	_selfCareRepo "HOPE-backend/v2/services/selfcare/repository"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	cors "github.com/rs/cors/wrapper/gin"
 
 	dbV2 "HOPE-backend/v2/db"
 
@@ -52,7 +52,12 @@ var upgrader = websocket.Upgrader{
 
 func main() {
 	router := gin.Default()
-	router.Use(cors.Default())
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowCredentials = true
+	config.AddAllowHeaders("*")
+	config.AddAllowMethods("OPTIONS")
+	router.Use(cors.New(config))
 
 	db := NewPostgreSQLDatabase()
 	db2 := dbV2.NewPostgreSQLDatabase()
