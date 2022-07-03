@@ -96,8 +96,8 @@ func (ths *postgreSQLRepository) GetUserWithProfileByID(id uint) (*models.DBUser
 func (ths *postgreSQLRepository) UpdateUserWithProfile(user models.DBUserWithProfile) (*models.DBUserWithProfile, error) {
 	_, err := ths.db.NamedQuery(
 		`WITH updated_query AS (UPDATE "auth".users 
-			SET email = :email, password = :password, first_name = :first_name, 
-			last_name = :last_name, profile_photo = :profile_photo, is_active = :is_active 
+			SET email = :email, password = :password, 
+			first_name = :first_name, last_name = :last_name
 			WHERE id = :user_id RETURNING id
 		) 
 		UPDATE "auth".profiles SET weight = :weight, height = :height, job = :job,
