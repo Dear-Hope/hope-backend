@@ -113,3 +113,32 @@ func (ths *postgreSQLRepository) UpdateUserWithProfile(user models.DBUserWithPro
 
 	return &user, nil
 }
+
+func (ths *postgreSQLRepository) SetUserToActive(id uint) error {
+	_, err := ths.db.Queryx(
+		`UPDATE "auth".users SET is_active = true WHERE id = $1`,
+		id,
+	)
+	if err != nil {
+		log.Printf("user set to active: %s", err.Error())
+
+		return errors.New("failed to activate user")
+	}
+
+	return nil
+}
+
+func (ths *postgreSQLRepository) SetUserProfilePhoto(id uint, link string) error {
+	_, err := ths.db.Queryx(
+		`UPDATE "auth".users SET profile_photo = $1 WHERE id = $2`,
+		link,
+		id,
+	)
+	if err != nil {
+		log.Printf("user set profile photo: %s", err.Error())
+
+		return errors.New("failed to set user profile photo")
+	}
+
+	return nil
+}

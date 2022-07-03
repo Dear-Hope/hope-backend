@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"os"
 	"strings"
 
 	sendblue "github.com/sendinblue/APIv3-go-library/lib"
@@ -224,8 +226,7 @@ func (ths *service) Activate(req models.ActivateRequest) (*models.TokenPair, err
 		return nil, errors.New("failed to activate account: " + err.Error())
 	}
 
-	user.IsActive = true
-	_, err = ths.repo.UpdateUserWithProfile(user)
+	err = ths.repo.SetUserToActive(user.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -244,6 +245,7 @@ func (ths *service) ResetPassword(req models.ResetPasswordRequest) error {
 		return err
 	}
 
+	user.Password = ""
 	key, err := constructKey(*user)
 	if err != nil {
 		return err
@@ -302,4 +304,34 @@ func (ths *service) ChangePassword(req models.ChangePasswordRequest) (*models.To
 	}
 
 	return tokenPair, nil
+}
+
+func (ths *service) SaveProfilePhoto(req models.SaveProfilePhotoRequest) (string, error) {
+	dirPath := fmt.Sprintf("assets/users/%d/profile_photo%s", req.UserID, req.Extension)
+
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+		err := os.MkdirAll("assets/users/"+fmt.Sprint(req.UserID), 0770)
+		if err != nil {
+			return "", fmt.Errorf("failed to save profile photo: %s", err.Error())
+		}
+	}
+
+	out, err := os.Create(dirPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to save profile photo: %s", err.Error())
+	}
+
+	defer out.Close()
+	_, err = io.Copy(out, *req.File)
+	if err != nil {
+		return "", fmt.Errorf("failed to save profile photo: %s", err.Error())
+	}
+
+	filepath := "https://13.251.114.0.nip.io/" + dirPath
+	err = ths.repo.SetUserProfilePhoto(req.UserID, filepath)
+	if err != nil {
+		return "", err
+	}
+
+	return filepath, nil
 }

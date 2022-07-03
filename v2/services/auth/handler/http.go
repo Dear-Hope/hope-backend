@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
@@ -35,6 +36,7 @@ func NewAuthHandler(router *gin.RouterGroup, svc models.AuthService) {
 	{
 		user.GET("/me", middleware.AuthorizeTokenJWT, handler.GetUserMe)
 		user.PUT("/me", middleware.AuthorizeTokenJWT, handler.UpdateUserMe)
+		user.POST("/me/upload/photo", middleware.AuthorizeTokenJWT, handler.UploadProfilePhoto)
 	}
 
 }
@@ -231,8 +233,40 @@ func (ths *handler) ChangePassword(c *gin.Context) {
 	if err != nil {
 		res.Error = err.Error()
 		c.JSON(http.StatusBadRequest, res)
+		return
 	}
 
 	res.Result = token
+	c.JSON(http.StatusOK, res)
+}
+
+func (ths *handler) UploadProfilePhoto(c *gin.Context) {
+	var res models.Response
+
+	file, header, err := c.Request.FormFile("profile_photo")
+	if err != nil {
+		res.Error = fmt.Sprintf("invalid parameters: %s", err.Error())
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	fmt.Println(header.Filename)
+
+	req := models.SaveProfilePhotoRequest{
+		File:      &file,
+		Extension: filepath.Ext(header.Filename),
+		UserID:    c.GetUint("userID"),
+	}
+
+	link, err := ths.svc.SaveProfilePhoto(req)
+	if err != nil {
+		res.Error = err.Error()
+		c.JSON(http.StatusInternalServerError, res)
+		return
+	}
+
+	res.Result = map[string]string{
+		"link": link,
+	}
 	c.JSON(http.StatusOK, res)
 }

@@ -1,5 +1,7 @@
 package models
 
+import "mime/multipart"
+
 type DBUserWithProfile struct {
 	UserID       uint    `db:"user_id"`
 	ProfileID    uint    `db:"profile_id"`
@@ -41,6 +43,7 @@ type AuthService interface {
 	Activate(ActivateRequest) (*TokenPair, error)
 	ResetPassword(ResetPasswordRequest) error
 	ChangePassword(ChangePasswordRequest) (*TokenPair, error)
+	SaveProfilePhoto(SaveProfilePhotoRequest) (string, error)
 }
 
 type AuthRepository interface {
@@ -48,6 +51,8 @@ type AuthRepository interface {
 	GetUserWithProfileByEmail(string) (*DBUserWithProfile, error)
 	GetUserWithProfileByID(uint) (*DBUserWithProfile, error)
 	UpdateUserWithProfile(DBUserWithProfile) (*DBUserWithProfile, error)
+	SetUserToActive(uint) error
+	SetUserProfilePhoto(uint, string) error
 }
 
 type UserResponse struct {
@@ -104,4 +109,10 @@ type EmailTemplate struct {
 	Content string
 	Email   string
 	Subject string
+}
+
+type SaveProfilePhotoRequest struct {
+	File      *multipart.File
+	Extension string
+	UserID    uint
 }
