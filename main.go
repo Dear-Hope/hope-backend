@@ -62,6 +62,8 @@ func main() {
 	db := NewPostgreSQLDatabase()
 	db2 := dbV2.NewPostgreSQLDatabase()
 
+	router.Static("/assets", "./assets")
+
 	router.GET("/server/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, "Server is OK!")
 	})
