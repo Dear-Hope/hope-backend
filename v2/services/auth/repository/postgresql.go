@@ -22,10 +22,10 @@ func NewPostgreSQLRepository(db *sqlx.DB) models.AuthRepository {
 
 func (ths *postgreSQLRepository) CreateUserWithProfile(user models.DBUserWithProfile) (uint, uint, error) {
 	rows, err := ths.db.NamedQuery(
-		`WITH new_user AS (INSERT INTO "auth".users (email, password, first_name, last_name, profile_photo, is_active) 
-		VALUES (:email, :password, :first_name, :last_name, :profile_photo, :is_active) RETURNING id)
-		INSERT INTO "auth".profiles (weight, height, job, activities, user_id)
-		VALUES (:weight, :height, :job, :activities, (SELECT id from new_user))
+		`WITH new_user AS (INSERT INTO "auth".users (email, password, first_name, last_name, is_active) 
+		VALUES (:email, :password, :first_name, :last_name, :is_active) RETURNING id)
+		INSERT INTO "auth".profiles (job, activities, photo, user_id)
+		VALUES (:job, :activities, :photo, (SELECT id from new_user))
 		RETURNING user_id, id as profile_id`,
 		user,
 	)
@@ -53,8 +53,8 @@ func (ths *postgreSQLRepository) GetUserWithProfileByEmail(email string) (*model
 	var dbUser models.DBUserWithProfile
 	err := ths.db.Get(
 		&dbUser,
-		`SELECT u.id AS user_id, email, password, first_name, last_name, profile_photo, is_active,
-		weight, height, job, activities, p.id AS profile_id
+		`SELECT u.id AS user_id, email, password, first_name, last_name, is_active,
+		job, activities, photo, p.id AS profile_id
 		FROM "auth".users AS u, "auth".profiles AS p
 		WHERE u.id = p.user_id AND email=$1`,
 		email,
@@ -75,8 +75,8 @@ func (ths *postgreSQLRepository) GetUserWithProfileByID(id uint) (*models.DBUser
 	var dbUser models.DBUserWithProfile
 	err := ths.db.Get(
 		&dbUser,
-		`SELECT u.id AS user_id, email, password, first_name, last_name, profile_photo, is_active,
-		weight, height, job, activities, p.id AS profile_id
+		`SELECT u.id AS user_id, email, password, first_name, last_name, is_active,
+		job, activities, photo, p.id AS profile_id
 		FROM "auth".users AS u, "auth".profiles AS p 
 		WHERE u.id = p.user_id AND u.id=$1`,
 		id,
@@ -100,8 +100,8 @@ func (ths *postgreSQLRepository) UpdateUserWithProfile(user models.DBUserWithPro
 			first_name = :first_name, last_name = :last_name
 			WHERE id = :user_id RETURNING id
 		) 
-		UPDATE "auth".profiles SET weight = :weight, height = :height, job = :job,
-		activities = :activities, user_id = (SELECT id from updated_query)
+		UPDATE "auth".profiles SET job = :job, activities = :activities, 
+		user_id = (SELECT id from updated_query)
 		WHERE id = :profile_id RETURNING user_id, id AS profile_id`,
 		user,
 	)
@@ -130,7 +130,7 @@ func (ths *postgreSQLRepository) SetUserToActive(id uint) error {
 
 func (ths *postgreSQLRepository) SetUserProfilePhoto(id uint, link string) error {
 	_, err := ths.db.Queryx(
-		`UPDATE "auth".users SET profile_photo = $1 WHERE id = $2`,
+		`UPDATE "auth".profiles SET photo = $1 WHERE id = $2`,
 		link,
 		id,
 	)

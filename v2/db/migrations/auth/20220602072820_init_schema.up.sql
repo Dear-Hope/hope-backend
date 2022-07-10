@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS "auth".users (
     "password" varchar(100) NOT NULL,
     "first_name" varchar(50),
     "last_name" varchar(50),
-    "profile_photo" varchar,
     "is_active" boolean NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT (now()),
     "updated_at" timestamptz NOT NULL DEFAULT (now())
@@ -15,10 +14,9 @@ CREATE TABLE IF NOT EXISTS "auth".users (
 
 CREATE TABLE IF NOT EXISTS "auth".profiles (
     "id" bigserial PRIMARY KEY,
-	"weight" numeric NOT NULL,
-	"height" numeric NOT NULL,
 	"job" varchar(60),
 	"activities" text,
+    "photo" varchar,
 	"user_id"     bigint,
     "created_at" timestamptz NOT NULL DEFAULT (now()),
     "updated_at" timestamptz NOT NULL DEFAULT (now()),

@@ -61,8 +61,6 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 		FirstName:    req.FirstName,
 		LastName:     req.LastName,
 		ProfilePhoto: req.ProfilePhoto,
-		Weight:       req.Profile.Weight,
-		Height:       req.Profile.Height,
 		Job:          req.Profile.Job,
 		Activities:   req.Profile.Activities,
 	}
@@ -153,19 +151,17 @@ func (ths *service) GetLoggedInUser(id uint) (*models.UserResponse, error) {
 
 	return &models.UserResponse{
 		User: models.User{
-			ID:           user.UserID,
-			Email:        user.Email,
-			Password:     "",
-			FirstName:    user.FirstName,
-			LastName:     user.LastName,
-			ProfilePhoto: user.ProfilePhoto,
+			ID:        user.UserID,
+			Email:     user.Email,
+			Password:  "",
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
 		},
 		Profile: models.Profile{
 			ID:         user.ProfileID,
-			Weight:     user.Weight,
-			Height:     user.Height,
 			Job:        user.Job,
 			Activities: user.Activities,
+			Photo:      user.ProfilePhoto,
 		},
 	}, nil
 }
@@ -184,8 +180,6 @@ func (ths *service) UpdateLoggedInUser(req models.UpdateRequest) (*models.UserRe
 		FirstName:    req.FirstName,
 		LastName:     req.LastName,
 		ProfilePhoto: req.ProfilePhoto,
-		Weight:       req.Profile.Weight,
-		Height:       req.Profile.Height,
 		Job:          req.Profile.Job,
 		Activities:   req.Profile.Activities,
 	}
@@ -197,19 +191,17 @@ func (ths *service) UpdateLoggedInUser(req models.UpdateRequest) (*models.UserRe
 
 	return &models.UserResponse{
 		User: models.User{
-			ID:           updatedUser.UserID,
-			Email:        updatedUser.Email,
-			Password:     "",
-			FirstName:    updatedUser.FirstName,
-			LastName:     updatedUser.LastName,
-			ProfilePhoto: updatedUser.ProfilePhoto,
+			ID:        updatedUser.UserID,
+			Email:     updatedUser.Email,
+			Password:  "",
+			FirstName: updatedUser.FirstName,
+			LastName:  updatedUser.LastName,
 		},
 		Profile: models.Profile{
 			ID:         updatedUser.ProfileID,
-			Weight:     updatedUser.Weight,
-			Height:     updatedUser.Height,
 			Job:        updatedUser.Job,
 			Activities: updatedUser.Activities,
+			Photo:      updatedUser.ProfilePhoto,
 		},
 	}, nil
 }

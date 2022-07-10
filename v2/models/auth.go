@@ -3,36 +3,32 @@ package models
 import "mime/multipart"
 
 type DBUserWithProfile struct {
-	UserID       uint    `db:"user_id"`
-	ProfileID    uint    `db:"profile_id"`
-	Email        string  `db:"email"`
-	Password     string  `db:"password"`
-	FirstName    string  `db:"first_name"`
-	LastName     string  `db:"last_name"`
-	ProfilePhoto string  `db:"profile_photo"`
-	Weight       float32 `db:"weight"`
-	Height       float32 `db:"height"`
-	Job          string  `db:"job"`
-	Activities   string  `db:"activities"`
-	IsActive     bool    `db:"is_active"`
+	UserID       uint   `db:"user_id"`
+	ProfileID    uint   `db:"profile_id"`
+	Email        string `db:"email"`
+	Password     string `db:"password"`
+	FirstName    string `db:"first_name"`
+	LastName     string `db:"last_name"`
+	ProfilePhoto string `db:"photo"`
+	Job          string `db:"job"`
+	Activities   string `db:"activities"`
+	IsActive     bool   `db:"is_active"`
 }
 
 type User struct {
-	ID           uint   `json:"id" `
-	Email        string `json:"email"`
-	Password     string `json:"password,omitempty"`
-	FirstName    string `json:"first_name"`
-	LastName     string `json:"last_name"`
-	ProfilePhoto string `json:"profile_photo"`
-	IsActive     bool   `json:"is_active"`
+	ID        uint   `json:"id" `
+	Email     string `json:"email"`
+	Password  string `json:"password,omitempty"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	IsActive  bool   `json:"is_active"`
 }
 
 type Profile struct {
-	ID         uint    `json:"id"`
-	Weight     float32 `json:"weight"`
-	Height     float32 `json:"height"`
-	Job        string  `json:"job"`
-	Activities string  `json:"activities"`
+	ID         uint   `json:"id"`
+	Job        string `json:"job"`
+	Activities string `json:"activities"`
+	Photo      string `json:"photo"`
 }
 
 type AuthService interface {
