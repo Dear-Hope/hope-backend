@@ -96,8 +96,7 @@ func (ths *postgreSQLRepository) GetUserWithProfileByID(id uint) (*models.DBUser
 func (ths *postgreSQLRepository) UpdateUserWithProfile(user models.DBUserWithProfile) (*models.DBUserWithProfile, error) {
 	_, err := ths.db.NamedQuery(
 		`WITH updated_query AS (UPDATE "auth".users 
-			SET email = :email, password = :password, 
-			first_name = :first_name, last_name = :last_name
+			SET email = :email, first_name = :first_name, last_name = :last_name
 			WHERE id = :user_id RETURNING id
 		) 
 		UPDATE "auth".profiles SET job = :job, activities = :activities, 
@@ -138,6 +137,21 @@ func (ths *postgreSQLRepository) SetUserProfilePhoto(id uint, link string) error
 		log.Printf("user set profile photo: %s", err.Error())
 
 		return errors.New("failed to set user profile photo")
+	}
+
+	return nil
+}
+
+func (ths *postgreSQLRepository) UpdatePassword(id uint, newPassword string) error {
+	_, err := ths.db.Queryx(
+		`UPDATE "auth".users SET password = $1 WHERE id = $2`,
+		newPassword,
+		id,
+	)
+	if err != nil {
+		log.Printf("user update password: %s", err.Error())
+
+		return errors.New("failed to update user password")
 	}
 
 	return nil

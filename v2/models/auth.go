@@ -49,6 +49,7 @@ type AuthRepository interface {
 	UpdateUserWithProfile(DBUserWithProfile) (*DBUserWithProfile, error)
 	SetUserToActive(uint) error
 	SetUserProfilePhoto(uint, string) error
+	UpdatePassword(uint, string) error
 }
 
 type UserResponse struct {

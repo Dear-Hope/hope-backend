@@ -284,8 +284,7 @@ func (ths *service) ChangePassword(req models.ChangePasswordRequest) (*models.To
 		return nil, err
 	}
 
-	user.Password = hashedPassword
-	_, err = ths.repo.UpdateUserWithProfile(user)
+	err = ths.repo.UpdatePassword(user.UserID, hashedPassword)
 	if err != nil {
 		return nil, err
 	}
