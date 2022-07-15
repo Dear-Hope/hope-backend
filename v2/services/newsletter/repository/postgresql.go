@@ -21,7 +21,7 @@ func NewPostgreSQLRepository(db *sqlx.DB) models.NewsletterRepository {
 
 func (ths *postgreSQLRepository) Create(newSubscription models.Subscription) error {
 	_, err := ths.db.NamedQuery(
-		`INSERT INTO "newsletter".subscription (id, email, subscribed_at) VALUES (:id, :email, :subscribed_at)`,
+		`INSERT INTO "newsletter".subscriptions (id, email, subscribed_at) VALUES (:id, :email, :subscribed_at)`,
 		&newSubscription,
 	)
 	if err != nil {
@@ -39,7 +39,7 @@ func (ths *postgreSQLRepository) Create(newSubscription models.Subscription) err
 
 func (ths *postgreSQLRepository) Delete(email string) error {
 	_, err := ths.db.Queryx(
-		`DELETE FROM "newsletter".subscription WHERE email = $1`,
+		`DELETE FROM "newsletter".subscriptions WHERE email = $1`,
 		email,
 	)
 	if err != nil {
