@@ -1,19 +1,6 @@
 package main
 
 import (
-	"HOPE-backend/v1/ambulance"
-	_ambulanceHandler "HOPE-backend/v1/ambulance/handler"
-	_ambulanceRepo "HOPE-backend/v1/ambulance/repository"
-	_chatHandler "HOPE-backend/v1/chat/handler"
-	"HOPE-backend/v1/hospital"
-	_hospitalHandler "HOPE-backend/v1/hospital/handler"
-	_hospitalRepo "HOPE-backend/v1/hospital/repository"
-	"HOPE-backend/v1/laboratory"
-	_laboratoryHandler "HOPE-backend/v1/laboratory/handler"
-	_laboratoryRepo "HOPE-backend/v1/laboratory/repository"
-	"HOPE-backend/v1/medicine"
-	_medicineHandler "HOPE-backend/v1/medicine/handler"
-	_medicineRepo "HOPE-backend/v1/medicine/repository"
 	"HOPE-backend/v2/services/auth"
 	_authHandler "HOPE-backend/v2/services/auth/handler"
 	_authRepo "HOPE-backend/v2/services/auth/repository"
@@ -26,13 +13,15 @@ import (
 	"HOPE-backend/v2/services/selfcare"
 	_selfCareHandler "HOPE-backend/v2/services/selfcare/handler"
 	_selfCareRepo "HOPE-backend/v2/services/selfcare/repository"
+	"log"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 
-	dbV2 "HOPE-backend/v2/db"
+	"HOPE-backend/config"
+	"HOPE-backend/v2/db"
 
 	sendblue "github.com/sendinblue/APIv3-go-library/lib"
 )
@@ -51,6 +40,47 @@ var upgrader = websocket.Upgrader{
 }
 
 func main() {
+	config, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load app configuration: %s", err)
+	}
+	router := newRouter()
+
+	db := db.NewPostgreSQLDatabase(config.DBConfig)
+
+	router.Static("/assets", "./assets")
+
+	router.GET("/server/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, "Server is OK!")
+	})
+
+	v2 := router.Group("/api/v2")
+
+	mailerCfg := sendblue.NewConfiguration()
+	mailerCfg.AddDefaultHeader("api-key", config.MailerConfig.ApiKey)
+	mailerCfg.AddDefaultHeader("partner-key", config.MailerConfig.PartnerKey)
+	mailer := sendblue.NewAPIClient(mailerCfg)
+
+	authRepo := _authRepo.NewPostgreSQLRepository(db)
+	authSvc := auth.NewAuthService(authRepo, mailer)
+	_authHandler.NewAuthHandler(v2, authSvc)
+
+	moodRepo := _moodRepo.NewPostgreSQLRepository(db)
+	moodSvc := moodtracker.NewMoodTrackerService(moodRepo, authRepo)
+	_moodHandler.NewMoodTrackerHandler(v2, moodSvc)
+
+	selfCareRepo := _selfCareRepo.NewPostgreSQLRepository(db)
+	selfCareSvc := selfcare.NewSelfCareService(selfCareRepo)
+	_selfCareHandler.NewSelfCareHandler(v2, selfCareSvc)
+
+	newsletterRepo := _newsletterRepo.NewPostgreSQLRepository(db)
+	newsletterSvc := newsletter.NewNewsletterService(newsletterRepo, mailer)
+	_newsletterHandler.NewNewsletterService(v2, newsletterSvc)
+
+	router.Run(":8000")
+}
+
+func newRouter() *gin.Engine {
 	router := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
@@ -59,70 +89,5 @@ func main() {
 	config.AddAllowMethods("OPTIONS")
 	router.Use(cors.New(config))
 
-	db := NewPostgreSQLDatabase()
-	db2 := dbV2.NewPostgreSQLDatabase()
-
-	router.Static("/assets", "./assets")
-
-	router.GET("/server/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, "Server is OK!")
-	})
-
-	v1 := router.Group("/api/v1")
-	v2 := router.Group("/api/v2")
-
-	mailerCfg := sendblue.NewConfiguration()
-	mailerCfg.AddDefaultHeader("api-key", "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")
-	mailerCfg.AddDefaultHeader("partner-key", "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")
-	mailer := sendblue.NewAPIClient(mailerCfg)
-
-	authRepo := _authRepo.NewPostgreSQLRepository(db2)
-	authSvc := auth.NewAuthService(authRepo, mailer)
-	_authHandler.NewAuthHandler(v2, authSvc)
-
-	medicineRepo := _medicineRepo.NewPostgreSQLRepository(db)
-	medicineSvc := medicine.NewMedicineService(medicineRepo)
-	_medicineHandler.NewMedicineHandler(v1, medicineSvc)
-
-	ambulanceRepo := _ambulanceRepo.NewPostgreSQLRepository(db)
-	ambulanceSvc := ambulance.NewAmbulanceService(ambulanceRepo)
-	_ambulanceHandler.NewAmbulanceHandler(v1, ambulanceSvc)
-
-	hospitalRepo := _hospitalRepo.NewPostgreSQLRepository(db)
-	hospitalSvc := hospital.NewHospitalService(hospitalRepo)
-	_hospitalHandler.NewHospitalHandler(v1, hospitalSvc)
-
-	laboratoryRepo := _laboratoryRepo.NewPostgreSQLRepository(db)
-	laboratorySvc := laboratory.NewLaboratoryService(laboratoryRepo)
-	_laboratoryHandler.NewLaboratoryHandler(v1, laboratorySvc)
-
-	pool := _chatHandler.NewPool()
-	go pool.Start()
-
-	// chatRepo := _chatRepo.NewPostgreSQLRepository(db)
-	// chatSvc := chat.NewChatService(chatRepo, authRepo)
-	// _chatHandler.NewChatHandler(v1, chatSvc, upgrader, pool)
-
-	// recordRepo := _recordRepo.NewPostgreSQLRepository(db)
-	// recordSvc := psychologicalrecord.NewPsychologicalRecordService(recordRepo, authRepo)
-	// _recordHandler.NewPsychologicalRecordHandler(v1, recordSvc)
-
-	moodRepo := _moodRepo.NewPostgreSQLRepository(db2)
-	moodSvc := moodtracker.NewMoodTrackerService(moodRepo, authRepo)
-	_moodHandler.NewMoodTrackerHandler(v2, moodSvc)
-
-	selfCareRepo := _selfCareRepo.NewPostgreSQLRepository(db2)
-	selfCareSvc := selfcare.NewSelfCareService(selfCareRepo)
-	_selfCareHandler.NewSelfCareHandler(v2, selfCareSvc)
-
-	// err := mailchimp.SetKey("eb5431057e55a836f23671a6c07c7643-us14")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	newsletterRepo := _newsletterRepo.NewPostgreSQLRepository(db2)
-	newsletterSvc := newsletter.NewNewsletterService(newsletterRepo, mailer)
-	_newsletterHandler.NewNewsletterService(v2, newsletterSvc)
-
-	router.Run(":8000")
+	return router
 }
