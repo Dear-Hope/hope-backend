@@ -40,7 +40,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func main() {
-	config, err := config.LoadConfig()
+	config, err := config.LoadConfig("./config")
 	if err != nil {
 		log.Fatalf("Failed to load app configuration: %s", err)
 	}

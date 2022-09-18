@@ -1,0 +1,15 @@
+{
+    "DBConfig": {
+        "Host": "localhost",
+        "Username": "hope",
+        "Password": "hope-database-pass",
+        "Name": "hopev2",
+        "Port": "5432",
+        "Sslmode": "disable",
+        "Timezone": "Asia/Jakarta"
+    },
+    "MailerConfig": {
+        "ApiKey": "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",
+        "PartnerKey": "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"
+    }
+}

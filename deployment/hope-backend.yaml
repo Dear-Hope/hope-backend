@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hope-backend-secret
+  namespace: hope
+type: Opaque
+stringData:   # We dont need to worry about converting to base64
+  DBCONFIG_HOST: hope-db-service
+  DBCONFIG_USERNAME: hope
+  DBCONFIG_PASSWORD: hope-database-pass
+  DBCONFIG_NAME: hopev2
+  DBCONFIG_PORT: "5432"
+  DBCONFIG_SSLMODE: disable
+  DBCONFIG_TIMEZONE: "Asia/Jakarta"
+
+  MAILERCONFIG_APIKEY: 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
+  MAILERCONFIG_PARTNERKEY: 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
+
+---
+apiVersion: apps/v1 
+kind: Deployment                                  # Type of the kubernetes resource
+metadata:
+  name: hope-backend                              # Name of the Kubernetes resource
+  namespace: hope
+  labels:
+    app: hope-backend
+spec:
+  replicas: 1                                     # Number of pods to run at any given time
+  selector:
+    matchLabels: 
+      app: hope-backend                           # This deployment applies to any Pods matching the specified label
+  template:                                       # This deployment will create a set of pods using the configurations in this template
+    metadata:
+      labels:                                     # The labels that will be applied to all of the pods in this deployment
+        app: hope-backend
+    spec:                                         # Spec for the container which will run in the Pod
+      containers:
+      - name: hope-backend 
+        image: ezrarizkiatama/dearhope:0.0.0      # The image we are getting from dockerhub
+        imagePullPolicy: IfNotPresent             # If we have not pulled it before, get it from dockerhub
+        ports:
+          - name: http
+            containerPort: 8000                   # Should match the port number that the Go application listens on
+        envFrom:
+          - secretRef:
+              name: hope-backend-secret           # Name of the secret environmental variable file to load
+
+---
+apiVersion: v1  
+kind: Service                                     # Type of the kubernetes resource
+metadata:
+  name: hope-backend-services                     # Name of the Kubernetes resource
+  namespace: hope
+  labels:                                         # Labels that will be applied to the resource
+    app: hope-backend
+spec:
+  type: NodePort                                  # Gives each node an external IP that’s accessible from outside the cluster and also opens a Port.
+  selector:
+    app: hope-backend                             # Selects any Pod with labels `app=hope-backend`
+  ports: 
+  - name: http
+    port: 8000
+    targetPort: 8000

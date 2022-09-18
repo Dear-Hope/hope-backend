@@ -1,6 +1,8 @@
 package config
 
 import (
+	"strings"
+
 	"github.com/spf13/viper"
 )
 
@@ -24,9 +26,12 @@ type PostgreSQLConfig struct {
 	Timezone string
 }
 
-func LoadConfig() (*ConfigMap, error) {
-	viper.AddConfigPath("./config")
+func LoadConfig(path string) (*ConfigMap, error) {
+	viper.AddConfigPath(path)
 	viper.AutomaticEnv()
+
+	replacer := strings.NewReplacer(".", "_")
+	viper.SetEnvKeyReplacer(replacer)
 
 	err := viper.ReadInConfig()
 	if err != nil {
