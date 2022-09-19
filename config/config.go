@@ -1,14 +1,16 @@
 package config
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/spf13/viper"
 )
 
 type ConfigMap struct {
-	DBConfig     PostgreSQLConfig
-	MailerConfig SendInBlueConfig
+	DBConfig         PostgreSQLConfig
+	MailerConfig     SendInBlueConfig
+	MigrationFileURL string
 }
 
 type SendInBlueConfig struct {
@@ -43,6 +45,8 @@ func LoadConfig(path string) (*ConfigMap, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println(config)
 
 	return &config, nil
 }

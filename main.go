@@ -46,7 +46,10 @@ func main() {
 	}
 	router := newRouter()
 
-	db := db.NewPostgreSQLDatabase(config.DBConfig)
+	database := db.NewPostgreSQLDatabase(config.DBConfig)
+	if err := db.RunDBMigrations(config.DBConfig, config.MigrationFileURL); err != nil {
+		log.Fatalln("failed to migrate database: " + err.Error())
+	}
 
 	router.Static("/assets", "./assets")
 
@@ -61,19 +64,19 @@ func main() {
 	mailerCfg.AddDefaultHeader("partner-key", config.MailerConfig.PartnerKey)
 	mailer := sendblue.NewAPIClient(mailerCfg)
 
-	authRepo := _authRepo.NewPostgreSQLRepository(db)
+	authRepo := _authRepo.NewPostgreSQLRepository(database)
 	authSvc := auth.NewAuthService(authRepo, mailer)
 	_authHandler.NewAuthHandler(v2, authSvc)
 
-	moodRepo := _moodRepo.NewPostgreSQLRepository(db)
+	moodRepo := _moodRepo.NewPostgreSQLRepository(database)
 	moodSvc := moodtracker.NewMoodTrackerService(moodRepo, authRepo)
 	_moodHandler.NewMoodTrackerHandler(v2, moodSvc)
 
-	selfCareRepo := _selfCareRepo.NewPostgreSQLRepository(db)
+	selfCareRepo := _selfCareRepo.NewPostgreSQLRepository(database)
 	selfCareSvc := selfcare.NewSelfCareService(selfCareRepo)
 	_selfCareHandler.NewSelfCareHandler(v2, selfCareSvc)
 
-	newsletterRepo := _newsletterRepo.NewPostgreSQLRepository(db)
+	newsletterRepo := _newsletterRepo.NewPostgreSQLRepository(database)
 	newsletterSvc := newsletter.NewNewsletterService(newsletterRepo, mailer)
 	_newsletterHandler.NewNewsletterService(v2, newsletterSvc)
 

@@ -16,6 +16,8 @@ stringData:   # We dont need to worry about converting to base64
   MAILERCONFIG_APIKEY: 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
   MAILERCONFIG_PARTNERKEY: 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
 
+  MIGRATIONFILEURL: "file://v2/db/migrations/"
+
 ---
 apiVersion: apps/v1 
 kind: Deployment                                  # Type of the kubernetes resource
@@ -36,8 +38,8 @@ spec:
     spec:                                         # Spec for the container which will run in the Pod
       containers:
       - name: hope-backend 
-        image: ezrarizkiatama/dearhope:0.0.0      # The image we are getting from dockerhub
-        imagePullPolicy: IfNotPresent             # If we have not pulled it before, get it from dockerhub
+        image: ezrarizkiatama/dearhope:latest      # The image we are getting from dockerhub
+        imagePullPolicy: Always                    
         ports:
           - name: http
             containerPort: 8000                   # Should match the port number that the Go application listens on
