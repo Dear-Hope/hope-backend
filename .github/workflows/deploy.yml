@@ -5,8 +5,8 @@ on:
   #   branches: [ "main" ]
   workflow_run:
     workflows: ["Build"]
-    types:
-      - completed
+    types: [completed]
+    branches: [main]
 
 jobs:
 
