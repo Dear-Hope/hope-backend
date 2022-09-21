@@ -30,8 +30,8 @@ jobs:
 
       run: |
           echo "$PRIVATE_KEY" > private_key && chmod 400 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
-          
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} "IMAGE=$IMAGE DB_HOST=$DB_HOST" '
+
             docker pull $IMAGE && 
             docker stop dearhope && 
             docker run -d -e DBCONFIG_HOST=$DB_HOST -p 8000:8000 --name dearhope $IMAGE &&
