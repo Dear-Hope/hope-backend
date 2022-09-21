@@ -18,26 +18,12 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 
 	"HOPE-backend/config"
 	"HOPE-backend/v2/db"
 
 	sendblue "github.com/sendinblue/APIv3-go-library/lib"
 )
-
-// We'll need to define an Upgrader
-// this will require a Read and Write buffer size
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-
-	// We'll need to check the origin of our connection
-	// this will allow us to make requests from our React
-	// development server to here.
-	// For now, we'll do no checking and just allow any connection
-	CheckOrigin: func(r *http.Request) bool { return true },
-}
 
 func main() {
 	config, err := config.LoadConfig("./config")
@@ -48,7 +34,7 @@ func main() {
 
 	database := db.NewPostgreSQLDatabase(config.DBConfig)
 	if err := db.RunDBMigrations(config.DBConfig, config.MigrationFileURL); err != nil {
-		log.Fatalln("failed to migrate database: " + err.Error())
+		log.Fatalf("failed to migrate database: %s", err)
 	}
 
 	router.Static("/assets", "./assets")
