@@ -1,36 +1,39 @@
 name: Deploy
 
 on:
-  push:
-    branches: [ "main" ]
+  # push:
+  #   branches: [ "main" ]
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
 
 jobs:
 
-  build:
-    name: Build image
+  deploy:
+    name: Deploy to production
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
 
     - name: Checkout code
       uses: actions/checkout@v3
     
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-southeast-3
-
-    - name: Login to Amazon ECR Private
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Build, tag, and push docker image to Amazon ECR
+    - name: SSH to EC2 and Run Docker
       env:
-        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        REPOSITORY: dearhope
-        IMAGE_TAG: ${{ github.sha }}
+        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        USERNAME: ${{ secrets.SSH_USER }}
+        HOSTNAME: ${{ secrets.SSH_HOSTNAME }}
+        IMAGE: ${{ secrets.AWS_ECR_IMAGE }}
+        DB_HOST: ${{ secrets.AWS_DATABASE_HOST }}
+
       run: |
-        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+          
+            docker pull $IMAGE && 
+            docker stop dearhope && 
+            docker run -d -e DBCONFIG_HOST=$DB_HOST -p 8000:8000 --name dearhope $IMAGE &&
+            docker ps
+          '
