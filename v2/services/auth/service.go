@@ -10,7 +10,9 @@ import (
 	"io"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/pquerna/otp/totp"
 	sendblue "github.com/sendinblue/APIv3-go-library/lib"
 )
 
@@ -49,8 +51,27 @@ func (ths *service) Login(req models.LoginRequest) (*models.TokenPair, error) {
 	return tokenPair, nil
 }
 
+func generateSecretKey(email string) (string, error) {
+	key, err := totp.Generate(
+		totp.GenerateOpts{
+			Issuer:      "DearHope",
+			AccountName: email,
+		},
+	)
+	if err != nil {
+		return "", err
+	}
+
+	return key.Secret(), nil
+}
+
 func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, error) {
 	hashedPassword, err := helper.EncryptPassword([]byte(req.Password))
+	if err != nil {
+		return nil, err
+	}
+
+	secret, err := generateSecretKey(req.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -63,6 +84,7 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 		ProfilePhoto: req.ProfilePhoto,
 		Job:          req.Profile.Job,
 		Activities:   req.Profile.Activities,
+		SecretKey:    secret,
 	}
 	userID, profileID, err := ths.repo.CreateUserWithProfile(newUser)
 	if err != nil {
@@ -76,7 +98,7 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 
 	newUser.UserID = userID
 	newUser.ProfileID = profileID
-	key, err := constructKey(newUser)
+	code, err := totp.GenerateCode(secret, time.Now())
 	if err != nil {
 		return nil, err
 	}
@@ -87,13 +109,13 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 		Content: fmt.Sprintf(
 			`<h4>Hai, %s!</h4>
 			</br>
-			<p>Selamat datang di keluarga Dear Hope. Mulai detik ini kamu tidak sendiri lagi, karena ada Hope yang menemani. Sebelum kita memulai, kita hanya butuh untuk mengkonfirmasi bahwa ini adalah kamu, Klik di bawah ini untuk menverifikasi alamat email kamu:</p>
+			<p>Selamat datang di keluarga Dear Hope. Mulai detik ini kamu tidak sendiri lagi, karena ada Hope yang menemani. Sebelum kita memulai, kita hanya butuh untuk mengkonfirmasi bahwa ini adalah kamu, silahkan masukkan kode OTP di bawah ini:</p>
 			</br>
-			<a href="app://dearhope.id/activate?key=%s"> <img alt="activation button" src="https://res.cloudinary.com/shirotama/image/upload/v1656645972/image/static/verifikasi_button.png" width=200/> </a>
+			<h3>%s</h3>
 			</br>
 			<p>Semoga harimu menyenangkan</p>`,
 			newUser.FirstName+" "+newUser.LastName,
-			key,
+			code,
 		),
 	}
 
@@ -207,15 +229,13 @@ func (ths *service) UpdateLoggedInUser(req models.UpdateRequest) (*models.UserRe
 }
 
 func (ths *service) Activate(req models.ActivateRequest) (*models.TokenPair, error) {
-	userString, err := helper.Decrypt(strings.TrimPrefix(req.Key, "https://dearhope.id/activate?key="))
+	user, err := ths.repo.GetUserWithProfileByEmail(req.Email)
 	if err != nil {
-		return nil, errors.New("failed to decrypt activate key: " + err.Error())
+		return nil, err
 	}
 
-	var user models.DBUserWithProfile
-	err = json.Unmarshal([]byte(userString), &user)
-	if err != nil {
-		return nil, errors.New("failed to activate account: " + err.Error())
+	if !totp.Validate(req.Code, user.SecretKey) {
+		return nil, errors.New("your activation code has expired")
 	}
 
 	err = ths.repo.SetUserToActive(user.UserID)
