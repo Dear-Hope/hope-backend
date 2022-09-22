@@ -22,8 +22,8 @@ func NewPostgreSQLRepository(db *sqlx.DB) models.AuthRepository {
 
 func (ths *postgreSQLRepository) CreateUserWithProfile(user models.DBUserWithProfile) (uint, uint, error) {
 	rows, err := ths.db.NamedQuery(
-		`WITH new_user AS (INSERT INTO "auth".users (email, password, first_name, last_name, is_active) 
-		VALUES (:email, :password, :first_name, :last_name, :is_active) RETURNING id)
+		`WITH new_user AS (INSERT INTO "auth".users (email, password, first_name, last_name, is_active, secret_key) 
+		VALUES (:email, :password, :first_name, :last_name, :is_active, :secret_key) RETURNING id)
 		INSERT INTO "auth".profiles (job, activities, photo, user_id)
 		VALUES (:job, :activities, :photo, (SELECT id from new_user))
 		RETURNING user_id, id as profile_id`,
@@ -53,7 +53,7 @@ func (ths *postgreSQLRepository) GetUserWithProfileByEmail(email string) (*model
 	var dbUser models.DBUserWithProfile
 	err := ths.db.Get(
 		&dbUser,
-		`SELECT u.id AS user_id, email, password, first_name, last_name, is_active,
+		`SELECT u.id AS user_id, email, password, first_name, last_name, is_active, secret_key,
 		job, activities, photo, p.id AS profile_id
 		FROM "auth".users AS u, "auth".profiles AS p
 		WHERE u.id = p.user_id AND email=$1`,

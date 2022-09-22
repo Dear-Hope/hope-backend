@@ -13,6 +13,7 @@ type DBUserWithProfile struct {
 	Job          string `db:"job"`
 	Activities   string `db:"activities"`
 	IsActive     bool   `db:"is_active"`
+	SecretKey    string `db:"secret_key"`
 }
 
 type User struct {
@@ -22,6 +23,7 @@ type User struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	IsActive  bool   `json:"is_active"`
+	SecretKey string `json:"secret_key"`
 }
 
 type Profile struct {
@@ -90,7 +92,8 @@ type TokenPair struct {
 }
 
 type ActivateRequest struct {
-	Key string `json:"key"`
+	Email string `json:"email"`
+	Code  string `json:"code"`
 }
 
 type ResetPasswordRequest struct {
