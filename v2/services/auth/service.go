@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/patrickmn/go-cache"
 	"github.com/pquerna/otp/totp"
 	sendblue "github.com/sendinblue/APIv3-go-library/lib"
 )
@@ -19,12 +20,14 @@ import (
 type service struct {
 	repo   models.AuthRepository
 	mailer *sendblue.APIClient
+	cache  *cache.Cache
 }
 
-func NewAuthService(repo models.AuthRepository, mailer *sendblue.APIClient) models.AuthService {
+func NewAuthService(repo models.AuthRepository, mailer *sendblue.APIClient, cache *cache.Cache) models.AuthService {
 	return &service{
 		repo:   repo,
 		mailer: mailer,
+		cache:  cache,
 	}
 }
 
@@ -123,6 +126,8 @@ func (ths *service) Register(req models.RegisterRequest) (*models.TokenPair, err
 	if err != nil {
 		return nil, err
 	}
+
+	ths.cache.SetDefault(req.Email, 0)
 
 	return tokenPair, nil
 }
@@ -345,4 +350,52 @@ func (ths *service) SaveProfilePhoto(req models.SaveProfilePhotoRequest) (string
 	}
 
 	return filepath, nil
+}
+
+func (ths *service) ResendActivationCode(req models.ResetPasswordRequest) error {
+	user, err := ths.repo.GetUserWithProfileByEmail(req.Email)
+	if err != nil {
+		return err
+	}
+
+	if user.IsActive {
+		return errors.New("user already activated the account")
+	}
+
+	if retries, found := ths.cache.Get(req.Email); found {
+		if retries.(int) >= 3 {
+			return errors.New("resend limit reached, please try again after a while")
+		}
+		if err := ths.cache.Increment(req.Email, 1); err != nil {
+			return err
+		}
+	}
+
+	code, err := totp.GenerateCode(user.SecretKey, time.Now())
+	if err != nil {
+		return err
+	}
+
+	template := models.EmailTemplate{
+		Subject: "Account Activation",
+		Email:   req.Email,
+		Content: fmt.Sprintf(
+			`<h4>Hai, %s!</h4>
+			</br>
+			<p>Selamat datang di keluarga Dear Hope. Mulai detik ini kamu tidak sendiri lagi, karena ada Hope yang menemani. Sebelum kita memulai, kita hanya butuh untuk mengkonfirmasi bahwa ini adalah kamu, silahkan masukkan kode OTP di bawah ini:</p>
+			</br>
+			<h3>%s</h3>
+			</br>
+			<p>Semoga harimu menyenangkan</p>`,
+			user.FirstName+" "+user.LastName,
+			code,
+		),
+	}
+
+	err = sendKey(ths.mailer, template)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

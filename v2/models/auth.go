@@ -42,6 +42,7 @@ type AuthService interface {
 	ResetPassword(ResetPasswordRequest) error
 	ChangePassword(ChangePasswordRequest) (*TokenPair, error)
 	SaveProfilePhoto(SaveProfilePhotoRequest) (string, error)
+	ResendActivationCode(ResetPasswordRequest) error
 }
 
 type AuthRepository interface {
