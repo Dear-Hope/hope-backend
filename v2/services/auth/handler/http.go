@@ -29,6 +29,7 @@ func NewAuthHandler(router *gin.RouterGroup, svc models.AuthService) {
 		auth.POST("/register", handler.Register)
 		auth.POST("/login/refresh", handler.RefreshToken)
 		auth.POST("/activate", handler.ActivateAccount)
+		auth.POST("/resend", handler.ResendActivationCode)
 		auth.POST("/password/reset", handler.ResetPassword)
 		auth.POST("/password/change", handler.ChangePassword)
 	}
@@ -250,8 +251,6 @@ func (ths *handler) UploadProfilePhoto(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(header.Filename)
-
 	req := models.SaveProfilePhotoRequest{
 		File:      &file,
 		Extension: filepath.Ext(header.Filename),
@@ -268,5 +267,27 @@ func (ths *handler) UploadProfilePhoto(c *gin.Context) {
 	res.Result = map[string]string{
 		"link": link,
 	}
+	c.JSON(http.StatusOK, res)
+}
+
+func (ths *handler) ResendActivationCode(c *gin.Context) {
+	var res models.Response
+	var req models.ResetPasswordRequest
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		res.Error = fmt.Sprintf("invalid parameters: %s", err.Error())
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	err = ths.svc.ResendActivationCode(req)
+	if err != nil {
+		res.Error = err.Error()
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res.Result = map[string]bool{"success": true}
 	c.JSON(http.StatusOK, res)
 }

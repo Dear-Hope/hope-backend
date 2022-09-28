@@ -37,6 +37,8 @@ func main() {
 		log.Fatalf("failed to migrate database: %s", err)
 	}
 
+	cache := db.NewInmemCache(config.CacheConfig)
+
 	router.Static("/assets", "./assets")
 
 	router.GET("/server/health", func(c *gin.Context) {
@@ -51,7 +53,7 @@ func main() {
 	mailer := sendblue.NewAPIClient(mailerCfg)
 
 	authRepo := _authRepo.NewPostgreSQLRepository(database)
-	authSvc := auth.NewAuthService(authRepo, mailer)
+	authSvc := auth.NewAuthService(authRepo, mailer, cache)
 	_authHandler.NewAuthHandler(v2, authSvc)
 
 	moodRepo := _moodRepo.NewPostgreSQLRepository(database)
