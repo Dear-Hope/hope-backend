@@ -399,3 +399,12 @@ func (ths *service) ResendActivationCode(req models.ResetPasswordRequest) error 
 
 	return nil
 }
+
+func (ths *service) DeleteUser(req models.ResetPasswordRequest) error {
+	err := ths.repo.DeleteUserByEmail(req.Email)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

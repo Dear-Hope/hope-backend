@@ -156,3 +156,17 @@ func (ths *postgreSQLRepository) UpdatePassword(id uint, newPassword string) err
 
 	return nil
 }
+
+func (ths *postgreSQLRepository) DeleteUserByEmail(email string) error {
+	_, err := ths.db.Queryx(
+		`DELETE FROM "auth".users WHERE email = $1`,
+		email,
+	)
+	if err != nil {
+		log.Printf("delete user: %s", err.Error())
+
+		return errors.New("failed to delete user")
+	}
+
+	return nil
+}
