@@ -32,6 +32,7 @@ func NewAuthHandler(router *gin.RouterGroup, svc models.AuthService) {
 		auth.POST("/resend", handler.ResendActivationCode)
 		auth.POST("/password/reset", handler.ResetPassword)
 		auth.POST("/password/change", handler.ChangePassword)
+		auth.POST("/delete", handler.DeleteUser)
 	}
 	user := router.Group("/user")
 	{
@@ -282,6 +283,28 @@ func (ths *handler) ResendActivationCode(c *gin.Context) {
 	}
 
 	err = ths.svc.ResendActivationCode(req)
+	if err != nil {
+		res.Error = err.Error()
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res.Result = map[string]bool{"success": true}
+	c.JSON(http.StatusOK, res)
+}
+
+func (ths *handler) DeleteUser(c *gin.Context) {
+	var res models.Response
+	var req models.ResetPasswordRequest
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		res.Error = fmt.Sprintf("invalid parameters: %s", err.Error())
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	err = ths.svc.DeleteUser(req)
 	if err != nil {
 		res.Error = err.Error()
 		c.JSON(http.StatusBadRequest, res)

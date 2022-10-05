@@ -43,6 +43,7 @@ type AuthService interface {
 	ChangePassword(ChangePasswordRequest) (*TokenPair, error)
 	SaveProfilePhoto(SaveProfilePhotoRequest) (string, error)
 	ResendActivationCode(ResetPasswordRequest) error
+	DeleteUser(ResetPasswordRequest) error
 }
 
 type AuthRepository interface {
@@ -53,6 +54,7 @@ type AuthRepository interface {
 	SetUserToActive(uint) error
 	SetUserProfilePhoto(uint, string) error
 	UpdatePassword(uint, string) error
+	DeleteUserByEmail(string) error
 }
 
 type UserResponse struct {
