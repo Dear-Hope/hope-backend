@@ -39,10 +39,7 @@ func RunDBMigrations(config config.PostgreSQLConfig, url string) error {
 	)
 
 	log.Println("Migrating base schema")
-	err := migrateUp(dsn, url)
-	if err != nil {
-		return err
-	}
+	migrateUp(dsn, url)
 
 	files, err := ioutil.ReadDir("./v2/db/migrations")
 	if err != nil {
@@ -59,15 +56,13 @@ func RunDBMigrations(config config.PostgreSQLConfig, url string) error {
 	return nil
 }
 
-func migrateUp(dsn, url string) error {
+func migrateUp(dsn, url string) {
 	migration, err := migrate.New(url, dsn)
 	if err != nil {
-		return err
+		panic(err)
 	}
 
 	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
-		return err
+		panic(err)
 	}
-
-	return nil
 }

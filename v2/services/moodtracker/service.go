@@ -35,7 +35,9 @@ func (ths *service) NewEmotion(req models.NewEmotionRequest, userID uint) (
 
 	newEmotion := models.Emotion{
 		Mood:        req.Mood,
+		Scale:       req.Scale,
 		Triggers:    req.Triggers,
+		Feelings:    req.Feelings,
 		Description: req.Description,
 		TimeFrame:   timeFrame,
 		Date:        req.Time,
