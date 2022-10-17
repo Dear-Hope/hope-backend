@@ -10,7 +10,9 @@ import (
 type Emotion struct {
 	ID          uint           `json:"id" db:"id"`
 	Mood        string         `json:"mood" db:"mood"`
+	Scale       uint           `json:"scale" db:"scale"`
 	Triggers    pq.StringArray `json:"triggers" db:"triggers"`
+	Feelings    pq.StringArray `json:"feelings" db:"feelings"`
 	Description string         `json:"description" db:"description"`
 	TimeFrame   string         `json:"time_frame" db:"time_frame"`
 	Date        int64          `json:"date" db:"date"`
@@ -38,7 +40,9 @@ type MoodTrackerRepository interface {
 
 type NewEmotionRequest struct {
 	Mood        string   `json:"mood"`
+	Scale       uint     `json:"scale"`
 	Triggers    []string `json:"triggers"`
+	Feelings    []string `json:"feelings"`
 	Description string   `json:"description"`
 	Time        int64    `json:"time"`
 	Offset      int      `json:"offset"`

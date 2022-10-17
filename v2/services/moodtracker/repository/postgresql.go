@@ -22,8 +22,8 @@ func NewPostgreSQLRepository(db *sqlx.DB) models.MoodTrackerRepository {
 
 func (ths *postgreSQLRepository) Create(newEmotion models.Emotion) (*models.Emotion, error) {
 	rows, err := ths.db.NamedQuery(
-		`INSERT INTO "moodtracker".emotions (mood, description, time_frame, date, user_id, triggers) 
-		VALUES (:mood, :description, :time_frame, :date, :user_id, :triggers) 
+		`INSERT INTO "moodtracker".emotions (mood, description, time_frame, date, user_id, triggers, feelings, scale) 
+		VALUES (:mood, :description, :time_frame, :date, :user_id, :triggers, :feelings, :scale) 
 		RETURNING id`,
 		newEmotion,
 	)
@@ -51,7 +51,7 @@ func (ths *postgreSQLRepository) GetAllEmotionByUserID(id uint) ([]*models.Emoti
 	emotions := []*models.Emotion{}
 	err := ths.db.Select(
 		&emotions,
-		`SELECT id, mood, description, time_frame, date, triggers, user_id 
+		`SELECT id, mood, description, time_frame, date, triggers, user_id, feelings, scale 
 		FROM "moodtracker".emotions WHERE user_id = $1`,
 		id,
 	)
@@ -69,7 +69,7 @@ func (ths *postgreSQLRepository) GetAllEmotionByUserIDPerWeek(id uint) ([]*model
 	emotions := []*models.Emotion{}
 	err := ths.db.Select(
 		&emotions,
-		`SELECT id, mood, description, time_frame, date, triggers, user_id 
+		`SELECT id, mood, description, time_frame, date, triggers, user_id, feelings, scale
 		FROM "moodtracker".emotions 
 		WHERE user_id = $1 AND date >= $2 AND date <= $3`,
 		id, getStartDayOfWeek(), getLastDayOfWeek(),
@@ -89,7 +89,7 @@ func (ths *postgreSQLRepository) GetAllEmotionByUserIDPerMonth(id uint) ([]*mode
 	firstDay, lastDay := getFirstAndLastDayOfMonth()
 	err := ths.db.Select(
 		&emotions,
-		`SELECT id, mood, description, time_frame, date, triggers, user_id 
+		`SELECT id, mood, description, time_frame, date, triggers, user_id, feelings, scale
 		FROM "moodtracker".emotions 
 		WHERE user_id = $1 AND date >= $2 AND date <= $3`,
 		id, firstDay, lastDay,
