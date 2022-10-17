@@ -13,12 +13,14 @@ type SelfCareService interface {
 	NewItem(NewSelfCareItemRequest) (*SelfCareItem, error)
 	ListItems() ([]*SelfCareItem, error)
 	GetItemsByMood(string) ([]*SelfCareItem, error)
+	ListTypes() ([]SelfCareTypeInfo, error)
 }
 
 type SelfCareRepository interface {
 	Create(SelfCareItem) (*SelfCareItem, error)
 	GetAllItems() ([]*SelfCareItem, error)
 	GetItemsByMood(string) ([]*SelfCareItem, error)
+	GetAllTypesWithTotal() ([]SelfCareTypeInfo, error)
 }
 
 type NewSelfCareItemRequest struct {
@@ -27,4 +29,9 @@ type NewSelfCareItemRequest struct {
 	Mood        string `json:"mood"`
 	Type        string `json:"type"`
 	Description string `json:"description,omitempty"`
+}
+
+type SelfCareTypeInfo struct {
+	Type  string `json:"type" db:"type"`
+	Total int    `json:"total" db:"total"`
 }

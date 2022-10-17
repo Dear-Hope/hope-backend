@@ -48,3 +48,12 @@ func (ths *service) ListItems() ([]*models.SelfCareItem, error) {
 
 	return items, err
 }
+
+func (ths *service) ListTypes() ([]models.SelfCareTypeInfo, error) {
+	types, err := ths.repo.GetAllTypesWithTotal()
+	if err != nil {
+		return nil, err
+	}
+
+	return types, err
+}

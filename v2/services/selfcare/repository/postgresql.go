@@ -79,3 +79,21 @@ func (ths *postgreSQLRepository) GetAllItems() ([]*models.SelfCareItem, error) {
 
 	return items, nil
 }
+
+func (ths *postgreSQLRepository) GetAllTypesWithTotal() ([]models.SelfCareTypeInfo, error) {
+	types := []models.SelfCareTypeInfo{}
+	err := ths.db.Select(
+		&types,
+		`SELECT type, COUNT(*) as total 
+		FROM "selfcare".items
+		GROUP BY type`,
+	)
+	if err != nil {
+		log.Printf("self care items get all types with total: %s", err.Error())
+
+		err = errors.New("something wrong when get all self care types")
+		return nil, err
+	}
+
+	return types, nil
+}
