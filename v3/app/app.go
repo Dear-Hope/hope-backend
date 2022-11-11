@@ -4,6 +4,10 @@ import (
 	_authController "HOPE-backend/v3/service/auth/controller"
 	_authRepo "HOPE-backend/v3/service/auth/repository"
 	_authService "HOPE-backend/v3/service/auth/service"
+
+	_moodController "HOPE-backend/v3/service/mood_tracker/controller"
+	_moodRepo "HOPE-backend/v3/service/mood_tracker/repository"
+	_moodService "HOPE-backend/v3/service/mood_tracker/service"
 	"log"
 	"net/http"
 
@@ -45,6 +49,10 @@ func Start() {
 	authRepo := _authRepo.NewRepository(database)
 	authSvc := _authService.NewService(authRepo, mailer, cache)
 	_authController.NewController(v3, authSvc)
+
+	moodRepo := _moodRepo.NewRepository(database)
+	moodSvc := _moodService.NewService(moodRepo, authRepo)
+	_moodController.NewController(v3, moodSvc)
 
 	router.Logger.Fatal(router.Start(":8000"))
 }

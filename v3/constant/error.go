@@ -17,3 +17,11 @@ var (
 	ERROR_UPDATE_USER_FAILED        = "failed to update user"
 	ERROR_SAVE_PROFILE_PHOTO_FAILED = "failed to save user profile photo"
 )
+
+var (
+	ERROR_FAILED_TO_CONVERT_HOUR = "failed to convert hour"
+	ERROR_MOOD_NOT_LISTED        = "mood given is not listed in our database"
+	ERROR_CREATE_EMOTION_FAILED  = "failed to create new emotion"
+	ERROR_EMOTION_ALREADY_EXISTS = "this patient emotion for this time frame today is already exists"
+	ERROR_GET_ALL_EMOTION_FAILED = "failed to get all emotions"
+)
