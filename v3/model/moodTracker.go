@@ -11,26 +11,41 @@ import (
 type (
 	Emotion struct {
 		ID          uint           `db:"id"`
-		Mood        string         `db:"mood"`
+		MoodID      uint           `db:"mood_id"`
+		UserID      uint           `db:"user_id"`
 		Scale       uint           `db:"scale"`
 		Triggers    pq.StringArray `db:"triggers"`
 		Feelings    pq.StringArray `db:"feelings"`
 		Description string         `db:"description"`
 		TimeFrame   string         `db:"time_frame"`
 		Date        int64          `db:"date"`
-		UserID      uint           `db:"user_id"`
+		Mood        string         `db:"mood"`
 	}
 
 	Emotions []Emotion
 
-	Mood string
+	Mood struct {
+		ID   uint   `db:"id"`
+		Name string `db:"name"`
+	}
+
+	Moods []Mood
 )
 
 func (ths Emotion) TableWithSchemaName() string {
 	return `"moodtracker".emotions`
 }
 
+func (ths Mood) TableWithSchemaName() string {
+	return `"moodtracker".moods`
+}
+
 type (
+	MoodResponse struct {
+		ID   uint   `json:"id"`
+		Name string `json:"name"`
+	}
+
 	EmotionResponse struct {
 		ID          uint     `json:"id"`
 		Mood        string   `json:"mood"`
@@ -43,7 +58,7 @@ type (
 	}
 
 	NewEmotionRequest struct {
-		Mood        Mood     `json:"mood"`
+		MoodID      uint     `json:"mood_id"`
 		Scale       uint     `json:"scale"`
 		Triggers    []string `json:"triggers"`
 		Feelings    []string `json:"feelings"`
@@ -76,16 +91,20 @@ func (ths Emotions) ToEmotionListResponse() []EmotionResponse {
 	return res
 }
 
-func (ths Mood) IsMoodAvailable() bool {
-	// add new available mood here in the array
-	availableMood := []Mood{"Angry", "Sad", "Happy", "Flat", "Gorgeus"}
-	for _, mood := range availableMood {
-		if ths == mood {
-			return true
-		}
+func (ths Mood) ToMoodResponse() *MoodResponse {
+	return &MoodResponse{
+		ID:   ths.ID,
+		Name: ths.Name,
+	}
+}
+
+func (ths Moods) ToMoodListResponse() []MoodResponse {
+	res := make([]MoodResponse, len(ths))
+	for i, emotion := range ths {
+		res[i] = *emotion.ToMoodResponse()
 	}
 
-	return false
+	return res
 }
 
 func (ths NewEmotionRequest) ConvertIntoTimeFrame() (string, error) {

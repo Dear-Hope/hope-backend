@@ -9,7 +9,7 @@ import (
 )
 
 func (ths *service) Create(req model.NewEmotionRequest) (*model.EmotionResponse, *model.ServiceError) {
-	if !req.Mood.IsMoodAvailable() {
+	if req.MoodID == 0 || req.MoodID > 5 {
 		return nil, &model.ServiceError{
 			Code: http.StatusBadRequest,
 			Err:  errors.New(constant.ERROR_MOOD_NOT_LISTED),
@@ -25,7 +25,7 @@ func (ths *service) Create(req model.NewEmotionRequest) (*model.EmotionResponse,
 	}
 
 	newEmotion := model.Emotion{
-		Mood:        string(req.Mood),
+		MoodID:      req.MoodID,
 		Scale:       req.Scale,
 		Triggers:    req.Triggers,
 		Feelings:    req.Feelings,

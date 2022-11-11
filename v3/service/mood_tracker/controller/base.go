@@ -23,6 +23,7 @@ func NewController(router *echo.Group, svc mood_tracker.Service) {
 		mood.GET("", controller.ListMoodToday, middleware.AuthorizeTokenJWT)
 		mood.GET("/week", controller.ListMoodWeekly, middleware.AuthorizeTokenJWT)
 		mood.GET("/month", controller.ListMoodMonthly, middleware.AuthorizeTokenJWT)
+		mood.GET("/master", controller.ListMoodData)
 	}
 }
 

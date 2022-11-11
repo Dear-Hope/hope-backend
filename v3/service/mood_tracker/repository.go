@@ -8,4 +8,5 @@ import (
 type Repository interface {
 	Store(model.Emotion) (*model.Emotion, error)
 	GetAll(uint, filter.List) (model.Emotions, error)
+	GetAllMood() (model.Moods, error)
 }

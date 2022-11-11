@@ -9,16 +9,16 @@ import (
 func (ths *repository) GetAll(userID uint, f filter.List) (model.Emotions, error) {
 	emotions := model.Emotions{}
 
-	query := `SELECT id, mood, description, time_frame, date, triggers, user_id, feelings, scale
-	FROM "moodtracker".emotions
-	WHERE user_id = $1 `
+	query := `SELECT e.id, m.name as mood, e.description, e.time_frame, e.date, e.triggers, e.user_id, e.feelings, e.scale
+	FROM ` + model.Emotion{}.TableWithSchemaName() + ` e, ` + model.Mood{}.TableWithSchemaName() + ` m
+	WHERE e.user_id = $1 AND e.mood_id = m.id `
 
 	if f.PeriodFrom != nil {
-		query += `AND date >= $2 `
+		query += `AND e.date >= $2 `
 	}
 
 	if f.PeriodTo != nil {
-		query += `AND date <= $3`
+		query += `AND e.date <= $3`
 	}
 
 	err := ths.db.Select(

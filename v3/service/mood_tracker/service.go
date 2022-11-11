@@ -8,4 +8,5 @@ import (
 type Service interface {
 	Create(model.NewEmotionRequest) (*model.EmotionResponse, *model.ServiceError)
 	List(uint, filter.List) ([]model.EmotionResponse, *model.ServiceError)
+	ListMoodData() ([]model.MoodResponse, *model.ServiceError)
 }

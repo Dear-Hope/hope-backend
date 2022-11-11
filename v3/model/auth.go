@@ -2,8 +2,6 @@ package model
 
 import "mime/multipart"
 
-// import "mime/multipart"
-
 type (
 	User struct {
 		UserID    uint   `db:"user_id"`
@@ -18,10 +16,13 @@ type (
 	}
 
 	Profile struct {
-		ProfileID    uint   `db:"profile_id"`
-		ProfilePhoto string `db:"photo"`
-		Job          string `db:"job"`
-		Activities   string `db:"activities"`
+		ProfileID        uint   `db:"profile_id"`
+		ProfilePhoto     string `db:"photo"`
+		Job              string `db:"job"`
+		Activities       string `db:"activities"`
+		TotalAudioPlayed int    `db:"total_audio_played"`
+		TotalTimePlayed  int    `db:"total_time_played"`
+		LongestStreak    int    `db:"longest_streak"`
 	}
 )
 
@@ -43,10 +44,13 @@ type (
 	}
 
 	ProfileResponse struct {
-		ID         uint   `json:"id"`
-		Job        string `json:"job"`
-		Activities string `json:"activities"`
-		Photo      string `json:"photo"`
+		ID               uint   `json:"id"`
+		Job              string `json:"job"`
+		Activities       string `json:"activities"`
+		Photo            string `json:"photo"`
+		TotalAudioPlayed int    `json:"total_audio_played"`
+		TotalTimePlayed  int    `json:"total_time_played"`
+		LongestStreak    int    `json:"longest_streak"`
 	}
 )
 
@@ -57,10 +61,13 @@ func (ths User) ToUserResponse() *UserResponse {
 		Name:  ths.Name,
 		Alias: ths.Alias,
 		Profile: ProfileResponse{
-			ID:         ths.ProfileID,
-			Job:        ths.Job,
-			Activities: ths.Activities,
-			Photo:      ths.ProfilePhoto,
+			ID:               ths.ProfileID,
+			Job:              ths.Job,
+			Activities:       ths.Activities,
+			Photo:            ths.ProfilePhoto,
+			TotalAudioPlayed: ths.TotalAudioPlayed,
+			TotalTimePlayed:  ths.TotalTimePlayed,
+			LongestStreak:    ths.LongestStreak,
 		},
 	}
 }
@@ -80,10 +87,11 @@ type RegisterRequest struct {
 }
 
 type ProfileCreateRequest struct {
-	Weight     float32 `json:"weight"`
-	Height     float32 `json:"height"`
-	Job        string  `json:"job,omitempty"`
-	Activities string  `json:"activities,omitempty"`
+	Job              string `json:"job,omitempty"`
+	Activities       string `json:"activities,omitempty"`
+	TotalAudioPlayed int    `json:"total_audio_played,omitempty"`
+	TotalTimePlayed  int    `json:"total_time_played,omitempty"`
+	LongestStreak    int    `json:"longest_streak,omitempty"`
 }
 
 type UpdateRequest struct {

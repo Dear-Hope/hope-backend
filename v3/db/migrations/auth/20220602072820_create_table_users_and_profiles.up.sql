@@ -14,13 +14,16 @@ CREATE TABLE IF NOT EXISTS "auth".users (
 );
 
 CREATE TABLE IF NOT EXISTS "auth".profiles (
-    "id"            bigserial PRIMARY KEY,
-	"job"           varchar(60),
-	"activities"    text,
-    "photo"         varchar,
-	"user_id"       bigint NOT NULL,
-    "created_at"    timestamptz NOT NULL DEFAULT (now()),
-    "updated_at"    timestamptz NOT NULL DEFAULT (now()),
+    "id"                    bigserial PRIMARY KEY,
+	"user_id"               bigint NOT NULL,
+	"job"                   varchar(60),
+	"activities"            text,
+    "photo"                 varchar,
+    "total_audio_played"    int NOT NULL,
+    "total_time_played"     int NOT NULL,
+    "longest_streak"        int NOT NULL,
+    "created_at"            timestamptz NOT NULL DEFAULT (now()),
+    "updated_at"            timestamptz NOT NULL DEFAULT (now()),
     CONSTRAINT fk_profile_user
         FOREIGN KEY (user_id)
             REFERENCES users(id)
