@@ -33,8 +33,8 @@ func (ths *service) Register(req model.RegisterRequest) (*model.TokenPairRespons
 	newUser := model.User{
 		Email:     req.Email,
 		Password:  hashedPassword,
-		FirstName: req.FirstName,
-		LastName:  req.LastName,
+		Name:      req.Name,
+		Alias:     req.Alias,
 		SecretKey: secret,
 		Profile: model.Profile{
 			ProfilePhoto: req.ProfilePhoto,
@@ -84,7 +84,7 @@ func (ths *service) Register(req model.RegisterRequest) (*model.TokenPairRespons
 			<h3>%s</h3>
 			</br>
 			<p>Semoga harimu menyenangkan</p>`,
-			user.FirstName+" "+user.LastName,
+			user.Name,
 			code,
 		),
 	}

@@ -8,7 +8,7 @@ import (
 func (ths *repository) Update(user model.User) (*model.User, error) {
 	rows, err := ths.db.NamedQuery(
 		`WITH updated_query AS (UPDATE "auth".users
-			SET email = :email, first_name = :first_name, last_name = :last_name
+			SET email = :email, name = :name, alias = :alias
 			WHERE id = :user_id RETURNING id
 		)
 		UPDATE "auth".profiles SET job = :job, activities = :activities,

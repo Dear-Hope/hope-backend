@@ -68,7 +68,7 @@ func (ths *service) ResendActivationCode(req model.ResetPasswordRequest) *model.
 			<h3>%s</h3>
 			</br>
 			<p>Semoga harimu menyenangkan</p>`,
-			user.FirstName+" "+user.LastName,
+			user.Name,
 			code,
 		),
 	}

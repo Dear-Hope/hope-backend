@@ -18,11 +18,11 @@ func (ths *service) UpdateLoggedInUser(req model.UpdateRequest) (*model.UserResp
 	}
 
 	newUser := model.User{
-		UserID:    req.UserID,
-		Email:     req.Email,
-		Password:  newPassword,
-		FirstName: req.FirstName,
-		LastName:  req.LastName,
+		UserID:   req.UserID,
+		Email:    req.Email,
+		Password: newPassword,
+		Name:     req.Name,
+		Alias:    req.Alias,
 		Profile: model.Profile{
 			ProfileID:    req.ProfileID,
 			ProfilePhoto: req.ProfilePhoto,

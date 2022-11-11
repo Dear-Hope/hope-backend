@@ -9,7 +9,7 @@ func (ths *repository) GetByID(id uint) (*model.User, error) {
 	var user model.User
 	err := ths.db.Get(
 		&user,
-		`SELECT u.id AS user_id, email, password, first_name, last_name, is_active,
+		`SELECT u.id AS user_id, email, password, name, alias, is_active,
 		job, activities, photo, p.id AS profile_id
 		FROM "auth".users AS u, "auth".profiles AS p
 		WHERE u.id = p.user_id AND u.id=$1`,

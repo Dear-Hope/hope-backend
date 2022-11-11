@@ -9,8 +9,8 @@ type (
 		UserID    uint   `db:"user_id"`
 		Email     string `db:"email"`
 		Password  string `db:"password"`
-		FirstName string `db:"first_name"`
-		LastName  string `db:"last_name"`
+		Name      string `db:"name"`
+		Alias     string `db:"alias"`
 		IsActive  bool   `db:"is_active"`
 		SecretKey string `db:"secret_key"`
 
@@ -35,11 +35,11 @@ func (ths Profile) TableWithSchemaName() string {
 
 type (
 	UserResponse struct {
-		ID        uint            `json:"id" `
-		Email     string          `json:"email"`
-		FirstName string          `json:"first_name"`
-		LastName  string          `json:"last_name"`
-		Profile   ProfileResponse `json:"profile,omitempty"`
+		ID      uint            `json:"id" `
+		Email   string          `json:"email"`
+		Name    string          `json:"name"`
+		Alias   string          `json:"alias"`
+		Profile ProfileResponse `json:"profile,omitempty"`
 	}
 
 	ProfileResponse struct {
@@ -52,10 +52,10 @@ type (
 
 func (ths User) ToUserResponse() *UserResponse {
 	return &UserResponse{
-		ID:        ths.UserID,
-		Email:     ths.Email,
-		FirstName: ths.FirstName,
-		LastName:  ths.LastName,
+		ID:    ths.UserID,
+		Email: ths.Email,
+		Name:  ths.Name,
+		Alias: ths.Alias,
 		Profile: ProfileResponse{
 			ID:         ths.ProfileID,
 			Job:        ths.Job,
@@ -73,8 +73,8 @@ type LoginRequest struct {
 type RegisterRequest struct {
 	Email        string               `json:"email"`
 	Password     string               `json:"password"`
-	FirstName    string               `json:"first_name,omitempty"`
-	LastName     string               `json:"last_name,omitempty"`
+	Name         string               `json:"name,omitempty"`
+	Alias        string               `json:"alias,omitempty"`
 	ProfilePhoto string               `json:"profile_photo,omitempty"`
 	Profile      ProfileCreateRequest `json:"profile,omitempty"`
 }
