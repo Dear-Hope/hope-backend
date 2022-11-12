@@ -7,10 +7,10 @@ import (
 
 func (ths repository) Create(user model.User) (*model.User, error) {
 	rows, err := ths.db.NamedQuery(
-		`WITH new_user AS (INSERT INTO "auth".users (email, password, name, alias, is_active, secret_key) 
+		`WITH new_user AS (INSERT INTO `+user.TableWithSchemaName()+` (email, password, name, alias, is_active, secret_key) 
 		VALUES (:email, :password, :name, :alias, :is_active, :secret_key) RETURNING id)
-		INSERT INTO "auth".profiles (job, activities, photo, user_id)
-		VALUES (:job, :activities, :photo, (SELECT id from new_user))
+		INSERT INTO `+user.Profile.TableWithSchemaName()+` (job, activities, photo, user_id, total_audio_played, total_time_played, longest_streak)
+		VALUES (:job, :activities, :photo, (SELECT id from new_user), :total_audio_played, :total_time_played, :longest_streak)
 		RETURNING user_id, id as profile_id`,
 		user,
 	)
