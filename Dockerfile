@@ -20,7 +20,7 @@ WORKDIR /root/
 
 COPY --from=builder /app/main .
 COPY --from=builder /app/config/config.json ./config/
-COPY --from=builder /app/v2/db/migrations/ ./v2/db/migrations/
+COPY --from=builder /app/v3/db/migrations/ ./v3/db/migrations/
 
 EXPOSE 8000
 
