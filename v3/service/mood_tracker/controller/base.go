@@ -19,11 +19,11 @@ func NewController(router *echo.Group, svc mood_tracker.Service) {
 
 	mood := router.Group("/mood")
 	{
+		mood.GET("", controller.ListMoodData)
 		mood.POST("", controller.NewMood, middleware.AuthorizeTokenJWT)
-		mood.GET("", controller.ListMoodToday, middleware.AuthorizeTokenJWT)
+		mood.GET("/today", controller.ListMoodToday, middleware.AuthorizeTokenJWT)
 		mood.GET("/week", controller.ListMoodWeekly, middleware.AuthorizeTokenJWT)
 		mood.GET("/month", controller.ListMoodMonthly, middleware.AuthorizeTokenJWT)
-		mood.GET("/master", controller.ListMoodData)
 	}
 }
 

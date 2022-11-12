@@ -25,12 +25,12 @@ func NewController(router *echo.Group, svc auth.Service) {
 		auth.POST("/resend", controller.ResendActivationCode)
 		auth.POST("/password/reset", controller.ResetPassword)
 		auth.POST("/password/change", controller.ChangePassword)
-		auth.POST("/delete", controller.DeleteUser)
 	}
 	user := router.Group("/user")
 	{
 		user.GET("/me", controller.GetUserMe, middleware.AuthorizeTokenJWT)
 		user.PUT("/me", controller.UpdateUserMe, middleware.AuthorizeTokenJWT)
 		user.POST("/me/upload/photo", controller.UploadProfilePhoto, middleware.AuthorizeTokenJWT)
+		user.POST("/delete", controller.DeleteUser)
 	}
 }
