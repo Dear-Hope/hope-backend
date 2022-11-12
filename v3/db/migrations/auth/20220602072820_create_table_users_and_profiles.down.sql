@@ -1,0 +1,6 @@
+BEGIN;
+
+DROP TABLE IF EXISTS "auth".profiles;
+DROP TABLE IF EXISTS "auth".user;
+
+COMMIT;
