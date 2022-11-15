@@ -6,6 +6,7 @@ import (
 	"HOPE-backend/v3/service/auth/helper"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
@@ -26,6 +27,10 @@ func (ths *controller) RefreshToken(c echo.Context) error {
 
 	if rtClaims, ok := refreshToken.Claims.(jwt.MapClaims); ok && refreshToken.Valid {
 		if rtClaims["refresh"] == true {
+			if rtClaims["expires"].(int64) < time.Now().Unix() {
+				res.Error = "refresh token has expired"
+				return c.JSON(http.StatusUnauthorized, res)
+			}
 			userID := rtClaims["userID"].(float64)
 			profileID := rtClaims["profileID"].(float64)
 			isActive := rtClaims["isActive"].(bool)

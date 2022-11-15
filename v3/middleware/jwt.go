@@ -4,6 +4,7 @@ import (
 	"HOPE-backend/v3/model"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
@@ -28,6 +29,10 @@ func AuthorizeTokenJWT(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			if claims["expires"].(int64) < time.Now().Unix() {
+				res.Error = "access token has expired"
+				return c.JSON(http.StatusUnauthorized, res)
+			}
 			if !claims["isActive"].(bool) {
 				res.Error = "account has not been activated yet"
 				return c.JSON(http.StatusUnauthorized, res)
