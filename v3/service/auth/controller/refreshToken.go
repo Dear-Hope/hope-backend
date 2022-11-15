@@ -27,7 +27,7 @@ func (ths *controller) RefreshToken(c echo.Context) error {
 
 	if rtClaims, ok := refreshToken.Claims.(jwt.MapClaims); ok && refreshToken.Valid {
 		if rtClaims["refresh"] == true {
-			if rtClaims["expires"].(int64) < time.Now().Unix() {
+			if int64(rtClaims["expires"].(float64)) < time.Now().Unix() {
 				res.Error = "refresh token has expired"
 				return c.JSON(http.StatusUnauthorized, res)
 			}

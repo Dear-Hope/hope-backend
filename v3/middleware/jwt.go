@@ -29,7 +29,7 @@ func AuthorizeTokenJWT(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			if claims["expires"].(int64) < time.Now().Unix() {
+			if int64(claims["expires"].(float64)) < time.Now().Unix() {
 				res.Error = "access token has expired"
 				return c.JSON(http.StatusUnauthorized, res)
 			}
