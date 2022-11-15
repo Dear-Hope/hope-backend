@@ -16,7 +16,7 @@ func GenerateTokenPair(userID, profileID uint, isActive bool) (*model.TokenPairR
 	atClaims["userID"] = userID
 	atClaims["profileID"] = profileID
 	atClaims["isActive"] = isActive
-	atClaims["expires"] = time.Now().Add(15 * time.Minute).Unix()
+	atClaims["expires"] = time.Now().Add(1 * time.Minute).Unix()
 
 	at, err := access.SignedString([]byte("hope-secret-key"))
 	if err != nil {
@@ -31,7 +31,7 @@ func GenerateTokenPair(userID, profileID uint, isActive bool) (*model.TokenPairR
 	rtClaims["userID"] = userID
 	rtClaims["profileID"] = profileID
 	rtClaims["isActive"] = isActive
-	rtClaims["expires"] = time.Now().Add(24 * time.Hour).Unix()
+	rtClaims["expires"] = time.Now().Add(5 * time.Minute).Unix()
 
 	rt, err := refresh.SignedString([]byte("hope-secret-key"))
 	if err != nil {

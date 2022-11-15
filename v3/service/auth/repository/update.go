@@ -6,9 +6,14 @@ import (
 )
 
 func (ths *repository) Update(user model.User) (*model.User, error) {
+	queryUser := `SET email = :email, name = :name, alias = :alias`
+	if user.Password != "" {
+		queryUser += `, password = :password`
+	}
+
 	rows, err := ths.db.NamedQuery(
 		`WITH updated_query AS (UPDATE "auth".users
-			SET email = :email, name = :name, alias = :alias
+			`+queryUser+`
 			WHERE id = :user_id RETURNING id
 		)
 		UPDATE "auth".profiles SET job = :job, activities = :activities,
