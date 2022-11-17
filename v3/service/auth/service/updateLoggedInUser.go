@@ -9,11 +9,17 @@ import (
 )
 
 func (ths *service) UpdateLoggedInUser(req model.UpdateRequest) (*model.UserResponse, *model.ServiceError) {
-	newPassword, err := helper.EncryptPassword([]byte(req.Password))
-	if err != nil {
-		return nil, &model.ServiceError{
-			Code: http.StatusInternalServerError,
-			Err:  errors.New(constant.ERROR_UPDATE_USER_FAILED),
+	var (
+		newPassword string
+		err         error
+	)
+	if req.Password != "" {
+		newPassword, err = helper.EncryptPassword([]byte(req.Password))
+		if err != nil {
+			return nil, &model.ServiceError{
+				Code: http.StatusInternalServerError,
+				Err:  errors.New(constant.ERROR_UPDATE_USER_FAILED),
+			}
 		}
 	}
 
