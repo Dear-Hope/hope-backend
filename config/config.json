@@ -9,8 +9,8 @@
         "Timezone": "Asia/Jakarta"
     },
     "MailerConfig": {
-        "ApiKey": "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",
-        "PartnerKey": "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"
+        "ApiKey": "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",
+        "PartnerKey": "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"
     },
     "MigrationFileURL": "file://v3/db/migrations/",
     "CacheConfig": {

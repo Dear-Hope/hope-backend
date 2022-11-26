@@ -10,7 +10,7 @@ import (
 
 	"github.com/patrickmn/go-cache"
 	"github.com/pquerna/otp/totp"
-	sendblue "github.com/sendinblue/APIv3-go-library/lib"
+	sendblue "github.com/sendinblue/APIv3-go-library/v2/lib"
 )
 
 type service struct {

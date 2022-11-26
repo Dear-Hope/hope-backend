@@ -15,7 +15,7 @@ func NewController(router *echo.Group, svc newsletter.Service) {
 		svc: svc,
 	}
 
-	newsletter := router.Group("newsletter")
+	newsletter := router.Group("/newsletter")
 	{
 		newsletter.POST("", controller.NewSubscription)
 		newsletter.DELETE("/:email", controller.DeleteSubscription)

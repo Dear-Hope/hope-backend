@@ -20,7 +20,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	sendblue "github.com/sendinblue/APIv3-go-library/lib"
+	sendblue "github.com/sendinblue/APIv3-go-library/v2/lib"
 )
 
 func Start() {
@@ -47,6 +47,7 @@ func Start() {
 
 	mailerCfg := sendblue.NewConfiguration()
 	mailerCfg.AddDefaultHeader("api-key", config.MailerConfig.ApiKey)
+	log.Println(config.MailerConfig.ApiKey)
 	mailerCfg.AddDefaultHeader("partner-key", config.MailerConfig.PartnerKey)
 	mailer := sendblue.NewAPIClient(mailerCfg)
 

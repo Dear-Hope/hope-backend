@@ -8,7 +8,7 @@ import (
 
 func (ths *repository) Create(newSubscription model.Subscription) error {
 	_, err := ths.db.NamedQuery(
-		`INSERT INTO "newsletter".subscriptions (id, email, subscribed_at) VALUES (:id, :email, :subscribed_at)`,
+		`INSERT INTO "newsletter".subscriptions (email, subscribed_at) VALUES (:email, :subscribed_at)`,
 		&newSubscription,
 	)
 	if err != nil {

@@ -3,7 +3,7 @@ package service
 import (
 	"HOPE-backend/v3/service/newsletter"
 
-	sendblue "github.com/sendinblue/APIv3-go-library/lib"
+	sendblue "github.com/sendinblue/APIv3-go-library/v2/lib"
 )
 
 type service struct {

@@ -7,8 +7,9 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strings"
 
-	sendblue "github.com/sendinblue/APIv3-go-library/lib"
+	sendblue "github.com/sendinblue/APIv3-go-library/v2/lib"
 )
 
 func (ths *service) Subscribe(req model.NewSubscriberRequest) *model.ServiceError {
@@ -19,6 +20,7 @@ func (ths *service) Subscribe(req model.NewSubscriberRequest) *model.ServiceErro
 		}
 	}
 
+	log.Println(req)
 	_, _, err := ths.mailer.ContactsApi.CreateContact(
 		context.Background(),
 		sendblue.CreateContact{
@@ -26,7 +28,7 @@ func (ths *service) Subscribe(req model.NewSubscriberRequest) *model.ServiceErro
 			ListIds: []int64{3},
 		},
 	)
-	if err != nil {
+	if err != nil && !strings.Contains(err.Error(), "400 Bad Request") {
 		log.Printf("failed to subscribe: %s", err.Error())
 		return &model.ServiceError{
 			Code: http.StatusInternalServerError,
