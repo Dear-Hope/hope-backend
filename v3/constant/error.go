@@ -25,3 +25,9 @@ var (
 	ERROR_EMOTION_ALREADY_EXISTS = "this patient emotion for this time frame today is already exists"
 	ERROR_GET_ALL_EMOTION_FAILED = "failed to get all emotions"
 )
+
+var (
+	ERROR_INVALID_EMAIL      = "invalid email given"
+	ERROR_SUBSCRIBE_FAILED   = "failed to subscribe"
+	ERROR_UNSUBSCRIBE_FAILED = "failed to unsubscribe"
+)
