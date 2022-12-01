@@ -12,6 +12,10 @@ import (
 	_newsletterController "HOPE-backend/v3/service/newsletter/controller"
 	_newsletterRepo "HOPE-backend/v3/service/newsletter/repository"
 	_newsletterService "HOPE-backend/v3/service/newsletter/service"
+
+	_movieController "HOPE-backend/v3/service/selfcare/movie/controller"
+	_movieRepo "HOPE-backend/v3/service/selfcare/movie/repository"
+	_movieService "HOPE-backend/v3/service/selfcare/movie/service"
 	"log"
 	"net/http"
 
@@ -62,6 +66,10 @@ func Start() {
 	newsletterRepo := _newsletterRepo.NewRepository(database)
 	newsletterSvc := _newsletterService.NewService(newsletterRepo, mailer)
 	_newsletterController.NewController(v3, newsletterSvc)
+
+	movieRepo := _movieRepo.NewRepository(database)
+	movieSvc := _movieService.NewService(movieRepo)
+	_movieController.NewController(v3, movieSvc)
 
 	router.Logger.Fatal(router.Start(":8000"))
 }

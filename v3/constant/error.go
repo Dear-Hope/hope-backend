@@ -31,3 +31,13 @@ var (
 	ERROR_SUBSCRIBE_FAILED   = "failed to subscribe"
 	ERROR_UNSUBSCRIBE_FAILED = "failed to unsubscribe"
 )
+
+var (
+	ERROR_MOVIE_MINIMAL_ONE_MOOD    = "movie must be associated with minimal 1 mood"
+	ERROR_MOVIE_ALREADY_EXISTS      = "movie already exists"
+	ERROR_CREATE_MOVIE_FAILED       = "failed to create new movie"
+	ERROR_STORE_MOVIE_DETAIL_FAILED = "failed to store new movie %s detail"
+	ERROR_GET_LIST_MOVIE_FAILED     = "failed to get list movies"
+	ERROR_GET_MOVIE_FAILED          = "failed to get detail movie"
+	ERROR_MOVIE_NOT_FOUND           = "movie not found with given id"
+)
