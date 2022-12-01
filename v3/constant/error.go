@@ -41,3 +41,8 @@ var (
 	ERROR_GET_MOVIE_FAILED          = "failed to get detail movie"
 	ERROR_MOVIE_NOT_FOUND           = "movie not found with given id"
 )
+
+var (
+	ERROR_GET_LIST_CATEGORIES_FAILED    = "failed to get list categories"
+	ERROR_GET_TOTAL_PER_CATEGORY_FAILED = "failed to get total per category"
+)

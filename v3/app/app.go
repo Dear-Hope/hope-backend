@@ -16,6 +16,10 @@ import (
 	_movieController "HOPE-backend/v3/service/selfcare/movie/controller"
 	_movieRepo "HOPE-backend/v3/service/selfcare/movie/repository"
 	_movieService "HOPE-backend/v3/service/selfcare/movie/service"
+
+	_categoryController "HOPE-backend/v3/service/selfcare/category/controller"
+	_categoryRepo "HOPE-backend/v3/service/selfcare/category/repository"
+	_categoryService "HOPE-backend/v3/service/selfcare/category/service"
 	"log"
 	"net/http"
 
@@ -70,6 +74,10 @@ func Start() {
 	movieRepo := _movieRepo.NewRepository(database)
 	movieSvc := _movieService.NewService(movieRepo)
 	_movieController.NewController(v3, movieSvc)
+
+	categoryRepo := _categoryRepo.NewRepository(database)
+	categorySvc := _categoryService.NewService(categoryRepo)
+	_categoryController.NewController(v3, categorySvc)
 
 	router.Logger.Fatal(router.Start(":8000"))
 }
