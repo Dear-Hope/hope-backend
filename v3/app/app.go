@@ -20,6 +20,10 @@ import (
 	_categoryController "HOPE-backend/v3/service/selfcare/category/controller"
 	_categoryRepo "HOPE-backend/v3/service/selfcare/category/repository"
 	_categoryService "HOPE-backend/v3/service/selfcare/category/service"
+
+	_breathingExerciseController "HOPE-backend/v3/service/selfcare/breathing_exercise/controller"
+	_breathingExerciseRepo "HOPE-backend/v3/service/selfcare/breathing_exercise/repository"
+	_breathingExerciseService "HOPE-backend/v3/service/selfcare/breathing_exercise/service"
 	"log"
 	"net/http"
 
@@ -78,6 +82,10 @@ func Start() {
 	categoryRepo := _categoryRepo.NewRepository(database)
 	categorySvc := _categoryService.NewService(categoryRepo)
 	_categoryController.NewController(v3, categorySvc)
+
+	breathingExerciseRepo := _breathingExerciseRepo.NewRepository(database)
+	breathingExerciseSvc := _breathingExerciseService.NewService(breathingExerciseRepo)
+	_breathingExerciseController.NewController(v3, breathingExerciseSvc)
 
 	router.Logger.Fatal(router.Start(":8000"))
 }

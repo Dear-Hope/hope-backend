@@ -12,11 +12,10 @@ import (
 func (ths *controller) ListCategory(c echo.Context) error {
 	var res model.Response
 
-	movies, svcErr := ths.svc.List(
+	categories, svcErr := ths.svc.List(
 		filter.ListCategory{
 			ExcludeIDs: []uint{
 				uint(constant.CATEGORY_AUDIO_SELF_HEALING_ID),
-				uint(constant.CATEGORY_BREATHING_EXERCISE_ID),
 				uint(constant.CATEGORY_MUSIC_ID),
 			},
 		},
@@ -26,6 +25,6 @@ func (ths *controller) ListCategory(c echo.Context) error {
 		return c.JSON(svcErr.Code, res)
 	}
 
-	res.Result = movies
+	res.Result = categories
 	return c.JSON(http.StatusOK, res)
 }

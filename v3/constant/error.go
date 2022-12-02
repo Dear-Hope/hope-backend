@@ -46,3 +46,9 @@ var (
 	ERROR_GET_LIST_CATEGORIES_FAILED    = "failed to get list categories"
 	ERROR_GET_TOTAL_PER_CATEGORY_FAILED = "failed to get total per category"
 )
+
+var (
+	ERROR_GET_LIST_BREATHING_EXERCISES_FAILED = "failed to get list breathing exercises"
+	ERROR_SET_LAST_PLAYED_FAILED              = "failed to set last played breathing exercise"
+	ERROR_GET_LAST_PLAYED_FAILED              = "failed to get last played breathing exercise"
+)
