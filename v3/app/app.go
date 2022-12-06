@@ -24,6 +24,10 @@ import (
 	_breathingExerciseController "HOPE-backend/v3/service/selfcare/breathing_exercise/controller"
 	_breathingExerciseRepo "HOPE-backend/v3/service/selfcare/breathing_exercise/repository"
 	_breathingExerciseService "HOPE-backend/v3/service/selfcare/breathing_exercise/service"
+
+	_selfHealingAudioController "HOPE-backend/v3/service/selfcare/self_healing_audio/controller"
+	_selfHealingAudioRepo "HOPE-backend/v3/service/selfcare/self_healing_audio/repository"
+	_selfHealingAudioService "HOPE-backend/v3/service/selfcare/self_healing_audio/service"
 	"log"
 	"net/http"
 
@@ -86,6 +90,10 @@ func Start() {
 	breathingExerciseRepo := _breathingExerciseRepo.NewRepository(database)
 	breathingExerciseSvc := _breathingExerciseService.NewService(breathingExerciseRepo)
 	_breathingExerciseController.NewController(v3, breathingExerciseSvc)
+
+	selfHealingAudioRepo := _selfHealingAudioRepo.NewRepository(database)
+	selfHealingAudioSvc := _selfHealingAudioService.NewService(selfHealingAudioRepo)
+	_selfHealingAudioController.NewController(v3, selfHealingAudioSvc)
 
 	router.Logger.Fatal(router.Start(":8000"))
 }
