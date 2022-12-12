@@ -15,7 +15,6 @@ func (ths *controller) ListCategory(c echo.Context) error {
 	categories, svcErr := ths.svc.List(
 		filter.ListCategory{
 			ExcludeIDs: []uint{
-				uint(constant.CATEGORY_AUDIO_SELF_HEALING_ID),
 				uint(constant.CATEGORY_MUSIC_ID),
 			},
 		},

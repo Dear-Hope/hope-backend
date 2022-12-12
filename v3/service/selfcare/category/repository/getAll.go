@@ -11,7 +11,7 @@ import (
 func (ths *repository) GetAll(f filter.ListCategory) (model.Categories, error) {
 	var categories model.Categories
 
-	query := `SELECT id, name FROM ` + model.Category{}.TableWithSchemaName()
+	query := `SELECT id, name, image_url, description FROM ` + model.Category{}.TableWithSchemaName()
 
 	if f.ExcludeIDs != nil && len(f.ExcludeIDs) > 0 {
 		var ids []string
