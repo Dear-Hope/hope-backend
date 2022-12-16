@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	sendblue "github.com/sendinblue/APIv3-go-library/v2/lib"
+	sendblue "github.com/sendinblue/APIv3-go-library/lib"
 )
 
 func (ths *service) Subscribe(req model.NewSubscriberRequest) *model.ServiceError {

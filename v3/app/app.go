@@ -36,7 +36,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	sendblue "github.com/sendinblue/APIv3-go-library/v2/lib"
+	sendblue "github.com/sendinblue/APIv3-go-library/lib"
 )
 
 func Start() {

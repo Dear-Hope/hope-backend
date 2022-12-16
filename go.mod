@@ -13,7 +13,6 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pquerna/otp v1.3.0
 	github.com/sendinblue/APIv3-go-library v2.0.0+incompatible
-	github.com/sendinblue/APIv3-go-library/v2 v2.1.0
 	github.com/smartystreets/goconvey v1.7.2
 	github.com/spf13/viper v1.13.0
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
