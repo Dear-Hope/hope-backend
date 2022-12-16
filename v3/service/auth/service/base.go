@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"time"
 
 	"github.com/patrickmn/go-cache"
 	"github.com/pquerna/otp/totp"
@@ -70,6 +71,7 @@ func sendKey(mailer *sendblue.APIClient, template model.EmailTemplate) error {
 			},
 			Subject:     template.Subject,
 			HtmlContent: template.Content,
+			ScheduledAt: time.Now().Add(5 * time.Second),
 		},
 	)
 	if err != nil {
