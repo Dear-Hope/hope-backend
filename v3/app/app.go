@@ -28,6 +28,11 @@ import (
 	_selfHealingAudioController "HOPE-backend/v3/service/selfcare/self_healing_audio/controller"
 	_selfHealingAudioRepo "HOPE-backend/v3/service/selfcare/self_healing_audio/repository"
 	_selfHealingAudioService "HOPE-backend/v3/service/selfcare/self_healing_audio/service"
+
+	_storyroomController "HOPE-backend/v3/service/storyroom/controller"
+	_storyroomRepo "HOPE-backend/v3/service/storyroom/repository"
+	_storyroomService "HOPE-backend/v3/service/storyroom/service"
+
 	"log"
 	"net/http"
 
@@ -94,6 +99,10 @@ func Start() {
 	selfHealingAudioRepo := _selfHealingAudioRepo.NewRepository(database)
 	selfHealingAudioSvc := _selfHealingAudioService.NewService(selfHealingAudioRepo)
 	_selfHealingAudioController.NewController(v3, selfHealingAudioSvc)
+
+	storyroomRepo := _storyroomRepo.NewRepository(database)
+	storyroomSvc := _storyroomService.NewService(storyroomRepo)
+	_storyroomController.NewController(v3, storyroomSvc)
 
 	router.Logger.Fatal(router.Start(":8000"))
 }
