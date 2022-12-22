@@ -60,3 +60,23 @@ var (
 	ERROR_GET_SELF_HEALING_AUDIO_FAILED             = "failed to get self healing audio"
 	ERROR_SELF_HEALING_AUDIO_NOT_FOUND              = "self healing audio not found with given id"
 )
+
+var (
+	ERROR_POST_MINIMAL_ONE_CATEGORY         = "post must be associated with minimal 1 category"
+	ERROR_POST_ALREADY_EXISTS               = "post already exists"
+	ERROR_COMMENT_ALREADY_EXISTS            = "comment already exists"
+	ERROR_CREATE_POST_FAILED                = "failed to create new post"
+	ERROR_CREATE_COMMENT_FAILED             = "failed to create new comment on post id %d"
+	ERROR_CREATE_CATEGORY_POST_FAILED       = "failed to associate category on post id %d"
+	ERROR_GET_LIST_POST_FAILED              = "failed to get list posts"
+	ERROR_GET_CATEGORY_BY_POST_ID_FAILED    = "failed to get category on post id %d"
+	ERROR_GET_COMMENT_BY_POST_ID_FAILED     = "failed to get comment on post id %d"
+	ERROR_GET_POST_FAILED                   = "failed to get detail post"
+	ERROR_POST_NOT_FOUND                    = "post not found with given id"
+	ERROR_DELETE_POST_FAILED                = "failed to delete post"
+	ERROR_DELETE_COMMENT_BY_POST_ID_FAILED  = "failed to delete comment on post id %d"
+	ERROR_DELETE_CATEGORY_BY_POST_ID_FAILED = "failed to delete category on post id %d"
+	ERROR_DELETE_LIKE_BY_POST_ID_FAILED     = "failed to delete like on post id %d"
+	ERROR_GET_LIST_CATEGORY_FAILED          = "failed to get list categories"
+	ERROR_UPSERT_LIKE_FAILED                = "failed to like/unlike the post id %d"
+)
