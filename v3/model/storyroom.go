@@ -35,8 +35,9 @@ type (
 	Comments []Comment
 
 	PostCategory struct {
-		ID   uint   `db:"id"`
-		Name string `db:"name"`
+		ID       uint   `db:"id"`
+		Name     string `db:"name"`
+		ImageURL string `db:"image_url"`
 	}
 
 	PostCategories []PostCategory
@@ -105,8 +106,9 @@ func (ths Comment) ToCommentResponse() *CommentResponse {
 
 func (ths PostCategory) ToPostCategoryResponse() *PostCategoryResponse {
 	return &PostCategoryResponse{
-		ID:   ths.ID,
-		Name: ths.Name,
+		ID:       ths.ID,
+		Name:     ths.Name,
+		ImageURL: ths.ImageURL,
 	}
 }
 
@@ -146,8 +148,9 @@ type (
 	}
 
 	PostCategoryResponse struct {
-		ID   uint   `json:"id"`
-		Name string `json:"name"`
+		ID       uint   `json:"id"`
+		Name     string `json:"name"`
+		ImageURL string `json:"image_url"`
 	}
 
 	PostRequest struct {

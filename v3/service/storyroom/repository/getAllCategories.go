@@ -10,7 +10,7 @@ func (ths *repository) GetAllCategories() (model.PostCategories, error) {
 
 	err := ths.db.Select(
 		&categories,
-		`SELECT id, name FROM "storyroom".categories`,
+		`SELECT id, name, image_url FROM "storyroom".categories`,
 	)
 	if err != nil {
 		log.Printf("get all categories: %s", err.Error())

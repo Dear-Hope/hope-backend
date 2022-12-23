@@ -12,7 +12,7 @@ func (ths *service) ListCategories() ([]model.PostCategoryResponse, *model.Servi
 	if err != nil {
 		return nil, &model.ServiceError{
 			Code: http.StatusInternalServerError,
-			Err:  errors.New(constant.ERROR_GET_MOVIE_FAILED),
+			Err:  errors.New(constant.ERROR_GET_LIST_CATEGORY_FAILED),
 		}
 	}
 
