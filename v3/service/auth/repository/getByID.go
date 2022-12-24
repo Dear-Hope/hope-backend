@@ -20,5 +20,34 @@ func (ths *repository) GetByID(id uint) (*model.User, error) {
 		return nil, err
 	}
 
+	var audios model.SelfHealingAudios
+	err = ths.db.Select(
+		&audios,
+		`SELECT a.id, a.duration 
+		FROM "selfcare".self_healing_audio_histories ah, "selfcare".self_healing_audios a 
+		WHERE a.id = ah.audio_id AND ah.user_id = $1`,
+		user.UserID,
+	)
+	if err != nil {
+		log.Printf("user get by id audio stats: %s", err.Error())
+		return nil, err
+	}
+
+	user.TotalAudioPlayed = len(audios)
+	for _, audio := range audios {
+		user.TotalTimePlayed += audio.Duration
+	}
+
+	var totalExercise int
+	err = ths.db.Get(
+		&totalExercise,
+		`SELECT COUNT(id) FROM "selfcare".breathing_exercise_histories WHERE user_id = $1`,
+		user.UserID,
+	)
+	if err != nil {
+		log.Printf("user get by id breath stats: %s", err.Error())
+		return nil, err
+	}
+
 	return &user, nil
 }
