@@ -10,4 +10,5 @@ type Service interface {
 	GetAudio(id uint) (*model.SelfHealingAudioResponse, *model.ServiceError)
 	SetLastPlayed(userID uint, req model.SelfHealingAudioHistoryRequest) *model.ServiceError
 	GetLastPlayed(userID uint) (*model.SelfHealingAudioResponse, *model.ServiceError)
+	ListAudioByMood(moodID, userID uint) ([]model.SelfHealingAudioListResponse, *model.ServiceError)
 }

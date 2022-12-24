@@ -10,4 +10,6 @@ type Repository interface {
 	GetAudioByID(id uint) (*model.SelfHealingAudio, error)
 	StoreHistory(newHistory model.SelfHealingAudioHistory) (*model.SelfHealingAudioHistory, error)
 	GetLastAudio(userID uint) (*model.SelfHealingAudio, error)
+	GetAllAudioByMoodID(moodID uint) (model.SelfHealingAudios, error)
+	GetLastOrderByThemeID(themeID, userID uint) (int, error)
 }

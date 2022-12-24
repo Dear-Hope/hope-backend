@@ -59,6 +59,7 @@ var (
 	ERROR_SELF_HEALING_AUDIO_THEME_NOT_FOUND        = "self healing audio theme not found with given id"
 	ERROR_GET_SELF_HEALING_AUDIO_FAILED             = "failed to get self healing audio"
 	ERROR_SELF_HEALING_AUDIO_NOT_FOUND              = "self healing audio not found with given id"
+	ERROR_GET_LIST_SELF_HEALING_AUDIO_FAILED        = "failed to get list self healing audios"
 )
 
 var (

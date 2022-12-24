@@ -144,17 +144,21 @@ func (ths SelfHealingAudioTheme) ToSelfHealingAudioThemeResponse() *SelfHealingA
 func (ths SelfHealingAudios) ToListSelfHealingAudioResponse(lastPlayedOrder int) []SelfHealingAudioListResponse {
 	items := make([]SelfHealingAudioListResponse, len(ths))
 	for i, audio := range ths {
-		items[i] = SelfHealingAudioListResponse{
-			ID:       audio.ID,
-			Title:    audio.Title,
-			Creator:  audio.ScriptWriter,
-			ImageURL: audio.ImageURL,
-			Duration: audio.Duration,
-			IsLocked: audio.Order > lastPlayedOrder,
-		}
+		items[i] = audio.ToListItemSelfHealingAudioResponse(lastPlayedOrder)
 	}
 
 	return items
+}
+
+func (ths SelfHealingAudio) ToListItemSelfHealingAudioResponse(lastPlayedOrder int) SelfHealingAudioListResponse {
+	return SelfHealingAudioListResponse{
+		ID:       ths.ID,
+		Title:    ths.Title,
+		Creator:  ths.ScriptWriter,
+		ImageURL: ths.ImageURL,
+		Duration: ths.Duration,
+		IsLocked: ths.Order > lastPlayedOrder,
+	}
 }
 
 func (ths SelfHealingAudio) ToSelfHealingAudioResponse() *SelfHealingAudioResponse {

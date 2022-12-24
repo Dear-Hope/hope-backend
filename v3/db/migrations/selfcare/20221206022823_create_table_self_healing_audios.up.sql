@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS "selfcare".self_healing_audio_themes (
 CREATE TABLE IF NOT EXISTS "selfcare".self_healing_audios (
     "id"            bigserial PRIMARY KEY,
     "theme_id"      bigint NOT NULL,
+    "mood_id"       bigint NOT NULL,
     "title"         varchar(100) NOT NULL,
     "description"   text NOT NULL,
     "image_url"     text NOT NULL,

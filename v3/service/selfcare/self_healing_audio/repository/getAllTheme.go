@@ -2,7 +2,6 @@ package repository
 
 import (
 	"HOPE-backend/v3/model"
-	"fmt"
 	"log"
 )
 
@@ -18,7 +17,6 @@ func (ths *repository) GetAllTheme() (model.SelfHealingAudioThemes, error) {
 	}
 
 	for i := range selfHealingAudioThemes {
-		fmt.Println(selfHealingAudioThemes[i].ID)
 		err := ths.db.Get(&selfHealingAudioThemes[i].TotalAudio, `SELECT COUNT(*) AS total_audio FROM `+model.SelfHealingAudio{}.TableWithSchemaName()+` WHERE theme_id = $1`, selfHealingAudioThemes[i].ID)
 		if err != nil {
 			log.Printf("get all self healing audio theme playlist count: %s", err.Error())

@@ -23,5 +23,6 @@ func NewController(router *echo.Group, svc self_healing_audio.Service) {
 		selfHealingAudio.GET("/theme/:id", controller.GetSelfHealingAudioTheme, middleware.AuthorizeTokenJWT)
 		selfHealingAudio.POST("/last-played", controller.SetLastPlayed, middleware.AuthorizeTokenJWT)
 		selfHealingAudio.GET("/last-played", controller.GetLastPlayed, middleware.AuthorizeTokenJWT)
+		selfHealingAudio.GET("/audio", controller.ListSelfHealingAudioByMood, middleware.AuthorizeTokenJWT)
 	}
 }
