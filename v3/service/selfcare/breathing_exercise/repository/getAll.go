@@ -2,15 +2,22 @@ package repository
 
 import (
 	"HOPE-backend/v3/model"
+	"HOPE-backend/v3/service/selfcare/filter"
 	"log"
 )
 
-func (ths *repository) GetAll() (model.BreathingExercises, error) {
+func (ths *repository) GetAll(f filter.ListExercise) (model.BreathingExercises, error) {
 	var breathingExercises model.BreathingExercises
 
-	query := `SELECT id, title, name, repetition, description, benefit FROM ` + model.BreathingExercise{}.TableWithSchemaName()
+	query := `SELECT id, title, name, repetition, description, benefit, implementation FROM ` + model.BreathingExercise{}.TableWithSchemaName()
+	args := []interface{}{}
 
-	err := ths.db.Select(&breathingExercises, query)
+	if f.MoodID > 0 {
+		query += " WHERE mood_id = $1"
+		args = append(args, f.MoodID)
+	}
+
+	err := ths.db.Select(&breathingExercises, query, args...)
 	if err != nil {
 		log.Printf("get all breathing exercises: %s", err.Error())
 		return nil, err

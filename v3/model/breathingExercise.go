@@ -4,12 +4,13 @@ import "time"
 
 type (
 	BreathingExercise struct {
-		ID          uint   `db:"id"`
-		Title       string `db:"title"`
-		Name        string `db:"name"`
-		Repetition  int    `db:"repetition"`
-		Description string `db:"description"`
-		Benefit     string `db:"benefit"`
+		ID             uint   `db:"id"`
+		Title          string `db:"title"`
+		Name           string `db:"name"`
+		Repetition     int    `db:"repetition"`
+		Description    string `db:"description"`
+		Benefit        string `db:"benefit"`
+		Implementation string `db:"implementation"`
 
 		Items BreathingExerciseItems
 	}
@@ -48,12 +49,13 @@ func (ths BreathingExerciseHistory) TableWithSchemaName() string {
 
 type (
 	BreathingExerciseResponse struct {
-		ID          uint   `json:"id"`
-		Title       string `json:"title"`
-		Name        string `json:"name"`
-		Repetition  int    `json:"repetition"`
-		Description string `json:"howToDoDesc"`
-		Benefit     string `json:"benefitDesc"`
+		ID             uint   `json:"id"`
+		Title          string `json:"title"`
+		Name           string `json:"name"`
+		Repetition     int    `json:"repetition"`
+		Description    string `json:"howToDoDesc"`
+		Benefit        string `json:"benefitDesc"`
+		Implementation string `json:"implementationTime"`
 
 		Items []BreathingExerciseItemResponse `json:"items"`
 	}
@@ -76,13 +78,14 @@ func (ths BreathingExercise) ToBreathingExerciseResponse() *BreathingExerciseRes
 	}
 
 	return &BreathingExerciseResponse{
-		ID:          ths.ID,
-		Title:       ths.Title,
-		Name:        ths.Name,
-		Repetition:  ths.Repetition,
-		Description: ths.Description,
-		Benefit:     ths.Benefit,
-		Items:       items,
+		ID:             ths.ID,
+		Title:          ths.Title,
+		Name:           ths.Name,
+		Repetition:     ths.Repetition,
+		Description:    ths.Description,
+		Benefit:        ths.Benefit,
+		Implementation: ths.Implementation,
+		Items:          items,
 	}
 }
 
