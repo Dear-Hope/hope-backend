@@ -19,7 +19,7 @@ func (ths *repository) GetAllAudioByMoodID(moodID uint) (model.SelfHealingAudios
 
 	err := ths.db.Select(
 		&selfHealingAudios,
-		`SELECT id, theme_id, title, image_url, audio_url, description, benefit, voice_over, script_writer, sha.order FROM `+model.SelfHealingAudio{}.TableWithSchemaName()+` sha `+where,
+		`SELECT id, theme_id, title, image_url, script_writer, duration, sha.order FROM `+model.SelfHealingAudio{}.TableWithSchemaName()+` sha `+where,
 		args...,
 	)
 	if err != nil {
