@@ -11,6 +11,7 @@ type (
 		Description    string `db:"description"`
 		Benefit        string `db:"benefit"`
 		Implementation string `db:"implementation"`
+		SubTitle       string `db:"sub_title"`
 
 		Items BreathingExerciseItems
 	}
@@ -56,6 +57,7 @@ type (
 		Description    string `json:"howToDoDesc"`
 		Benefit        string `json:"benefitDesc"`
 		Implementation string `json:"implementationTime"`
+		SubTitle       string `json:"subTitle"`
 
 		Items []BreathingExerciseItemResponse `json:"items"`
 	}
@@ -85,6 +87,7 @@ func (ths BreathingExercise) ToBreathingExerciseResponse() *BreathingExerciseRes
 		Description:    ths.Description,
 		Benefit:        ths.Benefit,
 		Implementation: ths.Implementation,
+		SubTitle:       ths.SubTitle,
 		Items:          items,
 	}
 }

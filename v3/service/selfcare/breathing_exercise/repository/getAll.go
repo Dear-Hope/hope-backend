@@ -9,7 +9,7 @@ import (
 func (ths *repository) GetAll(f filter.ListExercise) (model.BreathingExercises, error) {
 	var breathingExercises model.BreathingExercises
 
-	query := `SELECT id, title, name, repetition, description, benefit, implementation FROM ` + model.BreathingExercise{}.TableWithSchemaName()
+	query := `SELECT id, title, name, repetition, description, benefit, implementation, sub_title FROM ` + model.BreathingExercise{}.TableWithSchemaName()
 	args := []interface{}{}
 
 	if f.MoodID > 0 {
