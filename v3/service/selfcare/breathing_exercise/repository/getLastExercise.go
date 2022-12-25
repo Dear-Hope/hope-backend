@@ -14,7 +14,7 @@ func (ths *repository) GetLastExercise(userID uint) (*model.BreathingExercise, e
 			SELECT exercise_id AS id FROM `+model.BreathingExerciseHistory{}.TableWithSchemaName()+`
 			WHERE user_id = $1 ORDER BY updated_at DESC LIMIT 1
 		)
-		SELECT id, title, name, repetition, description, benefit FROM `+breathingExercise.TableWithSchemaName()+` WHERE id = (SELECT id FROM exercise)
+		SELECT id, title, name, repetition, description, benefit, sub_title FROM `+breathingExercise.TableWithSchemaName()+` WHERE id = (SELECT id FROM exercise)
 		`,
 		userID,
 	)
