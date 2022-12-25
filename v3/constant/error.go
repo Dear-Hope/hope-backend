@@ -81,3 +81,7 @@ var (
 	ERROR_GET_LIST_CATEGORY_FAILED          = "failed to get list categories"
 	ERROR_UPSERT_LIKE_FAILED                = "failed to like/unlike the post id %d"
 )
+
+var (
+	ERROR_GET_LIST_MUSIC_PLAYLIST_FAILED = "failed to get list music playlists"
+)

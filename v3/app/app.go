@@ -29,6 +29,10 @@ import (
 	_selfHealingAudioRepo "HOPE-backend/v3/service/selfcare/self_healing_audio/repository"
 	_selfHealingAudioService "HOPE-backend/v3/service/selfcare/self_healing_audio/service"
 
+	_musicPlaylistController "HOPE-backend/v3/service/selfcare/music/controller"
+	_musicPlaylistRepo "HOPE-backend/v3/service/selfcare/music/repository"
+	_musicPlaylistService "HOPE-backend/v3/service/selfcare/music/service"
+
 	_storyroomController "HOPE-backend/v3/service/storyroom/controller"
 	_storyroomRepo "HOPE-backend/v3/service/storyroom/repository"
 	_storyroomService "HOPE-backend/v3/service/storyroom/service"
@@ -99,6 +103,10 @@ func Start() {
 	selfHealingAudioRepo := _selfHealingAudioRepo.NewRepository(database)
 	selfHealingAudioSvc := _selfHealingAudioService.NewService(selfHealingAudioRepo)
 	_selfHealingAudioController.NewController(v3, selfHealingAudioSvc)
+
+	musicPlaylistRepo := _musicPlaylistRepo.NewRepository(database)
+	musicPlaylistSvc := _musicPlaylistService.NewService(musicPlaylistRepo)
+	_musicPlaylistController.NewController(v3, musicPlaylistSvc)
 
 	storyroomRepo := _storyroomRepo.NewRepository(database)
 	storyroomSvc := _storyroomService.NewService(storyroomRepo)
