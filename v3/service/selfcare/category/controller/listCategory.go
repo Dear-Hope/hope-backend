@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"HOPE-backend/v3/constant"
 	"HOPE-backend/v3/model"
 	"HOPE-backend/v3/service/selfcare/filter"
 	"net/http"
@@ -13,11 +12,7 @@ func (ths *controller) ListCategory(c echo.Context) error {
 	var res model.Response
 
 	categories, svcErr := ths.svc.List(
-		filter.ListCategory{
-			ExcludeIDs: []uint{
-				uint(constant.CATEGORY_MUSIC_ID),
-			},
-		},
+		filter.ListCategory{},
 	)
 	if svcErr != nil {
 		res.Error = svcErr.Err.Error()

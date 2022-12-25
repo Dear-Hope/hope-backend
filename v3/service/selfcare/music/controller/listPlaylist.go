@@ -25,12 +25,12 @@ func (ths *controller) ListPlaylist(c echo.Context) error {
 		}
 	}
 
-	movies, svcErr := ths.svc.List(filter.ListMusic{MoodID: uint(moodID)})
+	playlists, svcErr := ths.svc.List(filter.ListMusic{MoodID: uint(moodID)})
 	if svcErr != nil {
 		res.Error = svcErr.Err.Error()
 		return c.JSON(svcErr.Code, res)
 	}
 
-	res.Result = movies
+	res.Result = playlists
 	return c.JSON(http.StatusOK, res)
 }
