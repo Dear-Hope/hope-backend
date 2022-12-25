@@ -38,9 +38,8 @@ func (ths *repository) GetByID(id uint) (*model.User, error) {
 		user.TotalTimePlayed += audio.Duration
 	}
 
-	var totalExercise int
 	err = ths.db.Get(
-		&totalExercise,
+		&user.LongestStreak,
 		`SELECT COUNT(id) FROM "selfcare".breathing_exercise_histories WHERE user_id = $1`,
 		user.UserID,
 	)
