@@ -3,7 +3,7 @@ package constant
 var (
 	MAP_CATEGORY_TABLENAME map[string]string = map[string]string{
 		"Sinema":             `"selfcare".movies`,
-		"Latihan Pernafasan": `"selfcare".breathing_exercises`,
+		"Latihan Pernapasan": `"selfcare".breathing_exercises`,
 		"Audio Self-Healing": `"selfcare".self_healing_audios`,
 		"Musik":              `"selfcare".music_playlists`,
 	}
