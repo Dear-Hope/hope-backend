@@ -40,7 +40,7 @@ func (ths *service) SaveProfilePhoto(req model.SaveProfilePhotoRequest) (string,
 		}
 	}
 
-	filepath := "https://13.251.114.0.nip.io/" + dirPath
+	filepath := "https://108.136.238.205.nip.io/" + dirPath
 	err = ths.repo.SetProfilePhoto(req.UserID, filepath)
 	if err != nil {
 		return "", &model.ServiceError{
