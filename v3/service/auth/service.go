@@ -13,4 +13,5 @@ type Service interface {
 	SaveProfilePhoto(model.SaveProfilePhotoRequest) (string, *model.ServiceError)
 	ResendActivationCode(model.ResetPasswordRequest) *model.ServiceError
 	DeleteUser(model.ResetPasswordRequest) *model.ServiceError
+	BlockUser(userID uint, req model.BlockUserRequest) *model.ServiceError
 }

@@ -16,6 +16,8 @@ var (
 	ERROR_RESEND_LIMIT_REACHED      = "resend limit reached, please try again after a while"
 	ERROR_UPDATE_USER_FAILED        = "failed to update user"
 	ERROR_SAVE_PROFILE_PHOTO_FAILED = "failed to save user profile photo"
+	ERROR_BLOCK_USER_FAILED         = "failed to block user"
+	ERROR_GET_BLOCKED_USER_FAILED   = "failed to get blocked user"
 )
 
 var (
@@ -80,6 +82,9 @@ var (
 	ERROR_DELETE_LIKE_BY_POST_ID_FAILED     = "failed to delete like on post id %d"
 	ERROR_GET_LIST_CATEGORY_FAILED          = "failed to get list categories"
 	ERROR_UPSERT_LIKE_FAILED                = "failed to like/unlike the post id %d"
+	ERROR_GET_LIST_REASON_FAILED            = "failed to get list report reasons"
+	ERROR_REPORT_POST_FAILED                = "failed to report post with id %d"
+	ERROR_REPORT_POST_MINIMAL_ONE_REASON    = "report must have minimal 1 reason"
 )
 
 var (

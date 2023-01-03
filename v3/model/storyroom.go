@@ -41,6 +41,22 @@ type (
 	}
 
 	PostCategories []PostCategory
+
+	ReportReason struct {
+		ID     uint   `db:"id"`
+		Reason string `db:"reason"`
+	}
+
+	ReportReasons []ReportReason
+
+	Report struct {
+		ID        uint   `db:"id"`
+		UserID    uint   `db:"user_id"`
+		PostID    uint   `db:"post_id"`
+		ReasonID  uint   `db:"reason_id"`
+		Reason    string `db:"reason"`
+		IsDeleted bool   `db:"is_deleted"`
+	}
 )
 
 func (ths Post) TableWithSchemaName() string {
@@ -121,6 +137,31 @@ func (ths PostCategories) ToListPostCategoryResponse() []PostCategoryResponse {
 	return res
 }
 
+func (ths ReportReason) ToReportReasonResponse() *ReportReasonResponse {
+	return &ReportReasonResponse{
+		ID:     ths.ID,
+		Reason: ths.Reason,
+	}
+}
+
+func (ths ReportReasons) ToListReportReasonResponse() []ReportReasonResponse {
+	res := make([]ReportReasonResponse, len(ths))
+	for i, reportReason := range ths {
+		res[i] = *reportReason.ToReportReasonResponse()
+	}
+
+	return res
+}
+
+func (ths Report) ToReportResponse() *ReportResponse {
+	return &ReportResponse{
+		ID:     ths.ID,
+		UserID: ths.UserID,
+		PostID: ths.PostID,
+		Reason: ths.Reason,
+	}
+}
+
 type (
 	Author struct {
 		ID        uint   `json:"id"`
@@ -153,6 +194,18 @@ type (
 		ImageURL string `json:"imageUrl"`
 	}
 
+	ReportReasonResponse struct {
+		ID     uint   `json:"id"`
+		Reason string `json:"reason"`
+	}
+
+	ReportResponse struct {
+		ID     uint   `json:"id"`
+		UserID uint   `json:"userId"`
+		PostID uint   `json:"postId"`
+		Reason string `json:"reason"`
+	}
+
 	PostRequest struct {
 		Content     string `json:"content"`
 		CategoryIDs []uint `json:"categoryIds"`
@@ -160,5 +213,10 @@ type (
 
 	CommentRequest struct {
 		Content string `json:"content"`
+	}
+
+	ReportRequest struct {
+		PostID   uint `json:"postId"`
+		ReasonID uint `json:"reasonId"`
 	}
 )

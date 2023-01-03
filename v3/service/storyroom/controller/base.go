@@ -26,5 +26,7 @@ func NewController(router *echo.Group, svc storyroom.Service) {
 		storyroom.POST("/post/:id/comment", controller.NewComment, middleware.AuthorizeTokenJWT)
 		storyroom.GET("/post/:id/like", controller.LikePost, middleware.AuthorizeTokenJWT)
 		storyroom.GET("/categories", controller.ListCategories, middleware.AuthorizeTokenJWT)
+		storyroom.POST("/post/report", controller.ReportPost, middleware.AuthorizeTokenJWT)
+		storyroom.GET("/post/report/reason", controller.ListReason, middleware.AuthorizeTokenJWT)
 	}
 }

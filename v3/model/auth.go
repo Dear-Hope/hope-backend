@@ -24,6 +24,15 @@ type (
 		TotalTimePlayed  int    `db:"total_time_played"`
 		LongestStreak    int    `db:"longest_streak"`
 	}
+
+	BlockAccount struct {
+		ID            uint `db:"id"`
+		UserID        uint `db:"user_id"`
+		BlockedUserID uint `db:"blocked_user_id"`
+		IsDeleted     bool `db:"is_deleted"`
+	}
+
+	BlockAccounts []BlockAccount
 )
 
 func (ths User) TableWithSchemaName() string {
@@ -32,6 +41,10 @@ func (ths User) TableWithSchemaName() string {
 
 func (ths Profile) TableWithSchemaName() string {
 	return `"auth".profiles`
+}
+
+func (ths BlockAccount) TableWithSchemaName() string {
+	return `"auth".blocked_users`
 }
 
 type (
@@ -129,4 +142,8 @@ type SaveProfilePhotoRequest struct {
 	File      *multipart.File
 	Extension string
 	UserID    uint
+}
+
+type BlockUserRequest struct {
+	BlockedUserID uint `json:"blockedUserId"`
 }

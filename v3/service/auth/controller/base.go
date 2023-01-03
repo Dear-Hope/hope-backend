@@ -32,5 +32,6 @@ func NewController(router *echo.Group, svc auth.Service) {
 		user.PUT("/me", controller.UpdateUserMe, middleware.AuthorizeTokenJWT)
 		user.POST("/me/upload/photo", controller.UploadProfilePhoto, middleware.AuthorizeTokenJWT)
 		user.POST("/delete", controller.DeleteUser)
+		user.POST("/block", controller.BlockUser, middleware.AuthorizeTokenJWT)
 	}
 }

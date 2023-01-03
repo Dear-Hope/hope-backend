@@ -109,7 +109,7 @@ func Start() {
 	_musicPlaylistController.NewController(v3, musicPlaylistSvc)
 
 	storyroomRepo := _storyroomRepo.NewRepository(database)
-	storyroomSvc := _storyroomService.NewService(storyroomRepo)
+	storyroomSvc := _storyroomService.NewService(storyroomRepo, authRepo)
 	_storyroomController.NewController(v3, storyroomSvc)
 
 	router.Logger.Fatal(router.Start(":8000"))

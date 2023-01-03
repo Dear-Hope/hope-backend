@@ -13,4 +13,6 @@ type Service interface {
 	UpsertLike(postID, userID uint) *model.ServiceError
 	DeletePostByID(postID, userID uint) *model.ServiceError
 	ListCategories() ([]model.PostCategoryResponse, *model.ServiceError)
+	ListReason() ([]model.ReportReasonResponse, *model.ServiceError)
+	ReportPost(req model.ReportRequest, userID uint) (*model.ReportResponse, *model.ServiceError)
 }

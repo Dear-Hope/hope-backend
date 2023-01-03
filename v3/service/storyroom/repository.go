@@ -22,4 +22,6 @@ type Repository interface {
 	DeletePostCategoryByPostID(postID uint) error
 	DeleteLikeByPostID(postID uint) error
 	GetAllCategories() (model.PostCategories, error)
+	GetAllReason() (model.ReportReasons, error)
+	StoreReport(newReport model.Report) (*model.Report, error)
 }

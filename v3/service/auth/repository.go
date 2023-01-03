@@ -11,4 +11,6 @@ type Repository interface {
 	SetProfilePhoto(uint, string) error
 	UpdatePassword(uint, string) error
 	DeleteByEmail(string) error
+	CreateBlockedUser(uint, uint) error
+	GetBlockedUserByUserID(userID uint) (model.BlockAccounts, error)
 }

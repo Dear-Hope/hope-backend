@@ -9,6 +9,18 @@ import (
 )
 
 func (ths *service) List(f filter.List, userID uint) ([]model.PostResponse, *model.ServiceError) {
+	blockedUsers, err := ths.authRepo.GetBlockedUserByUserID(userID)
+	if err != nil {
+		return nil, &model.ServiceError{
+			Code: http.StatusInternalServerError,
+			Err:  errors.New(constant.ERROR_GET_BLOCKED_USER_FAILED),
+		}
+	}
+
+	for _, user := range blockedUsers {
+		f.ExcludedID = append(f.ExcludedID, user.BlockedUserID)
+	}
+
 	posts, err := ths.repo.GetAll(f)
 	if err != nil {
 		return nil, &model.ServiceError{
