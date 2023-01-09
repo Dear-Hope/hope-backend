@@ -15,4 +15,5 @@ type Service interface {
 	ListCategories() ([]model.PostCategoryResponse, *model.ServiceError)
 	ListReason() ([]model.ReportReasonResponse, *model.ServiceError)
 	ReportPost(req model.ReportRequest, userID uint) (*model.ReportResponse, *model.ServiceError)
+	ReportComment(req model.ReportCommentRequest, userID uint) (*model.ReportCommentResponse, *model.ServiceError)
 }

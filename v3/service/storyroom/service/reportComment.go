@@ -9,11 +9,11 @@ import (
 	"strings"
 )
 
-func (ths *service) ReportPost(req model.ReportRequest, userID uint) (*model.ReportResponse, *model.ServiceError) {
-	if req.PostID <= 0 {
+func (ths *service) ReportComment(req model.ReportCommentRequest, userID uint) (*model.ReportCommentResponse, *model.ServiceError) {
+	if req.CommentID <= 0 {
 		return nil, &model.ServiceError{
 			Code: http.StatusInternalServerError,
-			Err:  fmt.Errorf(constant.ERROR_REPORT_FAILED, "post", req.PostID),
+			Err:  fmt.Errorf(constant.ERROR_REPORT_FAILED, "comment", req.CommentID),
 		}
 	}
 
@@ -24,13 +24,13 @@ func (ths *service) ReportPost(req model.ReportRequest, userID uint) (*model.Rep
 		}
 	}
 
-	newReport := model.Report{
-		UserID:   userID,
-		PostID:   req.PostID,
-		ReasonID: req.ReasonID,
+	newReport := model.ReportComment{
+		UserID:    userID,
+		CommentID: req.CommentID,
+		ReasonID:  req.ReasonID,
 	}
 
-	report, err := ths.repo.StoreReport(newReport)
+	report, err := ths.repo.StoreReportComment(newReport)
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key") {
 			return nil, &model.ServiceError{
@@ -40,10 +40,10 @@ func (ths *service) ReportPost(req model.ReportRequest, userID uint) (*model.Rep
 		} else {
 			return nil, &model.ServiceError{
 				Code: http.StatusInternalServerError,
-				Err:  fmt.Errorf(constant.ERROR_REPORT_FAILED, "post", req.PostID),
+				Err:  fmt.Errorf(constant.ERROR_REPORT_FAILED, "comment", req.CommentID),
 			}
 		}
 	}
 
-	return report.ToReportResponse(), nil
+	return report.ToReportCommentResponse(), nil
 }

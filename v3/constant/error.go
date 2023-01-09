@@ -83,7 +83,7 @@ var (
 	ERROR_GET_LIST_CATEGORY_FAILED          = "failed to get list categories"
 	ERROR_UPSERT_LIKE_FAILED                = "failed to like/unlike the post id %d"
 	ERROR_GET_LIST_REASON_FAILED            = "failed to get list report reasons"
-	ERROR_REPORT_POST_FAILED                = "failed to report post with id %d"
+	ERROR_REPORT_FAILED                     = "failed to report %s with id %d"
 	ERROR_REPORT_POST_MINIMAL_ONE_REASON    = "report must have minimal 1 reason"
 )
 

@@ -9,6 +9,19 @@ import (
 )
 
 func (ths *service) GetByID(id, userID uint) (*model.PostResponse, *model.ServiceError) {
+	blockedUsers, err := ths.authRepo.GetBlockedUserByUserID(userID)
+	if err != nil {
+		return nil, &model.ServiceError{
+			Code: http.StatusInternalServerError,
+			Err:  errors.New(constant.ERROR_GET_BLOCKED_USER_FAILED),
+		}
+	}
+
+	var excludedIDs []uint
+	for _, user := range blockedUsers {
+		excludedIDs = append(excludedIDs, user.BlockedUserID)
+	}
+
 	post, err := ths.repo.GetByID(id, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -23,7 +36,7 @@ func (ths *service) GetByID(id, userID uint) (*model.PostResponse, *model.Servic
 		}
 	}
 
-	post.Comments, err = ths.repo.GetAllCommentByPostID(post.ID)
+	post.Comments, err = ths.repo.GetAllCommentByPostID(post.ID, excludedIDs)
 	if err != nil {
 		return nil, &model.ServiceError{
 			Code: http.StatusInternalServerError,

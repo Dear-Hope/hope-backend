@@ -1,9 +1,9 @@
 BEGIN;
 
-CREATE TABLE IF NOT EXISTS "storyroom".reports (
+CREATE TABLE IF NOT EXISTS "storyroom".report_comments (
     "id"            bigserial PRIMARY KEY,
     "user_id"       bigint NOT NULL,
-    "post_id"       bigint NOT NULL,
+    "comment_id"    bigint NOT NULL,
     "reason_id"     bigint NOT NULL,
     "is_deleted"    boolean NOT NULL DEFAULT false,
     "created_at"    timestamptz NOT NULL DEFAULT (now()),
@@ -13,9 +13,9 @@ CREATE TABLE IF NOT EXISTS "storyroom".reports (
             REFERENCES "auth".users(id)
             ON UPDATE CASCADE
             ON DELETE CASCADE,
-    CONSTRAINT fk_reported_post
-        FOREIGN KEY (post_id)
-            REFERENCES "storyroom".posts(id)
+    CONSTRAINT fk_reported_comment
+        FOREIGN KEY (comment_id)
+            REFERENCES "storyroom".comments(id)
             ON UPDATE CASCADE
             ON DELETE CASCADE,
     CONSTRAINT fk_report_reason
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS "storyroom".reports (
             ON DELETE CASCADE        
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS "idx_reported_post" 
-    ON "storyroom".reports USING btree ("user_id", "post_id"); 
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_reported_comment" 
+    ON "storyroom".report_comments USING btree ("user_id", "comment_id"); 
 
 COMMIT;

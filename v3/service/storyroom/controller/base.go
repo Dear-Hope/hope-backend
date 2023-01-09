@@ -28,5 +28,6 @@ func NewController(router *echo.Group, svc storyroom.Service) {
 		storyroom.GET("/categories", controller.ListCategories, middleware.AuthorizeTokenJWT)
 		storyroom.POST("/post/report", controller.ReportPost, middleware.AuthorizeTokenJWT)
 		storyroom.GET("/post/report/reason", controller.ListReason, middleware.AuthorizeTokenJWT)
+		storyroom.POST("/comment/report", controller.ReportComment, middleware.AuthorizeTokenJWT)
 	}
 }

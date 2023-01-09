@@ -11,7 +11,7 @@ type Repository interface {
 	StoreComment(newComment model.Comment) (*model.Comment, error)
 	GetAll(f filter.List) (model.Posts, error)
 	GetByID(id, userID uint) (*model.Post, error)
-	GetAllCommentByPostID(postID uint) (model.Comments, error)
+	GetAllCommentByPostID(postID uint, excludedIDs []uint) (model.Comments, error)
 	GetAllCategoryByPostID(postID uint) (model.PostCategories, error)
 	GetTotalCommentsByPostID(postID uint) int
 	GetTotalLikesByPostID(postID uint) int
@@ -24,4 +24,5 @@ type Repository interface {
 	GetAllCategories() (model.PostCategories, error)
 	GetAllReason() (model.ReportReasons, error)
 	StoreReport(newReport model.Report) (*model.Report, error)
+	StoreReportComment(newReport model.ReportComment) (*model.ReportComment, error)
 }

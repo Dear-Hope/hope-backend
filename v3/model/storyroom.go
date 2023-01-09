@@ -57,6 +57,15 @@ type (
 		Reason    string `db:"reason"`
 		IsDeleted bool   `db:"is_deleted"`
 	}
+
+	ReportComment struct {
+		ID        uint   `db:"id"`
+		UserID    uint   `db:"user_id"`
+		CommentID uint   `db:"comment_id"`
+		ReasonID  uint   `db:"reason_id"`
+		Reason    string `db:"reason"`
+		IsDeleted bool   `db:"is_deleted"`
+	}
 )
 
 func (ths Post) TableWithSchemaName() string {
@@ -162,6 +171,15 @@ func (ths Report) ToReportResponse() *ReportResponse {
 	}
 }
 
+func (ths ReportComment) ToReportCommentResponse() *ReportCommentResponse {
+	return &ReportCommentResponse{
+		ID:        ths.ID,
+		UserID:    ths.UserID,
+		CommentID: ths.CommentID,
+		Reason:    ths.Reason,
+	}
+}
+
 type (
 	Author struct {
 		ID        uint   `json:"id"`
@@ -206,6 +224,13 @@ type (
 		Reason string `json:"reason"`
 	}
 
+	ReportCommentResponse struct {
+		ID        uint   `json:"id"`
+		UserID    uint   `json:"userId"`
+		CommentID uint   `json:"commentId"`
+		Reason    string `json:"reason"`
+	}
+
 	PostRequest struct {
 		Content     string `json:"content"`
 		CategoryIDs []uint `json:"categoryIds"`
@@ -218,5 +243,10 @@ type (
 	ReportRequest struct {
 		PostID   uint `json:"postId"`
 		ReasonID uint `json:"reasonId"`
+	}
+
+	ReportCommentRequest struct {
+		CommentID uint `json:"commentId"`
+		ReasonID  uint `json:"reasonId"`
 	}
 )
