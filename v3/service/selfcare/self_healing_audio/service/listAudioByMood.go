@@ -4,7 +4,6 @@ import (
 	"HOPE-backend/v3/constant"
 	"HOPE-backend/v3/model"
 	"errors"
-	"fmt"
 	"net/http"
 )
 
@@ -23,7 +22,7 @@ func (ths *service) ListAudioByMood(moodID, userID uint) ([]model.SelfHealingAud
 		if err != nil {
 			return nil, &model.ServiceError{
 				Code: http.StatusInternalServerError,
-				Err:  fmt.Errorf(constant.ERROR_GET_LAST_PLAYED_FAILED, "self healing audio"),
+				Err:  errors.New(constant.ERROR_GET_LIST_SELF_HEALING_AUDIO_FAILED),
 			}
 		}
 		response = append(response, audio.ToListItemSelfHealingAudioResponse(lastOrderPlayed+1))

@@ -90,3 +90,15 @@ var (
 var (
 	ERROR_GET_LIST_MUSIC_PLAYLIST_FAILED = "failed to get list music playlists"
 )
+
+var (
+	ErrorGetListTopicsFailed     = "gagal mendapatkan daftar topik"
+	ErrorExpertMinimalOneTopic   = "ahli harus memiliki minimal satu topik"
+	ErrorExpertAlreadyExists     = "ahli ini sudah terdaftar"
+	ErrorCreateExpertFailed      = "gagal membuat ahli baru"
+	ErrorGetListExpertsFailed    = "gagal mendapatkan daftar ahli"
+	ErrorExpertNotFound          = "ahli dengan id tersebut tidak ditemukan"
+	ErrorGetExpertFailed         = "gagal mendapatkan detail ahli"
+	ErrorDeleteExpertFailed      = "gagal menghapus ahli"
+	ErrorGetExpertTopicIdsFailed = "gagal mendapatkan topik yang dimiliki ahli"
+)

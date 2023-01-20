@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func (ths repository) Create(user model.User) (*model.User, error) {
+func (ths *repository) Create(user model.User) (*model.User, error) {
 	rows, err := ths.db.NamedQuery(
 		`WITH new_user AS (INSERT INTO `+user.TableWithSchemaName()+` (email, password, name, alias, is_active, secret_key) 
 		VALUES (:email, :password, :name, :alias, :is_active, :secret_key) RETURNING id)
