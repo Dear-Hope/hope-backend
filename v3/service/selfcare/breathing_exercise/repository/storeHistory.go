@@ -19,6 +19,9 @@ func (ths *repository) StoreHistory(newHistory model.BreathingExerciseHistory) (
 		return nil, err
 	}
 
+	defer func() {
+		_ = rows.Close()
+	}()
 	for rows.Next() {
 		if err = rows.Scan(&newHistory.ID); err != nil {
 			log.Printf("new breathing exercise history failed: %s", err.Error())

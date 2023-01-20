@@ -23,6 +23,9 @@ func (ths *repository) StoreComment(newComment model.Comment) (*model.Comment, e
 		return nil, err
 	}
 
+	defer func() {
+		_ = rows.Close()
+	}()
 	for rows.Next() {
 		if err = rows.Scan(&newComment.ID, &newComment.CreatedAt, &newComment.AuthorName, &newComment.AuthorPicURL); err != nil {
 			log.Printf("new post comment failed: %s", err.Error())

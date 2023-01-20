@@ -19,6 +19,9 @@ func (ths *repository) StoreHistory(newAudio model.SelfHealingAudioHistory) (*mo
 		return nil, err
 	}
 
+	defer func() {
+		_ = rows.Close()
+	}()
 	for rows.Next() {
 		if err = rows.Scan(&newAudio.ID); err != nil {
 			log.Printf("new self healing audio history failed: %s", err.Error())

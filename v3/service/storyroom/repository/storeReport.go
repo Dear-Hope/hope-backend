@@ -22,6 +22,9 @@ func (ths *repository) StoreReport(newReport model.Report) (*model.Report, error
 		return nil, err
 	}
 
+	defer func() {
+		_ = rows.Close()
+	}()
 	for rows.Next() {
 		if err = rows.Scan(&newReport.ID, &newReport.Reason); err != nil {
 			log.Printf("new post report failed: %s", err.Error())

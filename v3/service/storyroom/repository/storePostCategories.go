@@ -33,6 +33,7 @@ func (ths *repository) StorePostCategories(postID uint, categoryIDs []uint) (mod
 		}
 
 		categories[i] = category
+		_ = rows.Close()
 	}
 
 	return categories, nil

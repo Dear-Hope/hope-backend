@@ -23,6 +23,9 @@ func (ths *repository) StorePost(newPost model.Post) (*model.Post, error) {
 		return nil, err
 	}
 
+	defer func() {
+		_ = rows.Close()
+	}()
 	for rows.Next() {
 		if err = rows.Scan(&newPost.ID, &newPost.CreatedAt, &newPost.AuthorName, &newPost.AuthorPicURL); err != nil {
 			log.Printf("new post create failed: %s", err.Error())

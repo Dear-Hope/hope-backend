@@ -17,6 +17,9 @@ func (ths *repository) Store(newMovie model.Movie) (*model.Movie, error) {
 		return nil, err
 	}
 
+	defer func() {
+		_ = rows.Close()
+	}()
 	for rows.Next() {
 		if err = rows.Scan(&newMovie.ID); err != nil {
 			log.Printf("new movie create failed: %s", err.Error())

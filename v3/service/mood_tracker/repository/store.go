@@ -22,6 +22,9 @@ func (ths *repository) Store(newEmotion model.Emotion) (*model.Emotion, error) {
 		return nil, err
 	}
 
+	defer func() {
+		_ = rows.Close()
+	}()
 	for rows.Next() {
 		if err = rows.Scan(&newEmotion.ID, &newEmotion.Mood); err != nil {
 			log.Printf("new emotion create failed: %s", err.Error())

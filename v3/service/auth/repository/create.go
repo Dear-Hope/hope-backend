@@ -19,6 +19,9 @@ func (ths *repository) Create(user model.User) (*model.User, error) {
 		return nil, err
 	}
 
+	defer func() {
+		_ = rows.Close()
+	}()
 	for rows.Next() {
 		err = rows.Scan(&user.UserID, &user.ProfileID)
 		if err != nil {

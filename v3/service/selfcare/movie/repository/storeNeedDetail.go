@@ -36,6 +36,7 @@ func (ths *repository) StoreNeedDetail(movieID uint, needIDs []uint) (model.Need
 		}
 
 		needs = append(needs, need)
+		_ = rows.Close()
 	}
 
 	return needs, nil

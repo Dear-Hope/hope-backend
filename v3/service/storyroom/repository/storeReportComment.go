@@ -22,6 +22,9 @@ func (ths *repository) StoreReportComment(newReport model.ReportComment) (*model
 		return nil, err
 	}
 
+	defer func() {
+		_ = rows.Close()
+	}()
 	for rows.Next() {
 		if err = rows.Scan(&newReport.ID, &newReport.Reason); err != nil {
 			log.Printf("new comment report failed: %s", err.Error())

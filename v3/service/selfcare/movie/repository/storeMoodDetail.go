@@ -36,6 +36,7 @@ func (ths *repository) StoreMoodDetail(movieID uint, moodIDs []uint) (model.Mood
 		}
 
 		moods = append(moods, mood)
+		_ = rows.Close()
 	}
 
 	return moods, nil
