@@ -37,6 +37,10 @@ import (
 	_storyroomRepo "HOPE-backend/v3/service/storyroom/repository"
 	_storyroomService "HOPE-backend/v3/service/storyroom/service"
 
+	_counselingController "HOPE-backend/v3/service/counseling/controller"
+	_counselingRepo "HOPE-backend/v3/service/counseling/repository"
+	_counselingService "HOPE-backend/v3/service/counseling/service"
+
 	"log"
 	"net/http"
 
@@ -49,18 +53,18 @@ import (
 )
 
 func Start() {
-	config, err := config.LoadConfig("./config")
+	cfg, err := config.LoadConfig("./config")
 	if err != nil {
 		log.Fatalf("Failed to load app configuration: %s", err)
 	}
 	router := newRouter()
 
-	database := db.NewPostgreSQLDatabase(config.DBConfig)
-	if err := db.RunDBMigrations(config.DBConfig, config.MigrationFileURL); err != nil {
+	database := db.NewPostgreSQLDatabase(cfg.DBConfig)
+	if err := db.RunDBMigrations(cfg.DBConfig, cfg.MigrationFileURL); err != nil {
 		log.Fatalf("failed to migrate database: %s", err)
 	}
 
-	cache := db.NewInmemCache(config.CacheConfig)
+	cache := db.NewInmemCache(cfg.CacheConfig)
 
 	router.Static("/assets", "./assets")
 
@@ -71,9 +75,9 @@ func Start() {
 	v3 := router.Group("/api/v3")
 
 	mailerCfg := sendblue.NewConfiguration()
-	mailerCfg.AddDefaultHeader("api-key", config.MailerConfig.ApiKey)
-	log.Println(config.MailerConfig.ApiKey)
-	mailerCfg.AddDefaultHeader("partner-key", config.MailerConfig.PartnerKey)
+	mailerCfg.AddDefaultHeader("api-key", cfg.MailerConfig.ApiKey)
+	log.Println(cfg.MailerConfig.ApiKey)
+	mailerCfg.AddDefaultHeader("partner-key", cfg.MailerConfig.PartnerKey)
 	mailer := sendblue.NewAPIClient(mailerCfg)
 
 	authRepo := _authRepo.NewRepository(database)
@@ -111,6 +115,10 @@ func Start() {
 	storyroomRepo := _storyroomRepo.NewRepository(database)
 	storyroomSvc := _storyroomService.NewService(storyroomRepo, authRepo)
 	_storyroomController.NewController(v3, storyroomSvc)
+
+	counselingRepo := _counselingRepo.NewRepository(database)
+	counselingSvc := _counselingService.NewService(counselingRepo)
+	_counselingController.NewController(v3, counselingSvc)
 
 	router.Logger.Fatal(router.Start(":8000"))
 }
