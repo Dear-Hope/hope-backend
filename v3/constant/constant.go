@@ -10,4 +10,7 @@ var (
 	CATEGORY_BREATHING_EXERCISE_ID = 2
 	CATEGORY_AUDIO_SELF_HEALING_ID = 3
 	CATEGORY_MUSIC_ID              = 4
+
+	FormatDate = "2006-01-02"
+	HourInSec  = 3600
 )
