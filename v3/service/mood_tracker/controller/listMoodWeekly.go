@@ -3,7 +3,6 @@ package controller
 import (
 	"HOPE-backend/v3/model"
 	"HOPE-backend/v3/service/mood_tracker/filter"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -16,8 +15,6 @@ func (ths *controller) ListMoodWeekly(c echo.Context) error {
 	currentUserID := c.Get("userID").(uint)
 
 	periodFrom, periodTo := getDayOfWeek()
-	fmt.Println(periodFrom)
-	fmt.Println(periodTo)
 
 	emotions, svcErr := ths.svc.List(currentUserID, filter.List{
 		PeriodFrom: &periodFrom,
@@ -40,7 +37,6 @@ func getDayOfWeek() (int64, int64) { //get monday 00:00:00
 	}
 	year, month, day := tm.Date()
 	currentZeroDay := time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
-	fmt.Println(currentZeroDay)
 	return currentZeroDay.Add(-1 * (weekday - 1) * 24 * time.Hour).UnixMilli(),
 		currentZeroDay.Add(1*(7-weekday)*24*time.Hour).Add(24*time.Hour).UnixMilli() - 1000
 }

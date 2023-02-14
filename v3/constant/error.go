@@ -102,3 +102,10 @@ var (
 	ErrorDeleteExpertFailed      = "gagal menghapus ahli"
 	ErrorGetExpertTopicIdsFailed = "gagal mendapatkan topik yang dimiliki ahli"
 )
+
+var (
+	ErrorUpcomingScheduleNotFound        = "jadwal sesi berikutnya dari ahli dengan id tersebut tidak ditemukan"
+	ErrorGetExpertUpcomingScheduleFailed = "gagal mendapatkan jadwal ahli sesi berikutnya"
+	ErrorGetListExpertScheduleFailed     = "gagal mendapatkan jadwal ahli"
+	ErrorBookExpertScheduleFailed        = "gagal melakukan pemesanan jadwal ahli"
+)

@@ -120,6 +120,9 @@ func Start() {
 	counselingSvc := _counselingService.NewService(counselingRepo)
 	_counselingController.NewController(v3, counselingSvc)
 
+	defer func() {
+		_ = database.Close()
+	}()
 	router.Logger.Fatal(router.Start(":8000"))
 }
 
