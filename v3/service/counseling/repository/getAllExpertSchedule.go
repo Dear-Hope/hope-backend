@@ -2,14 +2,11 @@ package repository
 
 import (
 	"HOPE-backend/v3/model"
-	"fmt"
 	"log"
 	"time"
 )
 
 func (ths *repository) GetAllExpertSchedule(expertId, typeId int64, start, end time.Time) (model.Consultations, error) {
-	fmt.Println(start)
-	fmt.Println(end)
 	var consuls model.Consultations
 	err := ths.db.Select(
 		&consuls,
