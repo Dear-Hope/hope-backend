@@ -5,9 +5,8 @@ CREATE TABLE IF NOT EXISTS "counseling".consultations (
     "schedule_id"   bigint NOT NULL,
     "type_id"       bigint NOT NULL,
     "user_id"       bigint NULL,
-    "is_booked"     boolean NOT NULL DEFAULT false,
-    "created_at"    timestamptz NOT NULL DEFAULT (now()),
-    "updated_at"    timestamptz NOT NULL DEFAULT (now()),
+    "created_at"    timestamp(6) NOT NULL DEFAULT (now()),
+    "updated_at"    timestamp(6) NOT NULL DEFAULT (now()),
     "is_deleted"    boolean NOT NULL DEFAULT false,
     CONSTRAINT fk_consul_schedule
         FOREIGN KEY (schedule_id)
