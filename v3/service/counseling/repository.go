@@ -17,4 +17,6 @@ type Repository interface {
 	GetExpertUpcomingSchedule(expertId, typeId int64) (*model.Consultation, error)
 	GetAllExpertSchedule(expertId, typeId int64, start, end time.Time) (model.Consultations, error)
 	UpdateExpertScheduleUser(consulId, userId int64) (bool, error)
+	IsExpertAvailable(id uint) (bool, error)
+	StoreExpertSchedule(schedules []model.ScheduleRequest, expertId int64) (int64, error)
 }

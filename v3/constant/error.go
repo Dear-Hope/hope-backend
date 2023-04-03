@@ -109,3 +109,9 @@ var (
 	ErrorGetListExpertScheduleFailed     = "gagal mendapatkan jadwal ahli"
 	ErrorBookExpertScheduleFailed        = "gagal melakukan pemesanan jadwal ahli"
 )
+
+var (
+	ErrorExpertScheduleAlreadyExists = "jadwal untuk ahli ini sudah ada"
+	ErrorCreateExpertScheduleFailed  = "gagal membuat jadwal ahli"
+	ErrorExpertMinimalOneSchedule    = "ahli harus mengisi minimal satu jadwal"
+)

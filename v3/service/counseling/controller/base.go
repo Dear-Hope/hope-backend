@@ -24,7 +24,9 @@ func NewController(router *echo.Group, svc counseling.Service) {
 		counsel.GET("/expert/:id", controller.DetailExpert, middleware.AuthorizeTokenJWT)
 		counsel.PUT("/expert/:id", controller.UpdateExpert, middleware.AuthorizeTokenJWT)
 		counsel.DELETE("/expert/:id", controller.DeleteExpert, middleware.AuthorizeTokenJWT)
+		counsel.GET("/expert/:id/available", controller.GetExpertAvailability, middleware.AuthorizeTokenJWT)
 		counsel.GET("/expert/:id/schedule", controller.ListExpertSchedule, middleware.AuthorizeTokenJWT)
+		counsel.POST("/expert/:id/schedule", controller.NewExpertSchedule, middleware.AuthorizeTokenJWT)
 		counsel.GET("/expert/:id/schedule/next", controller.GetUpcomingSchedule, middleware.AuthorizeTokenJWT)
 		counsel.POST("/expert/:id/schedule/book", controller.BookConsultation, middleware.AuthorizeTokenJWT)
 	}

@@ -15,4 +15,6 @@ type Service interface {
 	GetUpcomingSchedule(expertId, typeId int64) (*model.ConsultationResponse, *model.ServiceError)
 	ListExpertSchedule(f filter.ListExpertSchedule) ([]model.ConsultationResponse, *model.ServiceError)
 	BookExpertSchedule(req model.BookingRequest) (bool, *model.ServiceError)
+	GetExpertAvailability(id uint) (bool, *model.ServiceError)
+	CreateExpertSchedule(req model.NewConsultationRequest, expertId int64) (int64, *model.ServiceError)
 }

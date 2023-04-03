@@ -52,4 +52,14 @@ type (
 		Id     int64 `json:"id"`
 		UserId int64 `json:"userId"`
 	}
+
+	NewConsultationRequest struct {
+		Schedules []ScheduleRequest `json:"schedules"`
+	}
+
+	ScheduleRequest struct {
+		StartAt int64   `json:"startAt"`
+		EndAt   int64   `json:"endAt"`
+		Types   []int64 `json:"types"`
+	}
 )
