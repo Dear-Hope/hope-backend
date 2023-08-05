@@ -9,12 +9,14 @@ type Config struct {
 	MigrationFileUrl string            `yaml:"migrationFileUrl"`
 	Cache            CacheConfig       `yaml:"cache"`
 	FeatureFlag      FeatureFlagConfig `yaml:"featureFlag"`
+	Jwt              JwtConfig         `yaml:"jwt"`
 }
 
 type ServerConfig struct {
 	Name                 string `yaml:"name"`
 	Port                 string `yaml:"port"`
 	ShutdownTimeoutInSec int64  `yaml:"shutdownTimeoutInSec"`
+	SecretKey            string `yaml:"secretKey"`
 }
 
 type SendInBlueConfig struct {
@@ -41,4 +43,9 @@ type InmemCacheConfig struct {
 
 type FeatureFlagConfig struct {
 	RunMigrations bool `yaml:"runMigrations"`
+}
+
+type JwtConfig struct {
+	AccessExpiryInHour  time.Duration `yaml:"accessExpiryInHour"`
+	RefreshExpiryInHour time.Duration `yaml:"refreshExpiryInHour"`
 }

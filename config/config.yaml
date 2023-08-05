@@ -2,6 +2,7 @@ server:
   name: hope-backend
   port: 8000
   shutdownTimeoutInSec: 10
+  secretKey: hope-secret-key
 
 database:
   host: localhost
@@ -15,7 +16,7 @@ mailer:
   apiKey: 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
   partnerKey: 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
 
-migrationFileUrl: file://db/migrations/
+migrationFileUrl: file://scripts/migrations/
 
 cache:
   inmem:
@@ -23,4 +24,8 @@ cache:
     purgeTimeInSecond: 600
 
 featureFlag:
-  runMigrations: false
+  runMigrations: true
+
+jwt:
+  accessExpiryInHour: 24
+  refreshExpiryInHour: 24

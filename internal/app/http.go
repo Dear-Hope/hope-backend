@@ -2,9 +2,12 @@ package app
 
 import (
 	"HOPE-backend/config"
-	"HOPE-backend/infra/db"
+	_authHandler "HOPE-backend/internal/api/auth"
 	"HOPE-backend/internal/api/health"
+	_authRepo "HOPE-backend/internal/repository/auth"
 	"HOPE-backend/internal/server"
+	_authService "HOPE-backend/internal/service/auth"
+	"HOPE-backend/pkg/db"
 	"fmt"
 )
 
@@ -22,11 +25,19 @@ func Init(cfg *config.Config) error {
 		}
 	}
 
+	// Init repository
+	authRepo := _authRepo.New(database)
+
+	// Init service
+	authSvc := _authService.New(authRepo)
+
 	// Init handler
 	healthHandler := &health.Handler{}
+	authHandler := _authHandler.New(authSvc)
 
 	srv := server.Server{
 		HealthHandler: healthHandler,
+		AuthHandler:   authHandler,
 	}
 
 	return srv.Run(cfg.Server.Port, cfg.Server.ShutdownTimeoutInSec)

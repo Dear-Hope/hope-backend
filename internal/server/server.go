@@ -1,7 +1,9 @@
 package server
 
 import (
+	"HOPE-backend/internal/api/auth"
 	"HOPE-backend/internal/api/health"
+	"HOPE-backend/internal/middleware/jwt"
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -16,6 +18,7 @@ import (
 type Server struct {
 	router        *echo.Echo
 	HealthHandler *health.Handler
+	AuthHandler   *auth.Handler
 }
 
 func (s *Server) serve(port string) error {
@@ -33,9 +36,16 @@ func (s *Server) serve(port string) error {
 	s.router.Static("/assets", "./assets")
 
 	// Register health handler
-	s.router.GET("/server/health", s.HealthHandler.Check)
+	s.router.GET("/server/health", s.HealthHandler.Check, jwt.AuthorizeToken, jwt.AuthorizeRole("NORMAL"))
+
+	// Register api group
+	api := s.router.Group("/api")
 
 	// TODO: Register all endpoint below
+
+	// Register auth handler
+	authRouter := api.Group("/auth")
+	authRouter.POST("/register", s.AuthHandler.Register)
 
 	return s.router.Start(":" + port)
 }
