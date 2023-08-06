@@ -4,12 +4,16 @@ import (
 	"HOPE-backend/internal/constant"
 	"HOPE-backend/internal/entity/auth"
 	"HOPE-backend/internal/entity/response"
+	"HOPE-backend/pkg/mailer"
 	"context"
+	"fmt"
+	"github.com/pquerna/otp/totp"
 	"net/http"
 	"strings"
+	"time"
 )
 
-func (ths *service) Register(ctx context.Context, req auth.RegisterRequest) (*auth.TokenPairResponse, *response.ServiceError) {
+func (s *service) Register(ctx context.Context, req auth.RegisterRequest) (*auth.TokenPairResponse, *response.ServiceError) {
 	hashedPassword, err := encryptPassword([]byte(req.Password))
 	if err != nil {
 		return nil, &response.ServiceError{
@@ -38,7 +42,7 @@ func (ths *service) Register(ctx context.Context, req auth.RegisterRequest) (*au
 		Photo:      req.ProfilePhoto,
 		Role:       req.Role,
 	}
-	user, err := ths.repo.CreateUser(ctx, newUser)
+	user, err := s.repo.CreateUser(ctx, newUser)
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key") {
 			return nil, &response.ServiceError{
@@ -64,39 +68,42 @@ func (ths *service) Register(ctx context.Context, req auth.RegisterRequest) (*au
 		}
 	}
 
-	//code, err := totp.GenerateCode(secret, time.Now())
-	//if err != nil {
-	//	return nil, &response.ServiceError{
-	//		Code: http.StatusInternalServerError,
-	//		Err:  errors.New(constant.ERROR_GENERATE_OTP_CODE),
-	//	}
-	//}
-	//
-	//template := response.EmailTemplate{
-	//	Subject: "Account Activation",
-	//	Email:   req.Email,
-	//	Content: fmt.Sprintf(
-	//		`<h4>Hai, %s!</h4>
-	//		</br>
-	//		<p>Selamat datang di keluarga Dear Hope. Mulai detik ini kamu tidak sendiri lagi, karena ada Hope yang menemani. Sebelum kita memulai, kita hanya butuh untuk mengkonfirmasi bahwa ini adalah kamu, silahkan masukkan kode OTP di bawah ini:</p>
-	//		</br>
-	//		<h3>%s</h3>
-	//		</br>
-	//		<p>Semoga harimu menyenangkan</p>`,
-	//		user.Name,
-	//		code,
-	//	),
-	//}
-	//
-	//err = sendKey(ths.mailer, template)
-	//if err != nil {
-	//	return nil, &response.ServiceError{
-	//		Code: http.StatusInternalServerError,
-	//		Err:  err,
-	//	}
-	//}
-	//
-	//ths.cache.SetDefault(req.Email, 0)
+	if !user.IsVerified {
+		code, err := totp.GenerateCode(secret, time.Now())
+		if err != nil {
+			return nil, &response.ServiceError{
+				Code: http.StatusInternalServerError,
+				Msg:  constant.ErrorGenerateOtpCode,
+				Err:  fmt.Errorf("[AuthSvc][010008] failed to generate otp code: %v", err),
+			}
+		}
+
+		err = s.mailer.Send(ctx, mailer.EmailTemplate{
+			Subject:    "Account Activation",
+			To:         req.Email,
+			From:       "no-reply@dearhope.id",
+			SenderName: "Dear Hope",
+			Body: fmt.Sprintf(
+				`<h4>Hai, %s!</h4>
+			</br>
+			<p>Selamat datang di keluarga Dear Hope. Mulai detik ini kamu tidak sendiri lagi, karena ada Hope yang menemani. Sebelum kita memulai, kita hanya butuh untuk mengkonfirmasi bahwa ini adalah kamu, silahkan masukkan kode OTP di bawah ini:</p>
+			</br>
+			<h3>%s</h3>
+			</br>
+			<p>Semoga harimu menyenangkan</p>`,
+				user.Name,
+				code,
+			),
+		})
+		if err != nil {
+			return nil, &response.ServiceError{
+				Code: http.StatusInternalServerError,
+				Err:  err,
+			}
+		}
+
+		s.cache.Set(ctx, req.Email, 0, 0)
+	}
 
 	return tokenPair, nil
 }

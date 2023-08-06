@@ -4,8 +4,8 @@ import "time"
 
 type Config struct {
 	Server           ServerConfig      `yaml:"server"`
-	Database         PostgresConfig    `yaml:"database"`
-	Mailer           SendInBlueConfig  `yaml:"mailer"`
+	Database         DatabaseConfig    `yaml:"database"`
+	Mailer           MailerConfig      `yaml:"mailer"`
 	MigrationFileUrl string            `yaml:"migrationFileUrl"`
 	Cache            CacheConfig       `yaml:"cache"`
 	FeatureFlag      FeatureFlagConfig `yaml:"featureFlag"`
@@ -19,9 +19,17 @@ type ServerConfig struct {
 	SecretKey            string `yaml:"secretKey"`
 }
 
+type MailerConfig struct {
+	SendInBlue SendInBlueConfig `yaml:"sendInBlue"`
+}
+
 type SendInBlueConfig struct {
 	ApiKey     string `yaml:"apiKey"`
 	PartnerKey string `yaml:"partnerKey"`
+}
+
+type DatabaseConfig struct {
+	Postgres PostgresConfig `yaml:"postgres"`
 }
 
 type PostgresConfig struct {

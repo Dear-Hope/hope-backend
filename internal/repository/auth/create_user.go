@@ -6,8 +6,8 @@ import (
 	"fmt"
 )
 
-func (ths *repository) CreateUser(ctx context.Context, user auth.User) (*auth.User, error) {
-	rows, err := ths.db.NamedQueryContext(ctx,
+func (r *repository) CreateUser(ctx context.Context, user auth.User) (*auth.User, error) {
+	rows, err := r.db.NamedQueryContext(ctx,
 		`WITH new_user AS (
 				INSERT INTO "auth".users (email, password, name, alias, is_verified, secret_key) 
 				VALUES (:email, :password, :name, :alias, :is_verified, :secret_key) RETURNING id

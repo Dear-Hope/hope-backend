@@ -3,7 +3,11 @@ package auth
 import (
 	"HOPE-backend/config"
 	"HOPE-backend/internal/entity/auth"
+	"HOPE-backend/pkg/cache"
+	"HOPE-backend/pkg/helpers"
+	"HOPE-backend/pkg/mailer"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pquerna/otp/totp"
@@ -13,14 +17,17 @@ import (
 
 type Repository interface {
 	CreateUser(ctx context.Context, user auth.User) (*auth.User, error)
+	GetUserByEmail(ctx context.Context, email string) (*auth.User, error)
 }
 
 type service struct {
-	repo Repository
+	repo   Repository
+	mailer mailer.Mailer
+	cache  cache.Cache
 }
 
-func New(repo Repository) *service {
-	return &service{repo: repo}
+func New(repo Repository, mailer mailer.Mailer, cache cache.Cache) *service {
+	return &service{repo: repo, mailer: mailer, cache: cache}
 }
 
 func encryptPassword(password []byte) (string, error) {
@@ -88,4 +95,18 @@ func generateSecretKey(email string) (string, error) {
 	}
 
 	return key.Secret(), nil
+}
+
+func constructKey(user auth.User) (string, error) {
+	userByte, err := json.Marshal(user)
+	if err != nil {
+		return "", fmt.Errorf("[AuthSvc][010008] failed to construct key: %v", err)
+	}
+
+	key, err := helpers.Encrypt(string(userByte))
+	if err != nil {
+		return "", fmt.Errorf("[AuthSvc][010009] failed to encrypt key: %v", err)
+	}
+
+	return key, nil
 }

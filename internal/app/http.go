@@ -7,12 +7,15 @@ import (
 	_authRepo "HOPE-backend/internal/repository/auth"
 	"HOPE-backend/internal/server"
 	_authService "HOPE-backend/internal/service/auth"
+	_cache "HOPE-backend/pkg/cache"
 	"HOPE-backend/pkg/db"
+	_mailer "HOPE-backend/pkg/mailer"
 	"fmt"
 )
 
 func Init(cfg *config.Config) error {
-	database := db.NewPostgresDatabase(cfg.Database)
+	// Init db
+	database := db.NewPostgresDatabase(cfg.Database.Postgres)
 	defer func() {
 		_ = database.Close()
 	}()
@@ -20,16 +23,22 @@ func Init(cfg *config.Config) error {
 	// Run migrations
 	// TODO: move run migrations to dedicated service for migration
 	if cfg.FeatureFlag.RunMigrations {
-		if err := db.RunDBMigrations(cfg.Database, cfg.MigrationFileUrl); err != nil {
+		if err := db.RunDBMigrations(cfg.Database.Postgres, cfg.MigrationFileUrl); err != nil {
 			return fmt.Errorf("failed to migrate database: %v", err)
 		}
 	}
+
+	// Init cache
+	cache := _cache.New(cfg.Cache)
+
+	// Init mailer
+	mailer := _mailer.New(cfg.Mailer)
 
 	// Init repository
 	authRepo := _authRepo.New(database)
 
 	// Init service
-	authSvc := _authService.New(authRepo)
+	authSvc := _authService.New(authRepo, mailer, cache)
 
 	// Init handler
 	healthHandler := &health.Handler{}

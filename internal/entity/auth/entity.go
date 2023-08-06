@@ -27,6 +27,11 @@ type (
 		Alias        string `json:"alias,omitempty"`
 		ProfilePhoto string `json:"profilePhoto,omitempty"`
 	}
+
+	LoginRequest struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
 )
 
 // Responses Section

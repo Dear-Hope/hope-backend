@@ -5,16 +5,18 @@ server:
   secretKey: hope-secret-key
 
 database:
-  host: localhost
-  username: hope
-  password: hope-database-pass
-  name: hope_monolith
-  port: 5432
-  ssl: disable
+  postgres:
+    host: localhost
+    username: hope
+    password: hope-database-pass
+    name: hope_monolith
+    port: 5432
+    ssl: disable
 
 mailer:
-  apiKey: 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
-  partnerKey: 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
+  sendInBlue:
+    apiKey: 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
+    partnerKey: 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
 
 migrationFileUrl: file://scripts/migrations/
 

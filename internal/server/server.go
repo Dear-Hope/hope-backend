@@ -46,6 +46,7 @@ func (s *Server) serve(port string) error {
 	// Register auth handler
 	authRouter := api.Group("/auth")
 	authRouter.POST("/register", s.AuthHandler.Register)
+	authRouter.POST("/login", s.AuthHandler.Login)
 
 	return s.router.Start(":" + port)
 }
