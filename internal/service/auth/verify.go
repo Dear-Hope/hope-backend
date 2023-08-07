@@ -8,10 +8,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/pquerna/otp/totp"
 	"net/http"
 )
 
-func (s *service) Login(ctx context.Context, req auth.LoginRequest) (*auth.TokenPairResponse, *response.ServiceError) {
+func (s *service) Verify(ctx context.Context, req auth.VerifyRequest) (*auth.TokenPairResponse, *response.ServiceError) {
 	user, err := s.repo.GetUserByEmail(ctx, req.Email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -28,24 +29,24 @@ func (s *service) Login(ctx context.Context, req auth.LoginRequest) (*auth.Token
 		}
 	}
 
-	err = comparePassword([]byte(req.Password), []byte(user.Password))
-	if err != nil {
+	if !totp.Validate(req.Code, user.SecretKey) {
 		return nil, &response.ServiceError{
 			Code: http.StatusBadRequest,
-			Msg:  constant.ErrorPasswordNotMatch,
+			Msg:  constant.ErrorOtpCodeExpired,
+			Err:  fmt.Errorf("[AuthSvc.Verify][010012] otp code has expired"),
+		}
+	}
+
+	err = s.repo.VerifyUser(ctx, user.Id)
+	if err != nil {
+		return nil, &response.ServiceError{
+			Code: http.StatusInternalServerError,
+			Msg:  constant.ErrorVerifyUserFailed,
 			Err:  err,
 		}
 	}
 
-	if !user.IsVerified {
-		return nil, &response.ServiceError{
-			Code: http.StatusUnauthorized,
-			Msg:  constant.ErrorAccountNotVerified,
-			Err:  fmt.Errorf("[AuthSvc.Login][010010] account not verified yet"),
-		}
-	}
-
-	tokenPair, err := generateTokenPair(user.Id, user.Role, user.IsVerified)
+	tokenPair, err := generateTokenPair(user.Id, user.Role, true)
 	if err != nil {
 		return nil, &response.ServiceError{
 			Code: http.StatusInternalServerError,

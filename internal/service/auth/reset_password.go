@@ -1,42 +1,49 @@
-package service
+package auth
 
 import (
-	"HOPE-backend/v3/constant"
-	"HOPE-backend/v3/model"
+	"HOPE-backend/internal/constant"
+	"HOPE-backend/internal/entity/response"
+	"HOPE-backend/pkg/mailer"
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
 )
 
-func (ths *service) ResetPassword(req model.ResetPasswordRequest) *model.ServiceError {
-	user, err := ths.repo.GetByEmail(req.Email)
+func (s *service) ResetPassword(ctx context.Context, email string) *response.ServiceError {
+	user, err := s.repo.GetUserByEmail(ctx, email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return &model.ServiceError{
+			return &response.ServiceError{
 				Code: http.StatusNotFound,
-				Err:  errors.New(constant.ERROR_USER_NOT_FOUND),
+				Msg:  constant.ErrorUserNotFound,
+				Err:  err,
 			}
 		}
-		return &model.ServiceError{
+		return &response.ServiceError{
 			Code: http.StatusInternalServerError,
-			Err:  errors.New(constant.ERROR_GET_USER_FAILED),
+			Msg:  constant.ErrorGetUserFailed,
+			Err:  err,
 		}
 	}
 
 	user.Password = ""
 	key, err := constructKey(*user)
 	if err != nil {
-		return &model.ServiceError{
+		return &response.ServiceError{
 			Code: http.StatusInternalServerError,
+			Msg:  constant.ErrorInternalServer,
 			Err:  err,
 		}
 	}
 
-	template := model.EmailTemplate{
-		Subject: "Reset Password",
-		Email:   req.Email,
-		Content: fmt.Sprintf(
+	if err := s.mailer.Send(ctx, mailer.EmailTemplate{
+		Subject:    "Reset Password",
+		To:         email,
+		From:       "no-reply@dearhope.id",
+		SenderName: "Dear Hope",
+		Body: fmt.Sprintf(
 			`<h4>Halo, %s!</h4>
 			</br>
 			<p>Seseorang baru-baru ini meminta pengaturan ulang kata sandi untuk akun Dear Hope Anda. Silakan gunakan tautan ini untuk mengatur ulang kata sandi Anda:</p>
@@ -47,12 +54,10 @@ func (ths *service) ResetPassword(req model.ResetPasswordRequest) *model.Service
 			user.Name,
 			key,
 		),
-	}
-
-	err = sendKey(ths.mailer, template)
-	if err != nil {
-		return &model.ServiceError{
+	}); err != nil {
+		return &response.ServiceError{
 			Code: http.StatusInternalServerError,
+			Msg:  constant.ErrorInternalServer,
 			Err:  err,
 		}
 	}

@@ -3,6 +3,7 @@ package auth
 import (
 	"HOPE-backend/config"
 	"HOPE-backend/internal/entity/auth"
+	"HOPE-backend/internal/entity/user"
 	"HOPE-backend/pkg/cache"
 	"HOPE-backend/pkg/helpers"
 	"HOPE-backend/pkg/mailer"
@@ -16,8 +17,10 @@ import (
 )
 
 type Repository interface {
-	CreateUser(ctx context.Context, user auth.User) (*auth.User, error)
-	GetUserByEmail(ctx context.Context, email string) (*auth.User, error)
+	CreateUser(ctx context.Context, user user.User) (*user.User, error)
+	GetUserByEmail(ctx context.Context, email string) (*user.User, error)
+	VerifyUser(ctx context.Context, id uint64) error
+	UpdateUser(ctx context.Context, user user.User) (*user.User, error)
 }
 
 type service struct {
@@ -97,7 +100,7 @@ func generateSecretKey(email string) (string, error) {
 	return key.Secret(), nil
 }
 
-func constructKey(user auth.User) (string, error) {
+func constructKey(user user.User) (string, error) {
 	userByte, err := json.Marshal(user)
 	if err != nil {
 		return "", fmt.Errorf("[AuthSvc][010008] failed to construct key: %v", err)

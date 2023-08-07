@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS "auth".user_profiles (
     "total_audio_played"    int NOT NULL,
     "total_time_played"     int NOT NULL,
     "longest_streak"        int NOT NULL,
-    "created_at"            timestamp(6) NOT NULL DEFAULT (NOW()),
-    "updated_at"            timestamp(6) NOT NULL DEFAULT (NOW()),
+    "created_at"            timestamp(6) NOT NULL DEFAULT (TIMEZONE('UTC', NOW())),
+    "updated_at"            timestamp(6) NOT NULL DEFAULT (TIMEZONE('UTC', NOW())),
     "is_deleted"            boolean NOT NULL DEFAULT false,
     CONSTRAINT fk_profile_user
         FOREIGN KEY (user_id)

@@ -1,12 +1,12 @@
-package auth
+package user
 
 import (
-	"HOPE-backend/internal/entity/auth"
+	"HOPE-backend/internal/entity/user"
 	"context"
 	"fmt"
 )
 
-func (r *repository) CreateUser(ctx context.Context, user auth.User) (*auth.User, error) {
+func (r *repository) CreateUser(ctx context.Context, req user.User) (*user.User, error) {
 	rows, err := r.db.NamedQueryContext(ctx,
 		`WITH new_user AS (
 				INSERT INTO "auth".users (email, password, name, alias, is_verified, secret_key) 
@@ -19,20 +19,20 @@ func (r *repository) CreateUser(ctx context.Context, user auth.User) (*auth.User
 			INSERT INTO "auth".user_roles (user_id, role_name)
 			VALUES ((SELECT id from new_user), :role)
 			RETURNING user_id AS id`,
-		user,
+		req,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("[AuthRepo.Create][010006] Failed: %v", err)
+		return nil, fmt.Errorf("[UserRepo.Create][010006] Failed: %v", err)
 	}
 
 	defer func() {
 		_ = rows.Close()
 	}()
 	for rows.Next() {
-		err = rows.Scan(&user.Id)
+		err = rows.Scan(&req.Id)
 		if err != nil {
-			return nil, fmt.Errorf("[AuthRepo.Create][010007] Failed: %v", err)
+			return nil, fmt.Errorf("[UserRepo.Create][010007] Failed: %v", err)
 		}
 	}
-	return &user, nil
+	return &req, nil
 }

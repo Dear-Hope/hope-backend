@@ -2,8 +2,8 @@ CREATE TABLE IF NOT EXISTS "auth".user_roles(
     "id"            bigserial PRIMARY KEY,
     "user_id"       bigint NOT NULL,
     "role_name"          varchar(100) NOT NULL,
-    "created_at"    timestamp(6) NOT NULL DEFAULT (NOW()),
-    "updated_at"    timestamp(6) NOT NULL DEFAULT (NOW()),
+    "created_at"    timestamp(6) NOT NULL DEFAULT (TIMEZONE('UTC', NOW())),
+    "updated_at"    timestamp(6) NOT NULL DEFAULT (TIMEZONE('UTC', NOW())),
     "is_deleted"    boolean NOT NULL DEFAULT false,
     CONSTRAINT fk_role_user
         FOREIGN KEY (user_id)

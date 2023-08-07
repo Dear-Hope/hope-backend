@@ -3,6 +3,7 @@ package server
 import (
 	"HOPE-backend/internal/api/auth"
 	"HOPE-backend/internal/api/health"
+	"HOPE-backend/internal/api/user"
 	"HOPE-backend/internal/middleware/jwt"
 	"context"
 	"github.com/labstack/echo/v4"
@@ -19,6 +20,7 @@ type Server struct {
 	router        *echo.Echo
 	HealthHandler *health.Handler
 	AuthHandler   *auth.Handler
+	UserHandler   *user.Handler
 }
 
 func (s *Server) serve(port string) error {
@@ -38,15 +40,24 @@ func (s *Server) serve(port string) error {
 	// Register health handler
 	s.router.GET("/server/health", s.HealthHandler.Check, jwt.AuthorizeToken, jwt.AuthorizeRole("NORMAL"))
 
-	// Register api group
-	api := s.router.Group("/api")
+	// Register api group - backward compatibility with previous version
+	apiV3 := s.router.Group("/api/v3")
 
 	// TODO: Register all endpoint below
 
 	// Register auth handler
-	authRouter := api.Group("/auth")
+	authRouter := apiV3.Group("/auth")
 	authRouter.POST("/register", s.AuthHandler.Register)
 	authRouter.POST("/login", s.AuthHandler.Login)
+	authRouter.POST("/login/refresh", s.AuthHandler.RefreshToken)
+	authRouter.POST("/activate", s.AuthHandler.VerifyAccount)
+	authRouter.POST("/resend", s.AuthHandler.ResendOtp)
+	authRouter.POST("/password/reset", s.AuthHandler.ResetPassword)
+	authRouter.POST("/password/change", s.AuthHandler.ChangePassword)
+
+	// Register user handler
+	userRouter := apiV3.Group("/user")
+	userRouter.GET("/me", s.UserHandler.GetUserMe, jwt.AuthorizeToken)
 
 	return s.router.Start(":" + port)
 }

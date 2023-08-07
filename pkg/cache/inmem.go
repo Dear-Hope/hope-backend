@@ -3,6 +3,7 @@ package cache
 import (
 	"HOPE-backend/config"
 	"context"
+	"fmt"
 	"github.com/patrickmn/go-cache"
 	"time"
 )
@@ -37,5 +38,9 @@ func (i *inmem) Get(ctx context.Context, key string) (interface{}, bool) {
 }
 
 func (i *inmem) Increment(ctx context.Context, key string, n int64) error {
-	return i.cache.Increment(key, n)
+	if err := i.cache.Increment(key, n); err != nil {
+		return fmt.Errorf("[Cache.Inmem.Increment][990001] Failed: %v", err)
+	}
+
+	return nil
 }

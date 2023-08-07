@@ -4,6 +4,7 @@ import (
 	"HOPE-backend/internal/constant"
 	"HOPE-backend/internal/entity/auth"
 	"HOPE-backend/internal/entity/response"
+	"HOPE-backend/internal/entity/user"
 	"HOPE-backend/pkg/mailer"
 	"context"
 	"fmt"
@@ -32,7 +33,7 @@ func (s *service) Register(ctx context.Context, req auth.RegisterRequest) (*auth
 		}
 	}
 
-	newUser := auth.User{
+	newUser := user.User{
 		Email:      req.Email,
 		Password:   hashedPassword,
 		Name:       req.Name,
@@ -42,7 +43,7 @@ func (s *service) Register(ctx context.Context, req auth.RegisterRequest) (*auth
 		Photo:      req.ProfilePhoto,
 		Role:       req.Role,
 	}
-	user, err := s.repo.CreateUser(ctx, newUser)
+	res, err := s.repo.CreateUser(ctx, newUser)
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key") {
 			return nil, &response.ServiceError{
@@ -59,7 +60,7 @@ func (s *service) Register(ctx context.Context, req auth.RegisterRequest) (*auth
 		}
 	}
 
-	tokenPair, err := generateTokenPair(user.Id, user.Role, user.IsVerified)
+	tokenPair, err := generateTokenPair(res.Id, res.Role, res.IsVerified)
 	if err != nil {
 		return nil, &response.ServiceError{
 			Code: http.StatusInternalServerError,
@@ -68,13 +69,13 @@ func (s *service) Register(ctx context.Context, req auth.RegisterRequest) (*auth
 		}
 	}
 
-	if !user.IsVerified {
+	if !res.IsVerified {
 		code, err := totp.GenerateCode(secret, time.Now())
 		if err != nil {
 			return nil, &response.ServiceError{
 				Code: http.StatusInternalServerError,
 				Msg:  constant.ErrorGenerateOtpCode,
-				Err:  fmt.Errorf("[AuthSvc][010008] failed to generate otp code: %v", err),
+				Err:  fmt.Errorf("[AuthSvc.Register][010008] failed to generate otp code: %v", err),
 			}
 		}
 
@@ -91,7 +92,7 @@ func (s *service) Register(ctx context.Context, req auth.RegisterRequest) (*auth
 			<h3>%s</h3>
 			</br>
 			<p>Semoga harimu menyenangkan</p>`,
-				user.Name,
+				res.Name,
 				code,
 			),
 		})

@@ -1,13 +1,13 @@
-package auth
+package user
 
 import (
-	"HOPE-backend/internal/entity/auth"
+	"HOPE-backend/internal/entity/user"
 	"context"
 	"fmt"
 )
 
-func (r *repository) GetUserByEmail(ctx context.Context, email string) (*auth.User, error) {
-	var user auth.User
+func (r *repository) GetUserByEmail(ctx context.Context, email string) (*user.User, error) {
+	var res user.User
 
 	query := r.db.Rebind(
 		`SELECT u.id, u.email, u.password, u.name, u.alias, u.is_verified, u.secret_key,
@@ -15,10 +15,10 @@ func (r *repository) GetUserByEmail(ctx context.Context, email string) (*auth.Us
 		FROM "auth".users u, "auth".user_profiles p WHERE u.id = p.user_id AND u.email = ?`,
 	)
 
-	err := r.db.GetContext(ctx, &user, query, email)
+	err := r.db.GetContext(ctx, &res, query, email)
 	if err != nil {
-		return nil, fmt.Errorf("[AuthRepo.GetUserByEmail][010011] Failed: %v", err)
+		return nil, fmt.Errorf("[UserRepo.GetUserByEmail][010011] Failed: %v", err)
 	}
 
-	return &user, nil
+	return &res, nil
 }
