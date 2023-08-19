@@ -10,7 +10,7 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd
 
 
 FROM alpine:latest
@@ -19,8 +19,8 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 
 COPY --from=builder /app/main .
-COPY --from=builder /app/config/config.json ./config/
-COPY --from=builder /app/v3/db/migrations/ ./v3/db/migrations/
+COPY --from=builder /app/config/config.yaml ./config/
+COPY --from=builder /app/scripts/migrations/ ./scripts/migrations/
 
 EXPOSE 8000
 
