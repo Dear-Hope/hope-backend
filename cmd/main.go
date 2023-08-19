@@ -18,6 +18,8 @@ func main() {
 		log.Fatalf("failed to initialize config: %v", err)
 	}
 	cfg = config.Get()
+	log.Println(cfg)
+	log.Println(cfg.Database)
 
 	log.Println("starting dear hope backend service... ")
 	if err := app.Init(cfg); err != nil {
