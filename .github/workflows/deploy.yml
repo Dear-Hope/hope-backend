@@ -27,15 +27,19 @@ jobs:
         HOSTNAME: ${{ secrets.SSH_HOSTNAME }}
         IMAGE: ${{ secrets.AWS_ECR_IMAGE }}
         DB_HOST: ${{ secrets.AWS_DATABASE_HOST }}
+        DB_USERNAME: ${{ secrets.AWS_DATABASE_USERNAME }}
+        DB_PASSWORD: ${{ secrets.AWS_DATABASE_PASSWORD }}
+        DB_NAME: ${{ secrets.AWS_DATABASE_NAME }}
+        SECRET_KEY: ${{ secrets.DEARHOPE_SECRET_KEY }}
 
       run: |
           echo "$PRIVATE_KEY" > private_key && chmod 400 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} "IMAGE=$IMAGE DB_HOST=$DB_HOST" '
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} "IMAGE=$IMAGE DB_HOST=$DB_HOST DB_USERNAME=$DB_USERNAME" DB_PASSWORD=$DB_PASSWORD DB_NAME=$DB_NAME SECRET_KEY=$SECRET_KEY '
 
             CLEANUP=$(docker images | grep -E 'latest' | awk -e "{print $3}")
             docker rm -f dearhope
             docker rmi -f $CLEANUP
             docker pull $IMAGE
-            docker run -d -e DBCONFIG_HOST=$DB_HOST -p 8000:8000 --name dearhope $IMAGE
+            docker run -d -e HOPE_POSTGRES_HOST=$DB_HOST -e HOPE_POSTGRES_USERNAME=$DB_USERNAME -e HOPE_POSTGRES_PASSWORD=$DB_PASSWORD -e HOPE_POSTGRES_NAME=$DB_NAME -e HOPE_SERVER_SECRET_KEY=$SECRET_KEY -p 8000:8000 --name dearhope $IMAGE
             docker ps
           '
