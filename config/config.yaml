@@ -2,14 +2,14 @@ server:
   name: hope-backend
   port: 8000
   shutdownTimeoutInSec: 10
-  secretKey: hope-secret-key
+#  secretKey: hope-secret-key
 
 database:
   postgres:
-    host: localhost
-    username: hope
-    password: hope-database-pass
-    name: hope_monolith
+#    host: localhost
+#    username: hope
+#    password: hope-database-pass
+#    name: hope_monolith
     port: 5432
     ssl: disable
 

@@ -87,5 +87,10 @@ func Load(opts ...Option) error {
 
 	//TODO: Reading secret variables that will injected
 	config = new(Config)
+	config.Database.Postgres.Host = viper.GetString("HOPE_POSTGRES_HOST")
+	config.Database.Postgres.Username = viper.GetString("HOPE_POSTGRES_USERNAME")
+	config.Database.Postgres.Password = viper.GetString("HOPE_POSTGRES_PASSWORD")
+	config.Database.Postgres.Name = viper.GetString("HOPE_POSTGRES_NAME")
+	config.Server.SecretKey = viper.GetString("HOPE_SERVER_SECRET_KEY")
 	return viper.Unmarshal(&config)
 }

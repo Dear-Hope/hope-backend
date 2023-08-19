@@ -2,15 +2,15 @@ package jwt
 
 import (
 	"HOPE-backend/config"
+	"HOPE-backend/internal/entity/response"
 	"HOPE-backend/pkg/jwt"
-	"HOPE-backend/v3/model"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
 func AuthorizeToken(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var res model.Response
+		var res response.Response
 
 		const bearerSchema = "Bearer "
 		authHeader := c.Request().Header.Get("Authorization")
@@ -37,7 +37,7 @@ func AuthorizeToken(next echo.HandlerFunc) echo.HandlerFunc {
 func AuthorizeRole(role string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			var res model.Response
+			var res response.Response
 
 			if c.Get("role").(string) != role {
 				res.Error = "you do not have permission to access this"

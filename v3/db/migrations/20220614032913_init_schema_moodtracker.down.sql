@@ -1,5 +1,0 @@
-BEGIN;
-
-DROP SCHEMA IF EXISTS "moodtracker";
-
-COMMIT;
