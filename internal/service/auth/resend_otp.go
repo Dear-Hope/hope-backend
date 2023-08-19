@@ -14,7 +14,7 @@ import (
 )
 
 func (s *service) ResendOtp(ctx context.Context, email string) *response.ServiceError {
-	user, err := s.repo.GetUserByEmail(ctx, email)
+	user, err := s.userRepo.GetUserByEmail(ctx, email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return &response.ServiceError{

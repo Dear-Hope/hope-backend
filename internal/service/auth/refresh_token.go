@@ -21,7 +21,11 @@ func (s *service) RefreshToken(ctx context.Context, token string) (*auth.TokenPa
 		}
 	}
 
-	tokenPair, err := generateTokenPair(claim.UserId, claim.Role, claim.IsVerified)
+	tokenPair, err := jwt.GenerateTokenPair(jwt.TokenClaim{
+		Id:         claim.Id,
+		Role:       claim.Role,
+		IsVerified: claim.IsVerified,
+	})
 	if err != nil {
 		return nil, &response.ServiceError{
 			Code: http.StatusInternalServerError,

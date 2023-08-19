@@ -2,6 +2,7 @@ package server
 
 import (
 	"HOPE-backend/internal/api/auth"
+	"HOPE-backend/internal/api/expert"
 	"HOPE-backend/internal/api/health"
 	"HOPE-backend/internal/api/user"
 	"HOPE-backend/internal/middleware/jwt"
@@ -21,6 +22,7 @@ type Server struct {
 	HealthHandler *health.Handler
 	AuthHandler   *auth.Handler
 	UserHandler   *user.Handler
+	ExpertHandler *expert.Handler
 }
 
 func (s *Server) serve(port string) error {
@@ -47,17 +49,28 @@ func (s *Server) serve(port string) error {
 
 	// Register auth handler
 	authRouter := apiV3.Group("/auth")
-	authRouter.POST("/register", s.AuthHandler.Register)
 	authRouter.POST("/login", s.AuthHandler.Login)
 	authRouter.POST("/login/refresh", s.AuthHandler.RefreshToken)
-	authRouter.POST("/activate", s.AuthHandler.VerifyAccount)
 	authRouter.POST("/resend", s.AuthHandler.ResendOtp)
 	authRouter.POST("/password/reset", s.AuthHandler.ResetPassword)
 	authRouter.POST("/password/change", s.AuthHandler.ChangePassword)
 
 	// Register user handler
 	userRouter := apiV3.Group("/user")
-	userRouter.GET("/me", s.UserHandler.GetUserMe, jwt.AuthorizeToken)
+	userRouter.POST("/register", s.UserHandler.Register)
+	userRouter.POST("/activate", s.UserHandler.Verify)
+	userRouter.GET("/me", s.UserHandler.GetUserMe, jwt.AuthorizeToken, jwt.AuthorizeRole("USER"))
+	userRouter.PUT("/me", s.UserHandler.UpdateUserMe, jwt.AuthorizeToken, jwt.AuthorizeRole("USER"))
+	userRouter.POST("/me/upload/photo", s.UserHandler.UploadProfilePhoto, jwt.AuthorizeToken,
+		jwt.AuthorizeRole("USER"))
+
+	// Register expert handler
+	expertRouter := apiV3.Group("/expert")
+	expertRouter.POST("/register", s.ExpertHandler.Register)
+	expertRouter.GET("/me", s.ExpertHandler.GetExpertMe, jwt.AuthorizeToken, jwt.AuthorizeRole("EXPERT"))
+	expertRouter.PUT("/me", s.ExpertHandler.UpdateExpertMe, jwt.AuthorizeToken, jwt.AuthorizeRole("EXPERT"))
+	expertRouter.GET("/schedule", s.ExpertHandler.GetSchedule, jwt.AuthorizeToken, jwt.AuthorizeRole("EXPERT"))
+	expertRouter.PUT("/schedule", s.ExpertHandler.UpdateSchedule, jwt.AuthorizeToken, jwt.AuthorizeRole("EXPERT"))
 
 	return s.router.Start(":" + port)
 }

@@ -10,14 +10,14 @@ func (r *repository) GetUserByEmail(ctx context.Context, email string) (*user.Us
 	var res user.User
 
 	query := r.db.Rebind(
-		`SELECT u.id, u.email, u.password, u.name, u.alias, u.is_verified, u.secret_key,
-		p.photo, p.total_audio_played, p.total_time_played, p.longest_streak
-		FROM "auth".users u, "auth".user_profiles p WHERE u.id = p.user_id AND u.email = ?`,
+		`SELECT id, email, password, name, alias, is_verified, secret_key,
+		photo, total_audio_played, total_time_played, longest_streak
+		FROM "user".users WHERE email = ?`,
 	)
 
 	err := r.db.GetContext(ctx, &res, query, email)
 	if err != nil {
-		return nil, fmt.Errorf("[UserRepo.GetUserByEmail][010011] Failed: %v", err)
+		return nil, fmt.Errorf("[UserRepo.GetUserByEmail] Failed: %w", err)
 	}
 
 	return &res, nil

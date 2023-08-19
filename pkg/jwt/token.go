@@ -1,6 +1,8 @@
 package jwt
 
 import (
+	"HOPE-backend/config"
+	"HOPE-backend/internal/entity/auth"
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
@@ -8,9 +10,44 @@ import (
 )
 
 type TokenClaim struct {
-	UserId     uint64
+	Id         uint64
 	Role       string
 	IsVerified bool
+}
+
+func GenerateTokenPair(req TokenClaim) (*auth.TokenPairResponse, error) {
+	access := jwt.New(jwt.SigningMethodHS256)
+
+	atClaims := access.Claims.(jwt.MapClaims)
+	atClaims["access"] = true
+	atClaims["id"] = req.Id
+	atClaims["isVerified"] = req.IsVerified
+	atClaims["role"] = req.Role
+	atClaims["expires"] = time.Now().Add(config.Get().Jwt.AccessExpiryInHour * time.Hour).Unix()
+
+	at, err := access.SignedString([]byte(config.Get().Server.SecretKey))
+	if err != nil {
+		return nil, fmt.Errorf("error generate access token: %v", err)
+	}
+
+	refresh := jwt.New(jwt.SigningMethodHS256)
+
+	rtClaims := refresh.Claims.(jwt.MapClaims)
+	rtClaims["refresh"] = true
+	rtClaims["id"] = req.Id
+	rtClaims["isVerified"] = req.IsVerified
+	rtClaims["role"] = req.Role
+	rtClaims["expires"] = time.Now().Add(config.Get().Jwt.RefreshExpiryInHour * time.Hour).Unix()
+
+	rt, err := refresh.SignedString([]byte(config.Get().Server.SecretKey))
+	if err != nil {
+		return nil, fmt.Errorf("error generate refresh token: %v", err)
+	}
+
+	return &auth.TokenPairResponse{
+		Access:  at,
+		Refresh: rt,
+	}, nil
 }
 
 func ValidateToken(encodedToken, secretKey string) (*jwt.Token, error) {
@@ -42,7 +79,7 @@ func AuthorizeToken(tokenString, secretKey string, isRefresh bool) (*TokenClaim,
 		}
 
 		return &TokenClaim{
-			UserId:     uint64(claims["userId"].(float64)),
+			Id:         uint64(claims["id"].(float64)),
 			Role:       claims["role"].(string),
 			IsVerified: claims["isVerified"].(bool),
 		}, nil

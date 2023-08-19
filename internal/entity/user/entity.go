@@ -1,6 +1,9 @@
 package user
 
-import "time"
+import (
+	"mime/multipart"
+	"time"
+)
 
 // User is representation of table users, user_profiles, and user_roles
 type User struct {
@@ -22,6 +25,36 @@ type User struct {
 }
 
 // Requests section
+type (
+	// RegisterRequest is request struct for registering user
+	RegisterRequest struct {
+		Email        string `json:"email"`
+		Password     string `json:"password"`
+		Name         string `json:"name,omitempty"`
+		Alias        string `json:"alias,omitempty"`
+		ProfilePhoto string `json:"profilePhoto,omitempty"`
+	}
+
+	UpdateRequest struct {
+		Id           uint64 `json:"id"`
+		Email        string `json:"email"`
+		Password     string `json:"password"`
+		Name         string `json:"name"`
+		Alias        string `json:"alias"`
+		ProfilePhoto string `json:"profilePhoto"`
+	}
+
+	VerifyRequest struct {
+		Email string `json:"email"`
+		Code  string `json:"code"`
+	}
+
+	SaveProfilePhotoRequest struct {
+		Id        uint64
+		File      *multipart.File
+		Extension string
+	}
+)
 
 // Responses Section
 type (
@@ -32,11 +65,10 @@ type (
 		Name             string `json:"name"`
 		Alias            string `json:"alias"`
 		Photo            string `json:"photo"`
-		Role             string `json:"role"`
-		TotalAudioPlayed int    `json:"totalAudioPlayed"`
-		TotalTimePlayed  int    `json:"totalTimePlayed"`
-		LongestStreak    int    `json:"longest_streak"`
-		IsVerified       bool   `json:"isVerified"`
+		TotalAudioPlayed int    `json:"totalAudioPlayed,omitempty"`
+		TotalTimePlayed  int    `json:"totalTimePlayed,omitempty"`
+		LongestStreak    int    `json:"longest_streak,omitempty"`
+		IsVerified       bool   `json:"isVerified,omitempty"`
 	}
 )
 
@@ -53,6 +85,5 @@ func (u User) ToResponse() *Response {
 		TotalAudioPlayed: u.TotalAudioPlayed,
 		TotalTimePlayed:  u.TotalTimePlayed,
 		LongestStreak:    u.LongestStreak,
-		Role:             u.Role,
 	}
 }

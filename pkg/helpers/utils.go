@@ -5,6 +5,8 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
+	"fmt"
+	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
@@ -64,4 +66,20 @@ func Decrypt(text string) (string, error) {
 	plainText := make([]byte, len(cipherText))
 	cfb.XORKeyStream(plainText, cipherText)
 	return string(plainText), nil
+}
+
+func EncryptPassword(password []byte) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
+	if err != nil {
+		return "", fmt.Errorf("error encrypting password: %v", err)
+	}
+
+	return string(hash), nil
+}
+
+func TimestampToStringFormat(t time.Time, format string) string {
+	if t.IsZero() {
+		return ""
+	}
+	return t.Format(format)
 }

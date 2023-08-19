@@ -10,4 +10,4 @@ migrate-up-service:
 	@migrate -source file://scripts/migrations/$(schema) -database "postgres://${HOST}/hope_monolith?sslmode=disable&search_path=$(schema)" -verbose up
 
 migrate-down-service:
-	@migrate -source file://scripts/migrations/$(schema) -database "postgres://${HOST}/hope_monolith?sslmode=disable&search_path=$(schema)" -verbose down
+	@migrate -source file://scripts/migrations/$(schema) -database "postgres://${HOST}/hope_monolith?sslmode=disable&search_path=$(schema)" -verbose down 1

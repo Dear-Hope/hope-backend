@@ -6,6 +6,7 @@ import (
 	"HOPE-backend/internal/entity/response"
 	"HOPE-backend/internal/entity/user"
 	"HOPE-backend/pkg/helpers"
+	"HOPE-backend/pkg/jwt"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -33,7 +34,7 @@ func (s *service) ChangePassword(ctx context.Context, req auth.ChangePasswordReq
 		}
 	}
 
-	u.Password, err = encryptPassword([]byte(req.NewPassword))
+	u.Password, err = helpers.EncryptPassword([]byte(req.NewPassword))
 	if err != nil {
 		return nil, &response.ServiceError{
 			Code: http.StatusInternalServerError,
@@ -42,7 +43,7 @@ func (s *service) ChangePassword(ctx context.Context, req auth.ChangePasswordReq
 		}
 	}
 
-	updatedUser, err := s.repo.UpdateUser(ctx, u)
+	updatedUser, err := s.userRepo.UpdateUser(ctx, u)
 	if err != nil {
 		return nil, &response.ServiceError{
 			Code: http.StatusBadRequest,
@@ -51,7 +52,11 @@ func (s *service) ChangePassword(ctx context.Context, req auth.ChangePasswordReq
 		}
 	}
 
-	tokenPair, err := generateTokenPair(updatedUser.Id, updatedUser.Role, true)
+	tokenPair, err := jwt.GenerateTokenPair(jwt.TokenClaim{
+		Id:         updatedUser.Id,
+		Role:       "placeholder",
+		IsVerified: updatedUser.IsVerified,
+	})
 	if err != nil {
 		return nil, &response.ServiceError{
 			Code: http.StatusInternalServerError,

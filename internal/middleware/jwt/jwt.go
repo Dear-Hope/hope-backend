@@ -26,7 +26,7 @@ func AuthorizeToken(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, res)
 		}
 
-		c.Set("userId", claim.UserId)
+		c.Set("id", claim.Id)
 		c.Set("role", claim.Role)
 		c.Set("isVerified", claim.IsVerified)
 

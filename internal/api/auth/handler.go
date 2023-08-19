@@ -10,9 +10,7 @@ import (
 )
 
 type service interface {
-	Register(ctx context.Context, req auth.RegisterRequest) (*auth.TokenPairResponse, *response.ServiceError)
 	Login(ctx context.Context, req auth.LoginRequest) (*auth.TokenPairResponse, *response.ServiceError)
-	Verify(ctx context.Context, req auth.VerifyRequest) (*auth.TokenPairResponse, *response.ServiceError)
 	ResendOtp(ctx context.Context, email string) *response.ServiceError
 	ResetPassword(ctx context.Context, email string) *response.ServiceError
 	ChangePassword(ctx context.Context, req auth.ChangePasswordRequest) (*auth.TokenPairResponse, *response.ServiceError)
@@ -25,29 +23,6 @@ type Handler struct {
 
 func New(svc service) *Handler {
 	return &Handler{svc: svc}
-}
-
-func (h *Handler) Register(c echo.Context) error {
-	var (
-		res    response.Response
-		req    auth.RegisterRequest
-		svcErr *response.ServiceError
-	)
-
-	err := c.Bind(&req)
-	if err != nil {
-		res.Error = fmt.Sprintf("invalid parameters: %s", err.Error())
-		return c.JSON(http.StatusBadRequest, res)
-	}
-
-	res.Result, svcErr = h.svc.Register(c.Request().Context(), req)
-	if svcErr != nil {
-		c.Logger().Errorf("[AuthHandler.Register]%v", svcErr.Err)
-		res.Error = svcErr.Msg
-		return c.JSON(svcErr.Code, res)
-	}
-
-	return c.JSON(http.StatusOK, res)
 }
 
 func (h *Handler) Login(c echo.Context) error {
@@ -66,28 +41,6 @@ func (h *Handler) Login(c echo.Context) error {
 	res.Result, svcErr = h.svc.Login(c.Request().Context(), req)
 	if svcErr != nil {
 		c.Logger().Errorf("[AuthHandler.Login]%v", svcErr.Err)
-		res.Error = svcErr.Msg
-		return c.JSON(svcErr.Code, res)
-	}
-
-	return c.JSON(http.StatusOK, res)
-}
-
-func (h *Handler) VerifyAccount(c echo.Context) error {
-	var (
-		res    response.Response
-		req    auth.VerifyRequest
-		svcErr *response.ServiceError
-	)
-	err := c.Bind(&req)
-	if err != nil {
-		res.Error = fmt.Sprintf("invalid parameters: %s", err.Error())
-		return c.JSON(http.StatusBadRequest, res)
-	}
-
-	res.Result, svcErr = h.svc.Verify(c.Request().Context(), req)
-	if svcErr != nil {
-		c.Logger().Errorf("[AuthHandler.VerifyAccount]%v", svcErr.Err)
 		res.Error = svcErr.Msg
 		return c.JSON(svcErr.Code, res)
 	}
