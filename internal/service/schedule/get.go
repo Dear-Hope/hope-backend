@@ -52,10 +52,6 @@ func (s *service) Get(ctx context.Context, expertId uint64) ([]schedule.Response
 	}
 
 	for _, sch := range schedules {
-		//tsResponses := make([]schedule.TimeslotResponse, 0)
-		//if val, ok := mapScheduleTimeslots[sch.Id]; ok {
-		//	tsResponses = val
-		//}
 		responses = append(responses, schedule.Response{
 			Id:        sch.Id,
 			Day:       sch.Day,

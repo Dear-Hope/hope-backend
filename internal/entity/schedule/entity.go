@@ -54,6 +54,12 @@ type (
 		EndTime   string  `json:"endTime,omitempty"`
 		TypeIds   []int64 `json:"typeIds,omitempty"`
 	}
+
+	TimeslotUserResponse struct {
+		StartTime string `json:"startTime,omitempty"`
+		EndTime   string `json:"endTime,omitempty"`
+		IsBooked  bool   `json:"isBooked"`
+	}
 )
 
 type (
@@ -96,6 +102,12 @@ func (trs UpdateTimeslotRequests) ToTimeslots(scheduleId uint64) Timeslots {
 
 	return response
 }
+
+var (
+	DayIndonesian    = []string{"Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"}
+	MonthsIndonesian = []string{"Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September",
+		"Oktober", "November", "Desember"}
+)
 
 //func (ts *Timeslots) Scan(src interface{}) error {
 //	return pq.GenericArray{A: ts}.Scan(src)
