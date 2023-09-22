@@ -5,6 +5,7 @@ import (
 	"HOPE-backend/internal/api/expert"
 	"HOPE-backend/internal/api/health"
 	"HOPE-backend/internal/api/user"
+	"HOPE-backend/internal/constant"
 	"HOPE-backend/internal/middleware/jwt"
 	"context"
 	"github.com/labstack/echo/v4"
@@ -59,18 +60,24 @@ func (s *Server) serve(port string) error {
 	userRouter := apiV3.Group("/user")
 	userRouter.POST("/register", s.UserHandler.Register)
 	userRouter.POST("/activate", s.UserHandler.Verify)
-	userRouter.GET("/me", s.UserHandler.GetUserMe, jwt.AuthorizeToken, jwt.AuthorizeRole("USER"))
-	userRouter.PUT("/me", s.UserHandler.UpdateUserMe, jwt.AuthorizeToken, jwt.AuthorizeRole("USER"))
+	userRouter.GET("/me", s.UserHandler.GetUserMe, jwt.AuthorizeToken, jwt.AuthorizeRole(constant.UserRole))
+	userRouter.PUT("/me", s.UserHandler.UpdateUserMe, jwt.AuthorizeToken, jwt.AuthorizeRole(constant.UserRole))
 	userRouter.POST("/me/upload/photo", s.UserHandler.UploadProfilePhoto, jwt.AuthorizeToken,
-		jwt.AuthorizeRole("USER"))
+		jwt.AuthorizeRole(constant.UserRole))
 
 	// Register expert handler
 	expertRouter := apiV3.Group("/expert")
 	expertRouter.POST("/register", s.ExpertHandler.Register)
-	expertRouter.GET("/me", s.ExpertHandler.GetExpertMe, jwt.AuthorizeToken, jwt.AuthorizeRole("EXPERT"))
-	expertRouter.PUT("/me", s.ExpertHandler.UpdateExpertMe, jwt.AuthorizeToken, jwt.AuthorizeRole("EXPERT"))
-	expertRouter.GET("/schedule", s.ExpertHandler.GetSchedule, jwt.AuthorizeToken, jwt.AuthorizeRole("EXPERT"))
-	expertRouter.PUT("/schedule", s.ExpertHandler.UpdateSchedule, jwt.AuthorizeToken, jwt.AuthorizeRole("EXPERT"))
+	expertRouter.GET("/me", s.ExpertHandler.GetExpertMe, jwt.AuthorizeToken, jwt.AuthorizeRole(constant.ExpertRole))
+	expertRouter.PUT("/me", s.ExpertHandler.UpdateExpertMe, jwt.AuthorizeToken, jwt.AuthorizeRole(constant.ExpertRole))
+	expertRouter.GET("/schedule", s.ExpertHandler.GetSchedule, jwt.AuthorizeToken, jwt.AuthorizeRole(constant.ExpertRole))
+	expertRouter.PUT("/schedule", s.ExpertHandler.UpdateSchedule, jwt.AuthorizeToken, jwt.AuthorizeRole(constant.ExpertRole))
+	expertRouter.GET("/:id/schedule", s.ExpertHandler.GetScheduleUser, jwt.AuthorizeToken,
+		jwt.AuthorizeRole(constant.UserRole))
+	expertRouter.GET("/consultation", s.ExpertHandler.ListConsultation, jwt.AuthorizeToken,
+		jwt.AuthorizeRole(constant.ExpertRole))
+	expertRouter.GET("/consultation/:id", s.ExpertHandler.DetailConsultation, jwt.AuthorizeToken,
+		jwt.AuthorizeRole(constant.ExpertRole))
 
 	return s.router.Start(":" + port)
 }

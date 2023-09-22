@@ -2,6 +2,7 @@ package expert
 
 import (
 	"HOPE-backend/internal/entity/auth"
+	"HOPE-backend/internal/entity/consultation"
 	"HOPE-backend/internal/entity/expert"
 	"HOPE-backend/internal/entity/response"
 	"HOPE-backend/internal/entity/schedule"
@@ -19,13 +20,23 @@ type service interface {
 type scheduleService interface {
 	Get(ctx context.Context, expertId uint64) ([]schedule.Response, *response.ServiceError)
 	Update(ctx context.Context, req schedule.UpdateRequest) (bool, *response.ServiceError)
+	GetTimeslotUsers(ctx context.Context, expertId, typeId uint64, dateStr int64) ([]schedule.TimeslotUserResponse,
+		*response.ServiceError)
+}
+
+type consultationService interface {
+	GetByExpert(ctx context.Context, expertId uint64, status consultation.Status) (*consultation.ExpertListResponse,
+		*response.ServiceError)
+	GetDetailByExpert(ctx context.Context, consulId uint64) (*consultation.ExpertResponse,
+		*response.ServiceError)
 }
 
 type Handler struct {
 	svc         service
 	scheduleSvc scheduleService
+	consulSvc   consultationService
 }
 
-func New(svc service, schSvc scheduleService) *Handler {
-	return &Handler{svc: svc, scheduleSvc: schSvc}
+func New(svc service, schSvc scheduleService, consulSvc consultationService) *Handler {
+	return &Handler{svc: svc, scheduleSvc: schSvc, consulSvc: consulSvc}
 }

@@ -132,3 +132,8 @@ var (
 	ErrorCreateExpertScheduleFailed = "gagal membuat jadwal ahli"
 	ErrorUpdateExpertScheduleFailed = "gagal memperbarui jadwal ahli"
 )
+
+var (
+	ErrorGetConsultationFailed       = "Gagal mendapatkan daftar konsultasi"
+	ErrorGetDetailConsultationFailed = "Gagal mendapatkan detail konsultasi"
+)
