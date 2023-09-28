@@ -1,0 +1,5 @@
+ALTER TABLE "counsel".consultations
+    ADD COLUMN IF NOT EXISTS counsel_notes TEXT NOT NULL DEFAULT '',
+    ADD COLUMN IF NOT EXISTS suggestion TEXT NOT NULL DEFAULT '',
+    ADD COLUMN IF NOT EXISTS activity_recommendation TEXT NOT NULL DEFAULT '',
+    ADD COLUMN IF NOT EXISTS document TEXT NOT NULL DEFAULT '';
