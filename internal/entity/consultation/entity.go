@@ -7,18 +7,22 @@ import (
 )
 
 type Consultation struct {
-	Id          uint64       `db:"id"`
-	UserId      uint64       `db:"user_id"`
-	ExpertId    uint64       `db:"expert_id"`
-	TypeId      uint64       `db:"type_id"`
-	BookingDate string       `db:"booking_date"`
-	StartTime   string       `db:"start_time"`
-	EndTime     string       `db:"end_time"`
-	Status      string       `db:"status"`
-	UserNotes   string       `db:"user_notes"`
-	CreatedAt   time.Time    `db:"created_at"`
-	UpdatedAt   sql.NullTime `db:"updated_at"`
-	IsDeleted   bool         `db:"is_deleted"`
+	Id                     uint64       `db:"id"`
+	UserId                 uint64       `db:"user_id"`
+	ExpertId               uint64       `db:"expert_id"`
+	TypeId                 uint64       `db:"type_id"`
+	BookingDate            string       `db:"booking_date"`
+	StartTime              string       `db:"start_time"`
+	EndTime                string       `db:"end_time"`
+	Status                 string       `db:"status"`
+	UserNotes              string       `db:"user_notes"`
+	CounselNotes           string       `db:"counsel_notes"`
+	Suggestion             string       `db:"suggestion"`
+	ActivityRecommendation string       `db:"activity_recommendation"`
+	Document               string       `db:"document"`
+	CreatedAt              time.Time    `db:"created_at"`
+	UpdatedAt              sql.NullTime `db:"updated_at"`
+	IsDeleted              bool         `db:"is_deleted"`
 }
 
 type Consultations []Consultation
@@ -45,8 +49,11 @@ type (
 		ClientNote          string `json:"clientNote,omitempty"`
 		TypeId              uint64 `json:"typeId,omitempty"`
 		Status              string `json:"status,omitempty"`
+		Date                string `json:"date,omitempty"`
 		Time                string `json:"time,omitempty"`
 		IsStartConsultation bool   `json:"isStartConsultation"`
+		CounselNote         string `json:"counselNote,omitempty"`
+		Document            string `json:"document,omitempty"`
 	}
 
 	ExpertListResponse struct {

@@ -54,7 +54,7 @@ func (s *service) GetByExpert(ctx context.Context, req consultation.ExpertListRe
 
 func (s *service) constructExpertResponse(ctx context.Context, consul consultation.Consultation) (
 	*consultation.ExpertResponse, *response.ServiceError) {
-	now := time.Now().UTC()
+	now := time.Now()
 
 	usr, err := s.userRepo.GetUserById(ctx, consul.UserId)
 	if err != nil {
@@ -64,11 +64,14 @@ func (s *service) constructExpertResponse(ctx context.Context, consul consultati
 			Err:  err,
 		}
 	}
-	date, err := time.Parse(time.RFC3339, consul.BookingDate+"T"+consul.StartTime+":00+07:00")
-	timePeriod := "Sedang Berlangsung"
-	if now.Before(date) || now.After(date) {
-		timePeriod = fmt.Sprintf("%s, %d %s %d | %s - %s WIB", schedule.DayIndonesian[date.Weekday()], date.Day(),
-			schedule.MonthsIndonesian[date.Month()-1], date.Year(), consul.StartTime, consul.EndTime)
+	start, err := time.Parse(time.RFC3339, consul.BookingDate+"T"+consul.StartTime+":00+07:00")
+	end, err := time.Parse(time.RFC3339, consul.BookingDate+"T"+consul.EndTime+":00+07:00")
+	dt := ""
+	t := "Sedang Berlangsung"
+	if now.Before(start.UTC()) || now.After(end.UTC()) {
+		dt = fmt.Sprintf("%s, %d %s %d", schedule.DayIndonesian[start.Weekday()], start.Day(),
+			schedule.MonthsIndonesian[start.Month()-1], start.Year())
+		t = fmt.Sprintf("%s - %s WIB", consul.StartTime, consul.EndTime)
 	}
 	return &consultation.ExpertResponse{
 		Id:                  consul.Id,
@@ -77,7 +80,10 @@ func (s *service) constructExpertResponse(ctx context.Context, consul consultati
 		ClientNote:          consul.UserNotes,
 		TypeId:              consul.TypeId,
 		Status:              consultation.GetStatus(consul.Status).Text(),
-		Time:                timePeriod,
-		IsStartConsultation: now.After(date) && consul.Status == consultation.Accepted.String(),
+		Date:                dt,
+		Time:                t,
+		IsStartConsultation: now.After(start) && now.Before(end) && consul.Status == consultation.Accepted.String(),
+		CounselNote:         consul.CounselNotes,
+		Document:            consul.Document,
 	}, nil
 }
