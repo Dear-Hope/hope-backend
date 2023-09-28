@@ -11,11 +11,25 @@ import (
 	"time"
 )
 
-func (s *service) GetByExpert(ctx context.Context, expertId uint64, status consultation.Status) (
+func (s *service) GetByExpert(ctx context.Context, req consultation.ExpertListRequest) (
 	*consultation.ExpertListResponse, *response.ServiceError) {
-	var listResponses []consultation.ExpertResponse
+	var (
+		listResponses    []consultation.ExpertResponse
+		isFilterPerMonth = req.BookingMonth != ""
+	)
 
-	consultations, err := s.repo.GetAllConsultation(ctx, expertId, 0, status.String())
+	request := consultation.Consultation{
+		ExpertId:    req.ExpertId,
+		UserId:      req.UserId,
+		BookingDate: req.BookingDate,
+		Status:      req.Status.String(),
+	}
+
+	if isFilterPerMonth {
+		request.BookingDate = req.BookingMonth
+	}
+
+	consultations, err := s.repo.GetAllConsultation(ctx, request, isFilterPerMonth)
 	if err != nil {
 		return nil, &response.ServiceError{
 			Code: http.StatusInternalServerError,
@@ -52,7 +66,7 @@ func (s *service) constructExpertResponse(ctx context.Context, consul consultati
 	}
 	date, err := time.Parse(time.RFC3339, consul.BookingDate+"T"+consul.StartTime+":00+07:00")
 	timePeriod := "Sedang Berlangsung"
-	if now.Before(date) {
+	if now.Before(date) || now.After(date) {
 		timePeriod = fmt.Sprintf("%s, %d %s %d | %s - %s WIB", schedule.DayIndonesian[date.Weekday()], date.Day(),
 			schedule.MonthsIndonesian[date.Month()-1], date.Year(), consul.StartTime, consul.EndTime)
 	}

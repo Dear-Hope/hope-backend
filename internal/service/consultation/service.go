@@ -7,7 +7,8 @@ import (
 )
 
 type repository interface {
-	GetAllConsultation(ctx context.Context, expertId, userId uint64, status string) (consultation.Consultations, error)
+	GetAllConsultation(ctx context.Context, req consultation.Consultation, isFilterPerMonth bool) (
+		consultation.Consultations, error)
 	GetConsultationById(ctx context.Context, consulId uint64) (*consultation.Consultation, error)
 }
 

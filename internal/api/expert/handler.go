@@ -25,7 +25,7 @@ type scheduleService interface {
 }
 
 type consultationService interface {
-	GetByExpert(ctx context.Context, expertId uint64, status consultation.Status) (*consultation.ExpertListResponse,
+	GetByExpert(ctx context.Context, req consultation.ExpertListRequest) (*consultation.ExpertListResponse,
 		*response.ServiceError)
 	GetDetailByExpert(ctx context.Context, consulId uint64) (*consultation.ExpertResponse,
 		*response.ServiceError)

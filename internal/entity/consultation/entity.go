@@ -24,6 +24,16 @@ type Consultation struct {
 type Consultations []Consultation
 
 type (
+	ExpertListRequest struct {
+		UserId       uint64
+		ExpertId     uint64
+		BookingDate  string
+		BookingMonth string
+		Status       Status
+	}
+)
+
+type (
 	ExpertResponse struct {
 		Id                  uint64 `json:"id,omitempty"`
 		ClientName          string `json:"clientName,omitempty"`
