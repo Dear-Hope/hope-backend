@@ -134,6 +134,8 @@ var (
 )
 
 var (
-	ErrorGetConsultationFailed       = "Gagal mendapatkan daftar konsultasi"
-	ErrorGetDetailConsultationFailed = "Gagal mendapatkan detail konsultasi"
+	ErrorGetConsultationFailed          = "Gagal mendapatkan daftar konsultasi"
+	ErrorGetDetailConsultationFailed    = "Gagal mendapatkan detail konsultasi"
+	ErrorUpdateStatusConsultationFailed = "Gagal memperbarui status konsultasi"
+	ErrorInvalidStatusConsultation      = "Status yang diisi salah"
 )

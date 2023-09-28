@@ -31,6 +31,10 @@ type (
 		BookingMonth string
 		Status       Status
 	}
+
+	UpdateStatusRequest struct {
+		Status string `json:"status"`
+	}
 )
 
 type (
@@ -54,8 +58,20 @@ type (
 type Status int
 
 var (
-	status     = []string{"SCHEDULED", "ACCEPTED", "REJECTED", "ONGOING", "COMPLETED"}
-	statusText = []string{"Klien Baru", "Klien", "Ditolak", "Berlangsung", "Selesai"}
+	status = map[Status]string{
+		Scheduled: "SCHEDULED",
+		Accepted:  "ACCEPTED",
+		Rejected:  "REJECTED",
+		Ongoing:   "ONGOING",
+		Completed: "COMPLETED",
+	}
+	statusText = map[Status]string{
+		Scheduled: "Klien Baru",
+		Accepted:  "Klien",
+		Rejected:  "Ditolak",
+		Ongoing:   "Berlangsung",
+		Completed: "Selesai",
+	}
 )
 
 const (
@@ -67,18 +83,18 @@ const (
 )
 
 func (s Status) String() string {
-	return status[s-1]
+	return status[s]
 }
 
 func (s Status) Text() string {
-	return statusText[s-1]
+	return statusText[s]
 }
 
 func GetStatus(s string) Status {
 	for idx := range status {
 		if strings.EqualFold(status[idx], s) {
-			return Status(idx + 1)
+			return Status(idx)
 		}
 	}
-	return 1
+	return 0
 }

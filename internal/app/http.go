@@ -10,6 +10,7 @@ import (
 	_mailer "HOPE-backend/pkg/mailer"
 
 	_authHandler "HOPE-backend/internal/api/auth"
+	_consulHandler "HOPE-backend/internal/api/consultation"
 	_expertHandler "HOPE-backend/internal/api/expert"
 	_healthHandler "HOPE-backend/internal/api/health"
 	_userHandler "HOPE-backend/internal/api/user"
@@ -64,12 +65,14 @@ func Init(cfg *config.Config) error {
 	authHandler := _authHandler.New(authSvc)
 	userHandler := _userHandler.New(userSvc)
 	expertHandler := _expertHandler.New(expertSvc, scheduleSvc, consulSvc)
+	consulHandler := _consulHandler.New(consulSvc)
 
 	srv := server.Server{
 		HealthHandler: healthHandler,
 		AuthHandler:   authHandler,
 		UserHandler:   userHandler,
 		ExpertHandler: expertHandler,
+		ConsulHandler: consulHandler,
 	}
 
 	return srv.Run(cfg.Server.Port, cfg.Server.ShutdownTimeoutInSec)

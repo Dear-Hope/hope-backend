@@ -1,4 +1,4 @@
-package schedule
+package consultation
 
 import (
 	"HOPE-backend/internal/entity/consultation"
@@ -10,6 +10,7 @@ type repository interface {
 	GetAllConsultation(ctx context.Context, req consultation.Consultation, isFilterPerMonth bool) (
 		consultation.Consultations, error)
 	GetConsultationById(ctx context.Context, consulId uint64) (*consultation.Consultation, error)
+	UpdateStatusConsultation(ctx context.Context, id uint64, status string) (bool, error)
 }
 
 type userRepository interface {

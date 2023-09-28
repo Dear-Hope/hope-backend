@@ -1,4 +1,4 @@
-package schedule
+package consultation
 
 import (
 	"HOPE-backend/internal/constant"

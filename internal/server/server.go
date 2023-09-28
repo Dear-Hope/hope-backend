@@ -2,6 +2,7 @@ package server
 
 import (
 	"HOPE-backend/internal/api/auth"
+	"HOPE-backend/internal/api/consultation"
 	"HOPE-backend/internal/api/expert"
 	"HOPE-backend/internal/api/health"
 	"HOPE-backend/internal/api/user"
@@ -24,6 +25,7 @@ type Server struct {
 	AuthHandler   *auth.Handler
 	UserHandler   *user.Handler
 	ExpertHandler *expert.Handler
+	ConsulHandler *consultation.Handler
 }
 
 func (s *Server) serve(port string) error {
@@ -78,6 +80,10 @@ func (s *Server) serve(port string) error {
 		jwt.AuthorizeRole(constant.ExpertRole))
 	expertRouter.GET("/consultation/:id", s.ExpertHandler.DetailConsultation, jwt.AuthorizeToken,
 		jwt.AuthorizeRole(constant.ExpertRole))
+
+	// Register consultation handler
+	consulRouter := apiV3.Group("/consultation")
+	consulRouter.PUT("/:id/status", s.ConsulHandler.UpdateStatus, jwt.AuthorizeToken, jwt.AuthorizeRole(constant.ExpertRole))
 
 	return s.router.Start(":" + port)
 }

@@ -40,6 +40,7 @@ func (r *repository) GetAllConsultation(ctx context.Context, req consultation.Co
 		args = append(args, req.BookingDate)
 	}
 
+	query += ` ORDER BY booking_date`
 	err := r.db.SelectContext(ctx, &consultations, r.db.Rebind(query), args...)
 	if err != nil {
 		return nil, fmt.Errorf("[ConsultationRepo.GetAllConsultation] Failed select: %w", err)
