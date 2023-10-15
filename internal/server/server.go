@@ -80,6 +80,7 @@ func (s *Server) serve(port string) error {
 		jwt.AuthorizeRole(constant.ExpertRole))
 	expertRouter.GET("/consultation/:id", s.ExpertHandler.DetailConsultation, jwt.AuthorizeToken,
 		jwt.AuthorizeRole(constant.ExpertRole))
+	expertRouter.GET("/review", s.ExpertHandler.GetReview, jwt.AuthorizeToken, jwt.AuthorizeRole(constant.ExpertRole))
 
 	// Register consultation handler
 	consulRouter := apiV3.Group("/consultation")

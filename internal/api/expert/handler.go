@@ -5,6 +5,7 @@ import (
 	"HOPE-backend/internal/entity/consultation"
 	"HOPE-backend/internal/entity/expert"
 	"HOPE-backend/internal/entity/response"
+	"HOPE-backend/internal/entity/review"
 	"HOPE-backend/internal/entity/schedule"
 	"context"
 )
@@ -31,12 +32,17 @@ type consultationService interface {
 		*response.ServiceError)
 }
 
+type reviewService interface {
+	Get(ctx context.Context, expertId uint64) (*review.ListResponse, *response.ServiceError)
+}
+
 type Handler struct {
 	svc         service
 	scheduleSvc scheduleService
 	consulSvc   consultationService
+	reviewSvc   reviewService
 }
 
-func New(svc service, schSvc scheduleService, consulSvc consultationService) *Handler {
-	return &Handler{svc: svc, scheduleSvc: schSvc, consulSvc: consulSvc}
+func New(svc service, schSvc scheduleService, consulSvc consultationService, reviewSvc reviewService) *Handler {
+	return &Handler{svc: svc, scheduleSvc: schSvc, consulSvc: consulSvc, reviewSvc: reviewSvc}
 }
