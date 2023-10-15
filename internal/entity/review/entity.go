@@ -35,7 +35,9 @@ func (ths Reviews) ToListResponse() *ListResponse {
 		sum, totalReview int64
 		totalRating      = int64(len(ths))
 		res              = make([]Response, totalRating)
-		listResponse     = &ListResponse{}
+		listResponse     = &ListResponse{
+			AvgRating: "belum ada penilaian",
+		}
 	)
 	for i, review := range ths {
 		if review.Review.Valid {
@@ -46,7 +48,10 @@ func (ths Reviews) ToListResponse() *ListResponse {
 		res[i] = *review.ToResponse()
 	}
 
-	listResponse.AvgRating = fmt.Sprintf("%.1f/5.0", float64(sum)/float64(totalRating))
+	if totalRating > 0 {
+		listResponse.AvgRating = fmt.Sprintf("%.1f/5.0", float64(sum)/float64(totalRating))
+	}
+
 	listResponse.TotalRating = fmt.Sprintf("%d rating", totalRating)
 	listResponse.TotalReview = fmt.Sprintf("%d ulasan", totalReview)
 	listResponse.Reviews = res
