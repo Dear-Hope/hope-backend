@@ -139,3 +139,7 @@ var (
 	ErrorUpdateStatusConsultationFailed = "Gagal memperbarui status konsultasi"
 	ErrorInvalidStatusConsultation      = "Status yang diisi salah"
 )
+
+var (
+	ErrorGetExpertReviewFailed = "gagal mendapatkan penilaian dan ulasan ahli"
+)
