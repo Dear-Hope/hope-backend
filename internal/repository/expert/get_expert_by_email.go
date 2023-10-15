@@ -10,7 +10,7 @@ func (r *repository) GetExpertByEmail(ctx context.Context, email string) (*exper
 	var res expert.Expert
 
 	query := r.db.Rebind(
-		`SELECT id, email, password, name, expertise, rating, price,
+		`SELECT id, email, password, name, expertise, price,
 		photo, is_available, title, education, experience, bio
 		FROM "expert".experts WHERE email = ? AND is_deleted = false`,
 	)
